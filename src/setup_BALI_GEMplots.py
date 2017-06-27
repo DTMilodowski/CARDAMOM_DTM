@@ -22,15 +22,15 @@ obs_file = "<SOMETHING>.csv"
 
 # first load in coordinates
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
-dates_met,met_data = data.load_met_data(met_file)
+met_data = data.load_met_data(met_file)
 par_data = data.load_obs_data(par_file)
 dates_obs,obs_data = data.load_obs_data(obs_file)
 
 # start date ### read from data file
-d0 = dates_met[0]
-sim_length = dates_met[-1]-dates_met[0]
-DoY = dates_met - dates_met.astype('timedelta64[D]')
-tstep = dates_met - dates_met[0] + np.timedelta[1,'D']
+d0 = met_data['date'][0]
+DoY = met_data['date'] - met_data['date'].astype('timedelta64[Y]')
+tstep = met_data['tstep_days']#dates_met - dates_met[0] + np.timedelta[1,'D']
+sim_length = tstep[-1]
 nosites = len(plot)
 
 #-----------------------------------------------------------------------------
