@@ -16,14 +16,14 @@ project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 
 # File list containing drivers, observations and plot coordinates
 coordinate_file = "BALI_plot_coordinates.csv"
-met_file = "<SOMETHING>.csv"
+met_file = "/home/dmilodow/DataStore_DTM/BALI/CSPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_daily_v1.csv"
 par_file = "<SOMETHING>.csv"
 obs_file = "<SOMETHING>.csv"
 
 # first load in coordinates
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
 met_data = data.load_met_data(met_file)
-par_data = data.load_obs_data(par_file)
+par_data = data.load_par_data(par_file)
 dates_obs,obs_data = data.load_obs_data(obs_file)
 
 # start date ### read from data file
@@ -138,26 +138,11 @@ if project_par_npydata not in os.listdir(data_dir):
         parprior_unc[pp,31] = par_data[plot[pp]]['roo_rpl_u']
         parprior[pp,32] = par_data[plot[pp]]['woo_rpl'] # wood replanting
         parprior_unc[pp,32] = par_data[plot[pp]]['woo_rpl_u']
-        #parprior[pp,33] = par_data[plot[pp]]['']
-        #parprior[pp,34] = par_data[plot[pp]]['']
-        #parprior[pp,35] = par_data[plot[pp]]['']
-        #parprior[pp,36] = par_data[plot[pp]]['']
+
         parprior[pp,37] = par_data[plot[pp]]['Ccwd_i']   # initial C stock for CWD
         parprior_unc[pp,37] = par_data[plot[pp]]['Ccwd_i_u']
-        #parprior[pp,38] = par_data[plot[pp]]['']
-        #parprior[pp,39] = par_data[plot[pp]]['']
-        #parprior[pp,40] = par_data[plot[pp]]['']
-        #parprior[pp,41] = par_data[plot[pp]]['']
-        #parprior[pp,42] = par_data[plot[pp]]['']
-        #parprior[pp,43] = par_data[plot[pp]]['']
-        #parprior[pp,45] = par_data[plot[pp]]['']
-        #parprior[pp,46] = par_data[plot[pp]]['']
-        #parprior[pp,47] = par_data[plot[pp]]['']
-        #parprior[pp,48] = par_data[plot[pp]]['']
-        #parprior[pp,49] = par_data[plot[pp]]['']
 
     np.save(data_dir + project_par_npydata,[parprior,parprior_unc])
-
    
 else:
     print "Loading parameters"
@@ -188,33 +173,29 @@ if project_obs_npydata not in os.listdir(data_dir):
         obs[pp,:,30] = obs_data[plot[pp]]['Evap']     # Evapotranspiration
         obs[pp,:,32] = obs_dataplot[pp]]['flit']      # Litter flux
 
-        obs[pp,:,11] = obs_data[plot[pp]]['GPP_unc']       # GPP
-        obs[pp,:,12] = obs_data[plot[pp]]['LAI_unc']       # LAI
-        obs[pp,:,13] = obs_data[plot[pp]]['NEE_unc']       # NEE
-        obs[pp,:,14] = obs_data[plot[pp]]['woo_unc']       # woody increment
-        obs[pp,:,15] = obs_data[plot[pp]]['Reco_unc']      # Reco
-        obs[pp,:,16] = obs_data[plot[pp]]['Cfol_unc']      # Cfol
-        obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_unc']      # Cwood
-        obs[pp,:,18] = obs_data[plot[pp]]['Croo_unc']      # Croot
-        obs[pp,:,19] = obs_data[plot[pp]]['Clit_unc']      # Clit
-        obs[pp,:,20] = obs_data[plot[pp]]['Csom_unc']      # Csom
-        obs[pp,:,21] = obs_data[plot[pp]]['Cagb_unc']     # Cagb
-        obs[pp,:,23] = obs_data[plot[pp]]['Cstem_unc']    # Cstem
-        obs[pp,:,25] = obs_data[plot[pp]]['Cbranch_unc']  # Cbranch
-        obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_unc']    # Ccoarseroot
-        obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_unc'] # maximum Cfol
-        obs[pp,:,31] = obs_data[plot[pp]]['Evap_unc']     # Evapotranspiration
-        obs[pp,:,33] = obs_dataplot[pp]]['flit_unc']      # Litter flux
-        
-
-        
+        obs[pp,:,11] = obs_data[plot[pp]]['GPP_u']       # GPP
+        obs[pp,:,12] = obs_data[plot[pp]]['LAI_u']       # LAI
+        obs[pp,:,13] = obs_data[plot[pp]]['NEE_u']       # NEE
+        obs[pp,:,14] = obs_data[plot[pp]]['woo_u']       # woody increment
+        obs[pp,:,15] = obs_data[plot[pp]]['Reco_u']      # Reco
+        obs[pp,:,16] = obs_data[plot[pp]]['Cfol_u']      # Cfol
+        obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_u']      # Cwood
+        obs[pp,:,18] = obs_data[plot[pp]]['Croo_u']      # Croot
+        obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']      # Clit
+        obs[pp,:,20] = obs_data[plot[pp]]['Csom_u']      # Csom
+        obs[pp,:,21] = obs_data[plot[pp]]['Cagb_u']     # Cagb
+        obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']    # Cstem
+        obs[pp,:,25] = obs_data[plot[pp]]['Cbranch_u']  # Cbranch
+        obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_u']    # Ccoarseroot
+        obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol
+        obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
+        obs[pp,:,33] = obs_dataplot[pp]]['flit_u']      # Litter flux
+                
     np.save(data_dir + project_obs_npydata,[obs,obs_unc])
-
 
 else:
     print "Loading observations"
     obs = np.load(data_dir+project_obs_npydata)
-
 
 prj=CARDAMOM(project_name="BALI_GEMplots_daily")
 prj.setup(latitude,longitude,met,obs,parprior,parpriorunc,otherprior,otherpriorunc)
