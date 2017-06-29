@@ -9,7 +9,7 @@ from CARDAMOM_DTM import *
 import load_data as data
 
 # Project data file (to load in if already generated
-data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_DTM/npydata/"
+data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
 project_met_npydata = "BALI_GEMplots_daily_drivers.npy"
 project_par_npydata = "BALI_GEMplots_daily_params.npy"
 project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
@@ -34,7 +34,7 @@ dates = met_data['date'].astype('datetime64[D]')
 d0 = dates[0]#met_data['date'][0]
 DoY = dates-dates.astype('datetime64[Y]')#met_data['date'] - met_data['date'].astype('timedelta64[Y]')
 tstep = met_data['tstep_days']#dates_met - dates_met[0] + np.timedelta[1,'D']
-sim_length = tstep[-1]
+sim_length = tstep[-1]+1
 nosites = len(plot)
 
 #-----------------------------------------------------------------------------
@@ -44,20 +44,20 @@ met = np.zeros((nosites,sim_length,14))
 if project_met_npydata not in os.listdir(data_dir):
     
     # First load the met data into the met array - use same driving data for now
-    met[pp,:,0] = tstep.copy()                             #  0 = run day
-    met[pp,:,1] = met_data['mn2t']                         #  1 = minimum temperature oC
-    met[pp,:,2] = met_data['mx2t']                         #  2 = maximum temperature oC
-    met[pp,:,3] = met_data['ssrd']                         #  3 = surface shortwave radiation in MJ.m-2.day-1
-    met[pp,:,4] = 400.                                     #  4 = atmospheric CO2 concentration ppm
-    met[pp,:,5] = DoY.copy()                               #  5 = day of year
-    met[pp,:,6] = met_data['pptn']                         #  6 = lagged precipitation
-    met[pp,:,7] = -9999                                    #  7 = fire burned deforestation fraction - not applicable 
-    met[pp,:,8] = -9999                                    #  8 = fire burned deforestation fraction - not applicable 
-    met[pp,:,9] = met_data['mn2t_21d']                     #  9 = 21 day average min temperature K
-    met[pp,:,10] = met_data['mx2t_21d']                    # 10 = 21 day average max temperature K
-    met[pp,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
-    met[pp,:,12] = -9999                                   # 12 = forest management practice to accompany any clearing - not applicable
-    met[pp,:,13] = (met_data['mn2t']+met_data['mx2t'])/2.  # 13 = mean temperature oC ???
+    met[:,:,0] = tstep.copy()                             #  0 = run day
+    met[:,:,1] = met_data['mn2t']                         #  1 = minimum temperature oC
+    met[:,:,2] = met_data['mx2t']                         #  2 = maximum temperature oC
+    met[:,:,3] = met_data['ssrd']                         #  3 = surface shortwave radiation in MJ.m-2.day-1
+    met[:,:,4] = 400.                                     #  4 = atmospheric CO2 concentration ppm
+    met[:,:,5] = DoY.copy()                               #  5 = day of year
+    met[:,:,6] = met_data['pptn']                         #  6 = lagged precipitation
+    met[:,:,7] = -9999                                    #  7 = fire burned deforestation fraction - not applicable 
+    met[:,:,8] = -9999                                    #  8 = fire burned deforestation fraction - not applicable 
+    met[:,:,9] = met_data['mn2t_21d']                     #  9 = 21 day average min temperature K
+    met[:,:,10] = met_data['mx2t_21d']                    # 10 = 21 day average max temperature K
+    met[:,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
+    met[:,:,12] = -9999                                   # 12 = forest management practice to accompany any clearing - not applicable
+    met[:,:,13] = (met_data['mn2t']+met_data['mx2t'])/2.  # 13 = mean temperature oC ???
 
     np.save(data_dir + project_met_npydata,met)
 
@@ -175,7 +175,7 @@ if project_obs_npydata not in os.listdir(data_dir):
         obs[pp,:,26] = obs_data[plot[pp]]['Ccroo']    # Ccoarseroot
         obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max'] # maximum Cfol
         obs[pp,:,30] = obs_data[plot[pp]]['Evap']     # Evapotranspiration
-        obs[pp,:,32] = obs_dataplot[pp]]['flit']      # Litter flux
+        obs[pp,:,32] = obs_data[plot[pp]]['flit']      # Litter flux
 
         obs[pp,:,11] = obs_data[plot[pp]]['GPP_u']       # GPP
         obs[pp,:,12] = obs_data[plot[pp]]['LAI_u']       # LAI
@@ -193,9 +193,9 @@ if project_obs_npydata not in os.listdir(data_dir):
         obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_u']    # Ccoarseroot
         obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol
         obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
-        obs[pp,:,33] = obs_dataplot[pp]]['flit_u']      # Litter flux
+        obs[pp,:,33] = obs_data[plot[pp]]['flit_u']      # Litter flux
                 
-    np.save(data_dir + project_obs_npydata,[obs,obs_unc])
+    np.save(data_dir + project_obs_npydata,obs)
 
 else:
     print "Loading observations"
