@@ -327,11 +327,9 @@ class CARDAMOM(object):
 
         for ii in xrange(self.details["no_pts"]):
             #create an empty array to store data to be written
-            towrite=np.zeros(300+self.details["tsteps"]*(self.details["met_fields"]+self.details["obs_fields"]),dtype="d")-9999.
+            towrite=np.zeros(500+self.details["tsteps"]*(self.details["met_fields"]+self.details["obs_fields"]),dtype="d")-9999.
                     
             #provide fixed values
-
-
             towrite[0]=modelid                       # pixel number           
             towrite[2]=self.details["tsteps"]        # no of time steps
             towrite[3]=self.details["met_fields"]    # no of met fields
@@ -350,9 +348,9 @@ class CARDAMOM(object):
                 towrite[1]=self.details["latitude"]  # pixel latitude
 
                 towrite[100:100+len(parprior)]=parprior
-                towrite[150:150+len(parpriorunc)]=parpriorunc
-                towrite[200:200+len(otherprior)]=otherprior
-                towrite[250:250+len(otherpriorunc)]=otherpriorunc
+                towrite[200:200+len(parpriorunc)]=parpriorunc
+                towrite[300:300+len(otherprior)]=otherprior
+                towrite[400:400+len(otherpriorunc)]=otherpriorunc
 
                 metobs=np.hstack([self.details["drivers"],self.details["observations"]])
 
@@ -360,13 +358,13 @@ class CARDAMOM(object):
                 towrite[1]=self.details["latitude"][ii]  # pixel latitude
 
                 towrite[100:100+len(parprior[ii])]=parprior[ii]
-                towrite[150:150+len(parpriorunc[ii])]=parpriorunc[ii]
-                towrite[200:200+len(otherprior[ii])]=otherprior[ii]
-                towrite[250:250+len(otherpriorunc[ii])]=otherpriorunc[ii]
+                towrite[200:200+len(parpriorunc[ii])]=parpriorunc[ii]
+                towrite[300:300+len(otherprior[ii])]=otherprior[ii]
+                towrite[400:400+len(otherpriorunc[ii])]=otherpriorunc[ii]
 
                 metobs=np.hstack([self.details["drivers"][ii],self.details["observations"][ii]])
 
-            towrite[300:]=metobs.flatten()
+            towrite[500:]=metobs.flatten()
 
             #create binary data
             f=file(path2data+"%s_%05i.bin" % (self.project_name,ii+1),'wb')
