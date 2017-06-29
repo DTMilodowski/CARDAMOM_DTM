@@ -5,7 +5,7 @@
 import numpy as np
 import datetime as dt
 import os
-from CARDAMOM_DTM import *
+import CARDAMOM_DTM as CAR
 import load_data as data
 
 # Project data file (to load in if already generated
@@ -201,5 +201,5 @@ else:
     print "Loading observations"
     obs = np.load(data_dir+project_obs_npydata)
 
-prj=CARDAMOM(project_name="BALI_GEMplots_daily")
-prj.setup(latitude,longitude,met,obs,parprior,parpriorunc,otherprior,otherpriorunc)
+prj=CAR.CARDAMOM(project_name="BALI_GEMplots_daily")
+prj.setup(latitude,longitude,met,obs,parprior,parprior_unc,otherprior,otherprior_unc)
