@@ -57,7 +57,7 @@ class CARDAMOM(object):
             self.project_type=projtype
             if self.project_type == "0":
                 self.project_type = "ACM"
-            if self.project_type == "1":
+            elif self.project_type == "1":
                 self.project_type = "DALEC_CDEA"
             elif self.project_type == "2":
                 self.project_type = "DALEC_GSI_BUCKET"
@@ -70,25 +70,25 @@ class CARDAMOM(object):
             elif self.project_type == "6":
                 self.project_type = "DALEC_GSI_FR"
             elif self.project_type == "7":
-                self.project_type == "DALEC_GSI_FR_DBio"
+                self.project_type = "DALEC_GSI_FR_DBio"
             elif self.project_type == "8":
-                self.project_type == "DALEC_GSI_MFOL_FR"
+                self.project_type = "DALEC_GSI_MFOL_FR"
             elif self.project_type == "9":
-                self.project_type == "DALEC_GSI_FR_LABILE"
+                self.project_type = "DALEC_GSI_FR_LABILE"
             elif self.project_type == "10":
-                self.project_type == "DALECN_GSI_FR"
+                self.project_type = "DALECN_GSI_FR"
             elif self.project_type == "11":
-                self.project_type == "DALEC_GSI_DFOL_FR"
+                self.project_type = "DALEC_GSI_DFOL_FR"
             elif self.project_type == "12":
-                self.project_type == "DALEC_GSI_DFOL_FROOT_FR"
+                self.project_type = "DALEC_GSI_DFOL_FROOT_FR"
             elif self.project_type == "13":
-                self.project_type == "DALEC_GSI_DFOL_LABILE_FR"
+                self.project_type = "DALEC_GSI_DFOL_LABILE_FR"
             elif self.project_type == "14":
-                self.project_type == "DALECN_GSI_DFOL_LABILE_FR"
+                self.project_type = "DALECN_GSI_DFOL_LABILE_FR"
             elif self.project_type == "15":
-                self.project_type == "DALECN_GSI_DFOL_LABILE_FROOT_FR"
+                self.project_type = "DALECN_GSI_DFOL_LABILE_FROOT_FR"
             elif self.project_type == "16":
-                self.project_type == "DALEC_GSI_DFOL_CWD_FR" # this is Luke's model that includes CWD
+                self.project_type = "DALEC_GSI_DFOL_CWD_FR" # this is Luke's model that includes CWD
 
         else:
             print "project type not found, defaulting to CARDAMOM_CDEA"
@@ -324,7 +324,8 @@ class CARDAMOM(object):
             modelid = 15
         elif self.project_type == "DALEC_GSI_DFOL_CWD_FR":
             modelid = 16
-
+        else:
+            print "PROBLEM"
         for ii in xrange(self.details["no_pts"]):
             #create an empty array to store data to be written
             towrite=np.zeros(500+self.details["tsteps"]*(self.details["met_fields"]+self.details["obs_fields"]),dtype="d")-9999.
