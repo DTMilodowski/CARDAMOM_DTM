@@ -15,12 +15,11 @@ project_par_npydata = "BALI_GEMplots_daily_params.npy"
 project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 
 # File list containing drivers, observations and plot coordinates
-coordinate_file = "BALI_plot_coordinates.csv"
-met_file = "/home/dmilodow/DataStore_DTM/BALI/CSPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_daily_v1.csv"
-par_file = "PALI_CARDAMOM_priors.csv"
+coordinate_file = "../../parameter_files/BALI_plot_coordinates.csv"
+met_file = "BALI_gapfilled_met_station_daily_v1.csv"
+par_file = "../../parameter_files/BALI_GEM_plot_params.csv"
 
 # first load in coordinates and other data
-dates_obs = {}
 obs_data = {}
 
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
@@ -28,11 +27,12 @@ met_data = data.load_met_data(met_file)
 par_data = data.load_par_data(par_file)
 for i in range(0,len(plot)):
     obs_file = "CARDAMOM_obs_"+plot[i]+".csv"
-    dates_obs[plot[i]],obs_data[plot[i]] = data.load_obs_data(obs_file)
+    obs_data[plot[i]] = data.load_obs_data(obs_file)
 
 # start date ### read from data file
-d0 = met_data['date'][0]
-DoY = met_data['date'] - met_data['date'].astype('timedelta64[Y]')
+dates = met_data['date'].astype('datetime64[D]')
+d0 = dates[0]#met_data['date'][0]
+DoY = dates-dates.astype('datetime64[Y]')#met_data['date'] - met_data['date'].astype('timedelta64[Y]')
 tstep = met_data['tstep_days']#dates_met - dates_met[0] + np.timedelta[1,'D']
 sim_length = tstep[-1]
 nosites = len(plot)
