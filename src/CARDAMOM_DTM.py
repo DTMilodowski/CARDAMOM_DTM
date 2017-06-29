@@ -52,23 +52,43 @@ class CARDAMOM(object):
                
         # This is initialized here but will contain a dictionary will all the project details
         self.details = {}
-        projtype=raw_input("Enter project number of type: \n1\tDALEC_GSI\n2\tDALEC_CDEA_LU_FIRES\n3\tDALEC_GSI_newalloc\n4\tDALEC_CDEA_LU_FIRES_LIU\n5\tDALEC_GSI_LIU\n6\tDALEC_CDEA_LU_FIRES_ET\n7\tDALEC_GSI_DFOL_CWD_FR_MHMCMC\n")
+        projtype=raw_input("Enter project number of type: \n1\tDALEC_CDEA\n2\tDALEC_GSI_BUCKET\n3\tAT-DALEC\n4\tAT-DALEC_CROP\n5\tDALEC_CDEA_FR\n6\tDALEC_GSI_FR\n7\tDALEC_GSI_FR_DBio\n8\tDALEC_GSI_MFOL_FR\n9\tDALEC_GSI_FR_LABILE\n10\tDALECN_GSI_FR\n11\tDALEC_GSI_DFOL_FR\n12\tDALEC_GSI_DFOL_FROOT_FR\n13\tDALEC_GSI_DFOL_LABILE_FR\n14\tDALECN_GSI_DFOL_LABILE_FR\n15\tDALECN_GSI_DFOL_LABILE_FROOT_FR\n16\tDALEC_GSI_DFOL_CWD_FR\n")
         if projtype != "":       
             self.project_type=projtype
+            if self.project_type == "0":
+                self.project_type = "ACM"
             if self.project_type == "1":
-                self.project_type = "DALEC_GSI"
+                self.project_type = "DALEC_CDEA"
             elif self.project_type == "2":
-                self.project_type = "DALEC_CDEA_LU_FIRES"
+                self.project_type = "DALEC_GSI_BUCKET"
             elif self.project_type == "3":
-                self.project_type = "DALEC_GSI_newalloc"
+                self.project_type = "AT-DALEC"
             elif self.project_type == "4":
-                self.project_type = "DALEC_CDEA_LU_FIRES_LIU"
+                self.project_type = "AT-DALEC_CROP"
             elif self.project_type == "5":
-                self.project_type = "DALEC_GSI_LIU"
+                self.project_type = "DALEC_CDEA_FR"
             elif self.project_type == "6":
-                self.project_type = "DALEC_CDEA_LU_FIRES_ET"
+                self.project_type = "DALEC_GSI_FR"
             elif self.project_type == "7":
-                self.project_type == "DALEC_GSI_DFOL_CWD_FR_MHMCMC" # this is Luke's model that includes CWD and a bucket model(?)
+                self.project_type == "DALEC_GSI_FR_DBio"
+            elif self.project_type == "8":
+                self.project_type == "DALEC_GSI_MFOL_FR"
+            elif self.project_type == "9":
+                self.project_type == "DALEC_GSI_FR_LABILE"
+            elif self.project_type == "10":
+                self.project_type == "DALECN_GSI_FR"
+            elif self.project_type == "11":
+                self.project_type == "DALEC_GSI_DFOL_FR"
+            elif self.project_type == "12":
+                self.project_type == "DALEC_GSI_DFOL_FROOT_FR"
+            elif self.project_type == "13":
+                self.project_type == "DALEC_GSI_DFOL_LABILE_FR"
+            elif self.project_type == "14":
+                self.project_type == "DALECN_GSI_DFOL_LABILE_FR"
+            elif self.project_type == "15":
+                self.project_type == "DALECN_GSI_DFOL_LABILE_FROOT_FR"
+            elif self.project_type == "16":
+                self.project_type == "DALEC_GSI_DFOL_CWD_FR" # this is Luke's model that includes CWD and a bucket model(?)
 
         else:
             self.project_type="CARDAMOM_LU"
