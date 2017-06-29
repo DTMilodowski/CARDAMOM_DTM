@@ -17,14 +17,18 @@ project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 # File list containing drivers, observations and plot coordinates
 coordinate_file = "BALI_plot_coordinates.csv"
 met_file = "/home/dmilodow/DataStore_DTM/BALI/CSPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_daily_v1.csv"
-par_file = "<SOMETHING>.csv"
-obs_file = "<SOMETHING>.csv"
+par_file = "PALI_CARDAMOM_priors.csv"
 
-# first load in coordinates
+# first load in coordinates and other data
+dates_obs = {}
+obs_data = {}
+
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
 met_data = data.load_met_data(met_file)
 par_data = data.load_par_data(par_file)
-dates_obs,obs_data = data.load_obs_data(obs_file)
+for i in range(0,len(plot)):
+    obs_file = "CARDAMOM_obs_"+plot[i]+".csv"
+    dates_obs[plot[i]],obs_data[plot[i]] = data.load_obs_data(obs_file)
 
 # start date ### read from data file
 d0 = met_data['date'][0]
@@ -71,76 +75,76 @@ otherprior_unc = np.zeros((nosites,100))-9999.
 if project_par_npydata not in os.listdir(data_dir):
     
     for pp in range(0,nosites):
-        
-        parprior[pp,0] = par_data[plot[pp]]['m_r']      # Litter to SOM conversion rate 
-        parprior_unc[pp,0] = par_data[plot[pp]]['m_r_u']
-        parprior[pp,1] = par_data[plot[pp]]['f_a']      # Fraction of NPP respired
-        parprior_unc[pp,1] = par_data[plot[pp]]['f_a_u']    
-        parprior[pp,2] = par_data[plot[pp]]['f_f']      # Fraction of NPP allocated to foliage 
-        parprior_unc[pp,2] = par_data[plot[pp]]['f_f_u'] 
-        parprior[pp,3] = par_data[plot[pp]]['f_r']      # Fraction of NPP allocated to roots
-        parprior_unc[pp,3] = par_data[plot[pp]]['f_r_u']  
-        parprior[pp,4] = par_data[plot[pp]]['L_f']      # max leaf turnover (GSI) ! Leaf lifespan (CDEA)
-        parprior_unc[pp,4] = par_data[plot[pp]]['L_f_u']  
-        parprior[pp,5] = par_data[plot[pp]]['t_w']      # Turnover rate of wood
-        parprior_unc[pp,5] = par_data[plot[pp]]['t_w_u'] 
-        parprior[pp,6] = par_data[plot[pp]]['t_r']      # Turnover rate of roots
-        parprior_unc[pp,6] = par_data[plot[pp]]['t_r_u']  
-        parprior[pp,7] = par_data[plot[pp]]['t_l']      # Litter turnover rate
-        parprior_unc[pp,7] = par_data[plot[pp]]['t_l_u'] 
-        parprior[pp,8] = par_data[plot[pp]]['t_S']      # SOM turnover rate
-        parprior_unc[pp,8] = par_data[plot[pp]]['t_S_u']   
-        parprior[pp,9] = par_data[plot[pp]]['theta']    # Parameter in exponential term of temperature
-        parprior_unc[pp,9] = par_data[plot[pp]]['theta_u']   
-        parprior[pp,10] = par_data[plot[pp]]['C_eff']   # Canopy efficiency parameter (part of ACM) 
-        parprior_unc[pp,10] = par_data[plot[pp]]['C_eff_u'] 
-        parprior[pp,11] = par_data[plot[pp]]['B_day']   # max labile turnover(GSI) ! date of Clab release (CDEA)
-        parprior_unc[pp,11] = par_data[plot[pp]]['B_day_u']
-        parprior[pp,12] = par_data[plot[pp]]['f_l']     # Fraction allocated to Clab
-        parprior_unc[pp,12] = par_data[plot[pp]]['f_l_u']   
-        parprior[pp,13] = par_data[plot[pp]]['R_l']     # min temp threshold (GSI) ! lab release duration period (CDEA)
-        parprior_unc[pp,13] = par_data[plot[pp]]['R_l_u'] 
-        parprior[pp,14] = par_data[plot[pp]]['F_day']   # max temp threshold (GSI)! date of leaf fall
-        parprior_unc[pp,14] = par_data[plot[pp]]['F_day_u']
-        parprior[pp,15] = par_data[plot[pp]]['mn_photo']# min photoperiod threshold (GSI)
-        parprior_unc[pp,15] = par_data[plot[pp]]['mn_photo_u']
-        parprior[pp,16] = par_data[plot[pp]]['LMA']     # LMA
-        parprior_unc[pp,16] = par_data[plot[pp]]['LMA_u']    
-        parprior[pp,17] = par_data[plot[pp]]['Clab_i']  # initial C stock for labile
-        parprior_unc[pp,17] = par_data[plot[pp]]['Clab_i_u']
-        parprior[pp,18] = par_data[plot[pp]]['Cfol_i']  # initial C stock for foliar
-        parprior_unc[pp,18] = par_data[plot[pp]]['Cfol_i_u']
-        parprior[pp,19] = par_data[plot[pp]]['Croo_i']  # initial C stock for roots
-        parprior_unc[pp,19] = par_data[plot[pp]]['Croo_i_u']
-        parprior[pp,20] = par_data[plot[pp]]['Cwoo_i']  # initial C stock for litter
-        parprior_unc[pp,20] = par_data[plot[pp]]['Cwoo_i_u'] 
-        parprior[pp,21] = par_data[plot[pp]]['Clit_i']  # initial C stock for litter 
-        parprior_unc[pp,21] = par_data[plot[pp]]['Clit_i_u']
-        parprior[pp,22] = par_data[plot[pp]]['Csom_i']  # initial C stock for som
-        parprior_unc[pp,22] = par_data[plot[pp]]['Csom_i_u']
-        parprior[pp,23] = par_data[plot[pp]]['mx_photo']# max photoperiod threshold (GSI)
-        parprior_unc[pp,23] = par_data[plot[pp]]['mx_photo_u']
-        parprior[pp,24] = par_data[plot[pp]]['mn_vpd']  # min VPD threshold (GSI)
-        parprior_unc[pp,24] = par_data[plot[pp]]['mn_vpd_u'] 
-        parprior[pp,25] = par_data[plot[pp]]['mx_vpd']  # max VPD threshold (GSI)
-        parprior_unc[pp,25] = par_data[plot[pp]]['mx_vpd_u'] 
-        parprior[pp,26] = par_data[plot[pp]]['mn_gain'] # minimum GPP benefit of increased LAI for labile allocation to be allowed
-        parprior_unc[pp,26] = par_data[plot[pp]]['mn_gain_u']
-        parprior[pp,27] = par_data[plot[pp]]['F_br']    # fraction of Cwood which is Cbranch
-        parprior_unc[pp,27] = par_data[plot[pp]]['F_br_u']  
-        parprior[pp,28] = par_data[plot[pp]]['F_croo']  # fraction of Cwood which is Ccoarseroot
-        parprior_unc[pp,28] = par_data[plot[pp]]['F_croo_u']
-        parprior[pp,29] = par_data[plot[pp]]['lab_rpl'] # labile replanting
-        parprior_unc[pp,29] = par_data[plot[pp]]['lab_rpl_u']
-        parprior[pp,30] = par_data[plot[pp]]['fol_rpl'] # foliar replanting
-        parprior_unc[pp,30] = par_data[plot[pp]]['fol_rpl_u']
-        parprior[pp,31] = par_data[plot[pp]]['roo_rpl'] # fine root replanting
-        parprior_unc[pp,31] = par_data[plot[pp]]['roo_rpl_u']
-        parprior[pp,32] = par_data[plot[pp]]['woo_rpl'] # wood replanting
-        parprior_unc[pp,32] = par_data[plot[pp]]['woo_rpl_u']
+        ii = par_data['plot']==plot[pp]
+        parprior[pp,0] = par_data['m_r'][ii]      # Litter to SOM conversion rate 
+        parprior_unc[pp,0] = par_data['m_r_u'][ii] 
+        parprior[pp,1] = par_data['f_a'][ii]       # Fraction of NPP respired
+        parprior_unc[pp,1] = par_data['f_a_u'][ii]     
+        parprior[pp,2] = par_data['f_f'][ii]       # Fraction of NPP allocated to foliage 
+        parprior_unc[pp,2] = par_data['f_f_u'][ii]  
+        parprior[pp,3] = par_data['f_r'][ii]       # Fraction of NPP allocated to roots
+        parprior_unc[pp,3] = par_data['f_r_u'][ii]   
+        parprior[pp,4] = par_data['L_f'][ii]       # max leaf turnover (GSI) ! Leaf lifespan (CDEA)
+        parprior_unc[pp,4] = par_data['L_f_u'][ii]   
+        parprior[pp,5] = par_data['t_w'][ii]       # Turnover rate of wood
+        parprior_unc[pp,5] = par_data['t_w_u'][ii]  
+        parprior[pp,6] = par_data['t_r'][ii]       # Turnover rate of roots
+        parprior_unc[pp,6] = par_data['t_r_u'][ii]   
+        parprior[pp,7] = par_data['t_l'][ii]       # Litter turnover rate
+        parprior_unc[pp,7] = par_data['t_l_u'][ii]  
+        parprior[pp,8] = par_data['t_S'][ii]       # SOM turnover rate
+        parprior_unc[pp,8] = par_data['t_S_u'][ii]    
+        parprior[pp,9] = par_data['theta'][ii]     # Parameter in exponential term of temperature
+        parprior_unc[pp,9] = par_data['theta_u'][ii]    
+        parprior[pp,10] = par_data['C_eff'][ii]    # Canopy efficiency parameter (part of ACM) 
+        parprior_unc[pp,10] = par_data['C_eff_u'][ii]  
+        parprior[pp,11] = par_data['B_day'][ii]    # max labile turnover(GSI) ! date of Clab release (CDEA)
+        parprior_unc[pp,11] = par_data['B_day_u'][ii] 
+        parprior[pp,12] = par_data['f_l'][ii]      # Fraction allocated to Clab
+        parprior_unc[pp,12] = par_data['f_l_u'][ii]    
+        parprior[pp,13] = par_data['R_l'][ii]      # min temp threshold (GSI) ! lab release duration period (CDEA)
+        parprior_unc[pp,13] = par_data['R_l_u'][ii]  
+        parprior[pp,14] = par_data['F_day'][ii]    # max temp threshold (GSI)! date of leaf fall
+        parprior_unc[pp,14] = par_data['F_day_u'][ii] 
+        parprior[pp,15] = par_data['mn_photo'][ii] # min photoperiod threshold (GSI)
+        parprior_unc[pp,15] = par_data['mn_photo_u'][ii] 
+        parprior[pp,16] = par_data['LMA'][ii]      # LMA
+        parprior_unc[pp,16] = par_data['LMA_u'][ii]     
+        parprior[pp,17] = par_data['Clab_i'][ii]   # initial C stock for labile
+        parprior_unc[pp,17] = par_data['Clab_i_u'][ii] 
+        parprior[pp,18] = par_data['Cfol_i'][ii]   # initial C stock for foliar
+        parprior_unc[pp,18] = par_data['Cfol_i_u'][ii] 
+        parprior[pp,19] = par_data['Croo_i'][ii]   # initial C stock for roots
+        parprior_unc[pp,19] = par_data['Croo_i_u'][ii] 
+        parprior[pp,20] = par_data['Cwoo_i'][ii]   # initial C stock for litter
+        parprior_unc[pp,20] = par_data['Cwoo_i_u'][ii]  
+        parprior[pp,21] = par_data['Clit_i'][ii]   # initial C stock for litter 
+        parprior_unc[pp,21] = par_data['Clit_i_u'][ii] 
+        parprior[pp,22] = par_data['Csom_i'][ii]   # initial C stock for som
+        parprior_unc[pp,22] = par_data['Csom_i_u'][ii] 
+        parprior[pp,23] = par_data['mx_photo'][ii] # max photoperiod threshold (GSI)
+        parprior_unc[pp,23] = par_data['mx_photo_u'][ii] 
+        parprior[pp,24] = par_data['mn_vpd'][ii]   # min VPD threshold (GSI)
+        parprior_unc[pp,24] = par_data['mn_vpd_u'][ii]  
+        parprior[pp,25] = par_data['mx_vpd'][ii]   # max VPD threshold (GSI)
+        parprior_unc[pp,25] = par_data['mx_vpd_u'][ii]  
+        parprior[pp,26] = par_data['mn_gain'][ii]  # minimum GPP benefit of increased LAI for labile allocation to be allowed
+        parprior_unc[pp,26] = par_data['mn_gain_u'][ii] 
+        parprior[pp,27] = par_data['F_br'][ii]     # fraction of Cwood which is Cbranch
+        parprior_unc[pp,27] = par_data['F_br_u'][ii]   
+        parprior[pp,28] = par_data['F_croo'][ii]   # fraction of Cwood which is Ccoarseroot
+        parprior_unc[pp,28] = par_data['F_croo_u'][ii] 
+        parprior[pp,29] = par_data['lab_rpl'][ii]  # labile replanting
+        parprior_unc[pp,29] = par_data['lab_rpl_u'][ii] 
+        parprior[pp,30] = par_data['fol_rpl'][ii]  # foliar replanting
+        parprior_unc[pp,30] = par_data['fol_rpl_u'][ii] 
+        parprior[pp,31] = par_data['roo_rpl'][ii]  # fine root replanting
+        parprior_unc[pp,31] = par_data['roo_rpl_u'][ii] 
+        parprior[pp,32] = par_data['woo_rpl'][ii]  # wood replanting
+        parprior_unc[pp,32] = par_data['woo_rpl_u'][ii] 
 
-        parprior[pp,37] = par_data[plot[pp]]['Ccwd_i']   # initial C stock for CWD
-        parprior_unc[pp,37] = par_data[plot[pp]]['Ccwd_i_u']
+        parprior[pp,37] = par_data['Ccwd_i'][ii]    # initial C stock for CWD
+        parprior_unc[pp,37] = par_data['Ccwd_i_u'][ii] 
 
     np.save(data_dir + project_par_npydata,[parprior,parprior_unc])
    
