@@ -246,7 +246,7 @@ for pp in range(0,len(plot)):
     LAI_in[np.isnan(LAI_in)]=-9999.
     LAI_std_in[np.isnan(LAI_std_in)]=-9999.
     Croot_in[np.isnan(Croot_in)]=-9999.
-    Croot_std_in[np.isnan(Croot_in)]=-9999.
+    Croot_std_in[np.isnan(Croot_std_in)]=-9999.
 
     Cwood_unc=Cwood_in*0.20 # for now, assume 20% error on Cwood
     Cwood_in[np.isnan(Cwood_in)]=-9999.
