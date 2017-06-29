@@ -181,8 +181,8 @@ for pp in range(0,len(plot)):
     Cwood_in = np.zeros(N_t)*np.nan#-9999.
     Croot_in = np.zeros(N_t)*np.nan#-9999.
     Croot_std_in = np.zeros(N_t)*np.nan#-9999.
-    Croot_npp_in = np.zeros(N_t)*np.nan
-    Croot_npp_std_in = np.zeros(N_t)*np.nan
+    root_npp_in = np.zeros(N_t)*np.nan
+    root_npp_std_in = np.zeros(N_t)*np.nan
     Csoil_in = np.zeros(N_t)*np.nan#-9999.
     Litter_in = np.zeros(N_t)*np.nan#-9999.
     Litter_std_in = np.zeros(N_t)*np.nan#-9999.
@@ -237,8 +237,8 @@ for pp in range(0,len(plot)):
     # Convert nodata to -9999
     Litter_in[np.isnan(Litter_in)]=-9999.
     Litter_std_in[np.isnan(Litter_std_in)]=-9999.
-    root_npp_in[np.isnan(Litter_in)]=-9999.
-    root_npp_std_in[np.isnan(Litter_std_in)]=-9999.
+    root_npp_in[np.isnan(root_npp_in)]=-9999.
+    root_npp_std_in[np.isnan(root_npp_std_in)]=-9999.
     LAI_MH_in[np.isnan(LAI_MH_in)]=-9999.
     LAI_MH_std_in[np.isnan(LAI_MH_std_in)]=-9999.
     LAI_rad_in[np.isnan(LAI_rad_in)]=-9999.
@@ -247,18 +247,22 @@ for pp in range(0,len(plot)):
     LAI_std_in[np.isnan(LAI_std_in)]=-9999.
     Croot_in[np.isnan(Croot_in)]=-9999.
     Croot_std_in[np.isnan(Croot_in)]=-9999.
+
+    Cwood_unc=Cwood_in*0.20 # for now, assume 20% error on Cwood
     Cwood_in[np.isnan(Cwood_in)]=-9999.
+    Cwood_unc[np.isnan(Cwood_unc)]=-9999.
+
+    Csoil_unc=Csoil_in*0.50 # for now, assume 50% error on Csoil as only have one pit
     Csoil_in[np.isnan(Csoil_in)]=-9999.
-
-
+    Csoil_unc[np.isnan(Csoil_unc)]=-9999.
 
     # build an output matrix for the observations file
-    obs_h = ['GPP','GPP_u','LAI','LAI_u','NEE','NEE_u','woo','woo_u','Reco','Reco_u','Cfol','Cfol_u','Cwoo','Cwoo_u','Croo','Croo_u','Clit','Clit_u','Csom','Csom_u','Cagb','Cagb_u','Cstem','Cstem_u','Cbranch','Cbranch_u','Ccroo','Ccroo_u','Cfol_max','Cfol_max_u','Evap','Evap_u','flit','flit_u','NPProo','NPProo_u']
-    obs = np.zeros((len(obs_h),N_t))*-9999.
+    obs_h = np.asarray(['GPP','GPP_u','LAI','LAI_u','NEE','NEE_u','woo','woo_u','Reco','Reco_u','Cfol','Cfol_u','Cwoo','Cwoo_u','Croo','Croo_u','Clit','Clit_u','Csom','Csom_u','Cagb','Cagb_u','Cstem','Cstem_u','Cbranch','Cbranch_u','Ccroo','Ccroo_u','Cfol_max','Cfol_max_u','Evap','Evap_u','flit','flit_u','NPProo','NPProo_u'])
+    obs = np.zeros((len(obs_h),N_t))-9999.
     
     # fill obs matrix with relevant data
     obs[obs_h=='Cwoo',:]=Cwood_in.copy()
-    obs[obs_h=='Cwoo_u',:]=Cwood_in*0.20 # for now, assume 20% error on Cwood
+    obs[obs_h=='Cwoo_u',:]=Cwood_unc.copy()
     obs[obs_h=='Croo',:]=Croot_in.copy()
     obs[obs_h=='Croo_u',:]=Croot_std_in.copy()
     obs[obs_h=='flit',:]=Litter_in.copy()
@@ -268,19 +272,19 @@ for pp in range(0,len(plot)):
     obs[obs_h=='LAI',:]=LAI_rad_in.copy()
     obs[obs_h=='LAI_u',:]=LAI_rad_std_in.copy()
     obs[obs_h=='Csom',:]=Csoil_in.copy()
-    obs[obs_h=='Csom_u',:]=Csoil_in*0.50 # for now, assume 50% error on Csoil as only have one pit
+    obs[obs_h=='Csom_u',:]=Csoil_unc.copy()
 
     # write output to file
     outfile_obs = "CARDAMOM_obs_"+plot[pp]+".csv"
     out_obs = open(outfile_obs,'w')
-    obs.write(obs_h[0])
-    for vv in range(1,len(obs_h)):
-        obs.write(','+obs_h[vv])
-    obs.write(obs_h[vv]+'\n')
+    out_obs.write('tstep_days,date')
+    for vv in range(0,len(obs_h)):
+        out_obs.write(','+obs_h[vv])
+    out_obs.write('\n')
     # now write in data
     for tt in range(0,N_t):
-        out_priors.write(str(tt) + ',' + str(date[tt]))
+        out_obs.write(str(tt) + ',' + str(date[tt]))
         for vv in range(0,len(obs_h)):
-            obs.write(', ' + str(obs[vv,tt]))
-            obs.write('\n')
-    out_priors.close()
+            out_obs.write(', ' + str(obs[vv,tt]))
+        out_obs.write('\n')
+    out_obs.close()
