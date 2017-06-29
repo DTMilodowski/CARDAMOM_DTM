@@ -88,10 +88,11 @@ class CARDAMOM(object):
             elif self.project_type == "15":
                 self.project_type == "DALECN_GSI_DFOL_LABILE_FROOT_FR"
             elif self.project_type == "16":
-                self.project_type == "DALEC_GSI_DFOL_CWD_FR" # this is Luke's model that includes CWD and a bucket model(?)
+                self.project_type == "DALEC_GSI_DFOL_CWD_FR" # this is Luke's model that includes CWD
 
         else:
-            self.project_type="CARDAMOM_LU"
+            print "project type not found, defaulting to CARDAMOM_CDEA"
+            self.project_type="CARDAMOM_CDEA"
 
         self.save_project()
 
@@ -291,20 +292,38 @@ class CARDAMOM(object):
 
         print "Now creating input data in \"%s\" for project \"%s\"" % (path2data,self.project_name)
 
-        if self.project_type == "DALEC_GSI":
+        if self.project_type == "DALEC_CDEA":
             modelid = 1
-        elif self.project_type == "DALEC_CDEA_LU_FIRES":
+        elif self.project_type == "DALEC_GSI_BUCKET":
             modelid = 2
-        elif self.project_type == "DALEC_GSI_newalloc":
+        elif self.project_type == "AT-DALEC":
             modelid = 3 
-        elif self.project_type == "DALEC_CDEA_LU_FIRES_LIU":
+        elif self.project_type == "AT-DALEC_CROP":
             modelid = 4 
-        elif self.project_type == "DALEC_GSI_LIU":
+        elif self.project_type == "DALEC_CDEA_FR":
             modelid = 5 
-        elif self.project_type == "DALEC_CDEA_LU_FIRES_ET":
+        elif self.project_type == "DALEC_GSI_FR":
             modelid = 6
-        elif self.project_type == "DALEC_GSI_DFOL_CWD_FR_MHMCMC":
+        elif self.project_type == "DALEC_GSI_FR_DBio":
             modelid = 7
+        elif self.project_type == "DALEC_GSI_MFOL_FR":
+            modelid = 8
+        elif self.project_type == "DALEC_GSI_FR_LABILE":
+            modelid = 9
+        elif self.project_type == "DALECN_GSI_FR":
+            modelid = 10
+        elif self.project_type == "DALEC_GSI_DFOL_FR":
+            modelid = 11
+        elif self.project_type == "DALEC_GSI_DFOL_FROOT_FR":
+            modelid = 12
+        elif self.project_type == "DALEC_GSI_DFOL_LABILE_FR":
+            modelid = 13
+        elif self.project_type == "DALECN_GSI_DFOL_LABILE_FR":
+            modelid = 14
+        elif self.project_type == "DALECN_GSI_DFOL_LABILE_FROOT_FR":
+            modelid = 15
+        elif self.project_type == "DALEC_GSI_DFOL_CWD_FR":
+            modelid = 16
 
         for ii in xrange(self.details["no_pts"]):
             #create an empty array to store data to be written
