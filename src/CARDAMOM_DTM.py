@@ -169,9 +169,9 @@ class CARDAMOM(object):
         if self.paths["projects"] == "":
             self.paths["projects"] = self.paths["CARDAMOM"]+"/projects/"
 
-        self.paths["library"] = raw_input("Where are source codes kept? (provide full path or leave blank to use subdirectory \"library\"): ")
+        self.paths["library"] = raw_input("Where are source codes kept? (provide full path or leave blank to use subdirectory \CARDAMOM\trunk\LIBRARY/CARDAMOM_F): ")
         if self.paths["library"] == "":
-            self.paths["library"] = self.paths["CARDAMOM"]+"/library/"
+            self.paths["library"] = self.paths["CARDAMOM"]+"/CARDAMOM/trunk/LIBRARY/CARDAMOM_F/"
 
         usecluster = raw_input("Will you run this project on a cluster <y/n>? ")
         if usecluster == "y":
@@ -406,8 +406,8 @@ class CARDAMOM(object):
         if "exec" not in os.listdir(self.paths["projects"]+self.project_name):
             os.mkdir(self.paths["projects"]+self.project_name+"/exec")
         #compile directly in good directory
-        os.system("gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm" % (path2source,path2include,path2exe+self.project_name))
-                 
+        #os.system("gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm" % (path2source,path2include,path2exe+self.project_name))
+        os.system("ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe" % (path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe+self.project_name))
     #-------------------------------------------------------------------------------------
     # This method compiles the code on the cluster #### CHANGE TO COMPILE LUKE'S FORTRAN CODE!!!
     def compile_cluster(self):
@@ -417,8 +417,8 @@ class CARDAMOM(object):
         path2include = "%s/models/%s/likelihood/MODEL_LIKELIHOOD.c" % (path2source,self.project_type)
         path2exe = self.paths["cluster_directory"]+self.project_name+"/exec/"
 
-        os.system("ssh %s 'gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm'" % (path2cluster,path2source,path2include,path2exe+self.project_name))
-
+        #os.system("ssh %s 'gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm'" % (path2cluster,path2source,path2include,path2exe+self.project_name))
+        os.system("ssh %s 'ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe'" % (path2cluster,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe+self.project_name))
     #-------------------------------------------------------------------------------------
     # Redo the setup with attributes of the object
     def resetup(self):
