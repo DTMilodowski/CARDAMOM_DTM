@@ -396,7 +396,7 @@ class CARDAMOM(object):
             self.compile_cluster()
 
     #-------------------------------------------------------------------------------------
-    # This method compiles the code and saves a backup #### CHANGE TO COMPILE LUKE'S FORTRAN CODE!!!
+    # This method compiles the code and saves a backup
     def compile_local_code(self):
 
         path2source=self.paths["projects"]+self.project_name+"/src/"
@@ -410,7 +410,7 @@ class CARDAMOM(object):
         os.system("ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe" % (path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe+self.project_name))
 
     #-------------------------------------------------------------------------------------
-    # This method compiles the code on the cluster #### CHANGE TO COMPILE LUKE'S FORTRAN CODE!!!
+    # This method compiles the code on the cluster
     def compile_cluster(self):
         
         path2cluster = self.paths["cluster_address"]
