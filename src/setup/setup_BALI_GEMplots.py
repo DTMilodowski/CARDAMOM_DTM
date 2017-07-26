@@ -5,7 +5,10 @@
 import numpy as np
 import datetime as dt
 import os
+import sys
+sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src')
 import CARDAMOM_DTM as CAR
+sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/setup')
 import load_data as data
 
 # Project data file (to load in if already generated
@@ -15,25 +18,26 @@ project_par_npydata = "BALI_GEMplots_daily_params.npy"
 project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 
 # File list containing drivers, observations and plot coordinates
-coordinate_file = "../../parameter_files/BALI_plot_coordinates.csv"
-met_file = "BALI_gapfilled_met_station_daily_v1.csv"
-par_file = "../../parameter_files/BALI_GEM_plot_params.csv"
+coordinate_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_plot_coordinates.csv"
+met_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_data/BALI_metstation_daily_v1.csv"
+par_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_GEM_plot_params.csv"
 
 # first load in coordinates and other data
+obs_dir = '/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/setup/obs/'
 obs_data = {}
 
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
 met_data = data.load_met_data(met_file)
 par_data = data.load_par_data(par_file)
 for i in range(0,len(plot)):
-    obs_file = "CARDAMOM_obs_"+plot[i]+".csv"
+    obs_file = obs_dir+"CARDAMOM_obs_"+plot[i]+".csv"
     obs_data[plot[i]] = data.load_obs_data(obs_file)
 
 # start date ### read from data file
 dates = met_data['date'].astype('datetime64[D]')
 d0 = dates[0]#met_data['date'][0]
-DoY = dates-dates.astype('datetime64[Y]')#met_data['date'] - met_data['date'].astype('timedelta64[Y]')
-tstep = met_data['tstep_days']#dates_met - dates_met[0] + np.timedelta[1,'D']
+DoY = dates-dates.astype('datetime64[Y]')
+tstep = met_data['tstep_days']
 sim_length = tstep[-1]+1
 nosites = len(plot)
 
@@ -58,7 +62,7 @@ if project_met_npydata not in os.listdir(data_dir):
     met[:,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
     met[:,:,12] = -9999                                   # 12 = forest management practice to accompany any clearing - not applicable
     met[:,:,13] = (met_data['mn2t']+met_data['mx2t'])/2.  # 13 = mean temperature oC ???
-
+    print np.sum(met==-9999,axis=-1)
     np.save(data_dir + project_met_npydata,met)
 
 else:
