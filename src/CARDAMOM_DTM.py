@@ -489,22 +489,25 @@ class CARDAMOM(object):
     # run CARDAMOM locally
     def run_CARDAMOM_local(self, **kwargs):
     
+        if "cardamom_output"  not in os.listdir("%s/%s/" % (self.paths["projects"],self.project_name)):
+            os.mkdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
+
         runlist = os.listdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
         if "runid" in kwargs:
             runid = kwargs["runid"]
-            path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
         else:
             if len(runlist) == 0:
                 runid = 1
-                path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
             else:
                 runlist.sort()
                 runid = int(runlist[-1].split("_")[-1])+1
-                path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
-        os.mkdir('%s'(path_to_output))
+        if "run_%03i" % runid not in runlist:
+            path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/%03i/" % (runid)
+            print path_to_output
+            os.system("mkdir %s" % (path_to_output))
 
-        if 'executable' in kwargs:
-            executable = kwargs['executable']
+        if "executable" in kwargs:
+            executable = kwargs["executable"]
         else:
             executable = self.paths["projects"]+self.project_name+"/exec/cardamom.exe"
 
@@ -536,6 +539,7 @@ class CARDAMOM(object):
         #----------------------------
         # Run CARDAMOM for each point
         print 'Running CARDAMOM locally'
+        print '\t- path to exe: ', self.paths["projects"]+self.project_name+"/exec/"
         print '\t- path to data: ', path_to_data
         print '\t- path to output: ', path_to_output
         print '\t- number of accepted parameters: ', str(accepted_params)
@@ -546,4 +550,4 @@ class CARDAMOM(object):
             data_bin=path_to_data+"%s_%05i.bin" % (self.project_name,ii+1)
             for cc in range(0,n_chains):
                 output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,ii+1,cc+1)
-                os.system("./%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
+                os.system(".%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
