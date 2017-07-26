@@ -89,10 +89,10 @@ def generate_daily_met_drivers_ERAinterim_TRMM(ERA_file, TRMM_file, start_date, 
 # This downsamples a pre-existing half-hourly gapfilled dataset to a daily timestep
 # the input file would usually be generated using the SPA prep scripts
 def generate_daily_met_drivers_from_existing_halfhourly_time_series(met_data_file,start,end):
-    dtype={'names':('time_in_days','time','airt','wind_spd','sw_rad','vpd','ppfd','precip','sfc_pressure','gap_airt','gap_sw','gap_vpd','gap_ppfd','gap_pptn','gap_sfc_pressure'),'formats':('f32','S32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32')}
+    dtype={'names':('time_in_days','time','airt','wind_spd','swr','vpd','ppfd','pptn','sfc_pressure','gap_airt','gap_sw','gap_vpd','gap_ppfd','gap_pptn','gap_sfc_pressure'),'formats':('f32','S32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32','f32')}
     met_data = np.genfromtxt(met_data_file,skiprows=1,delimiter=',',dtype=dtype)
     
-    dates = np.datetime64(met_data['time']).astype('datetime64[D]')
+    dates = met_data['time'].astype('datetime64').astype('datetime64[D]')
 
     met_days = np.unique(dates)
     if met_days[0]>start:
@@ -107,7 +107,7 @@ def generate_daily_met_drivers_from_existing_halfhourly_time_series(met_data_fil
         dates = np.datetime64(met_data['time']).astype('datetime64[D]')
         met_days = np.unique(dates)
 
-    if met_days[-1]<end:
+    if met_days[-1]>end:
         print "\tWARNING: time series continues beyond full period of interest, so clipping"
         met_data = met_data[dates<=end]
         dates = np.datetime64(met_data['time']).astype('datetime64[D]')
@@ -118,14 +118,14 @@ def generate_daily_met_drivers_from_existing_halfhourly_time_series(met_data_fil
     daily_met_data = {}
     daily_met_data['date'] = met_days.copy()
     # temperature - get minimum and maximum temperatures
-    daily_met_data['minT'] = np.min(met_data_clipped['airt'].reshape(n_days,48),axis=1)
-    daily_met_data['maxT'] = np.max(met_data_clipped['airt'].reshape(n_days,48),axis=1)
+    daily_met_data['minT'] = np.min(met_data['airt'].reshape(n_days,48),axis=1)
+    daily_met_data['maxT'] = np.max(met_data['airt'].reshape(n_days,48),axis=1)
     # precipitation - get total daily precipitation
-    daily_met_data['pptn'] = np.sum(met_data_clipped['pptn'].reshape(n_days,48),axis=1)
+    daily_met_data['pptn'] = np.sum(met_data['pptn'].reshape(n_days,48),axis=1)
     # radiation - get total daily radiation
-    daily_met_data['ssrd'] = np.sum(met_data_clipped['swr'].reshape(n_days,48),axis=1)*10.**6 # convert J m2 d-1 to MJ m-2 d-1
+    daily_met_data['ssrd'] = np.sum(met_data['swr'].reshape(n_days,48),axis=1)*10.**6 # convert J m2 d-1 to MJ m-2 d-1
     # vpd - get average vpd out
-    daily_met_data['vpd'] = np.mean(met_data_clipped['vpd'].reshape(n_days,48),axis=1)/10.**3 # convert Pa to kPa
+    daily_met_data['vpd'] = np.mean(met_data['vpd'].reshape(n_days,48),axis=1)/10.**3 # convert Pa to kPa
 
     return met_days,daily_met_data['minT'], daily_met_data['maxT'], daily_met_data['vpd'], daily_met_data['ssrd'],daily_met_data['pptn']
 
