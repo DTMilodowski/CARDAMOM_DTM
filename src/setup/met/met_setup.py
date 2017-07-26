@@ -123,9 +123,9 @@ def generate_daily_met_drivers_from_existing_halfhourly_time_series(met_data_fil
     # precipitation - get total daily precipitation
     daily_met_data['pptn'] = np.sum(met_data['pptn'].reshape(n_days,48),axis=1)
     # radiation - get total daily radiation
-    daily_met_data['ssrd'] = np.sum(met_data['swr'].reshape(n_days,48),axis=1)*10.**6 # convert J m2 d-1 to MJ m-2 d-1
+    daily_met_data['ssrd'] = np.sum(met_data['swr'].reshape(n_days,48),axis=1)/10.**6 # convert J m2 d-1 to MJ m-2 d-1
     # vpd - get average vpd out
-    daily_met_data['vpd'] = np.mean(met_data['vpd'].reshape(n_days,48),axis=1)/10.**3 # convert Pa to kPa
+    daily_met_data['vpd'] = np.mean(met_data['vpd'].reshape(n_days,48),axis=1)*10.**3 # convert kPa to Pa
 
     return met_days,daily_met_data['minT'], daily_met_data['maxT'], daily_met_data['vpd'], daily_met_data['ssrd'],daily_met_data['pptn']
 

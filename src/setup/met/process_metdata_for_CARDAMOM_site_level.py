@@ -29,7 +29,7 @@ outfile_station = "BALI_metstation_daily_v1.csv"
 #---------------------------------------------------------------------------------------------------------------
 # Now get some basic parameters for the run
 start_date= '01/01/2011'
-end_date= '01/03/2016'
+end_date= '31/12/2015'
 
 # Initiate some arrays to host time series
 d,m,y = start_date.split('/')
