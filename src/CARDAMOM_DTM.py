@@ -486,7 +486,79 @@ class CARDAMOM(object):
 
 
     #-------------------------------------------------------------------------------------
-    # run CARDAMOM locally
+    # run CARDAMOM locally for single point
+    def run_CARDAMOM_single(self, **kwargs):
+    
+        if "cardamom_output"  not in os.listdir("%s/%s/" % (self.paths["projects"],self.project_name)):
+            os.mkdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
+
+        runlist = os.listdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
+        if "runid" in kwargs:
+            runid = kwargs["runid"]
+        else:
+            if len(runlist) == 0:
+                runid = 1
+            else:
+                runlist.sort()
+                runid = int(runlist[-1].split("_")[-1])+1
+        if "run_%03i" % runid not in runlist:
+            path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/%03i/" % (runid)
+            print path_to_output
+            os.system("mkdir %s" % (path_to_output))
+
+        if "executable" in kwargs:
+            executable = kwargs["executable"]
+        else:
+            executable = self.paths["projects"]+self.project_name+"/exec/cardamom.exe"
+
+        if 'path_to_data' in kwargs:
+            path_to_data = kwargs['path_to_data']
+        else:
+            path_to_data = self.paths["projects"]+self.project_name+"/data/" 
+
+        if 'accepted_params' in kwargs:
+            accepted_params= kwargs['accepted_params']
+        else:
+            accepted_params = 10000000
+
+        if 'printing_freq' in kwargs:
+            printing_freq = kwargs['printing_freq']
+        else:
+            printing_freq = 0
+
+        if 'sample_freq' in kwargs:
+            sample_freq = kwargs['sample_freq']
+        else:
+            sample_freq = 10000
+
+        if 'n_chains' in kwargs:
+            n_chains = kwargs['n_chains']
+        else:
+            n_chains = 3
+
+        
+        if "target_point" in kwargs:
+            target_point = kwargs["target_point"]
+        else:
+            target_point = 1
+
+        #----------------------------
+        # Run CARDAMOM for each point
+        print 'Running CARDAMOM locally'
+        print '\t- path to exe: ', self.paths["projects"]+self.project_name+"/exec/"
+        print '\t- path to data: ', path_to_data
+        print '\t- path to output: ', path_to_output
+        print '\t- number of accepted parameters: ', str(accepted_params)
+        print '\t- printing frequency: ', str(printing_freq)
+        print '\t- sample frequency: ', str(sample_freq)
+
+        data_bin=path_to_data+"%s_%05i.bin" % (self.project_name,target_point)
+        for cc in range(0,n_chains):
+            output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,target_point,cc+1)
+            os.system("%s %s %s %s %s %s" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
+
+    #-------------------------------------------------------------------------------------
+    # run CARDAMOM locally for all points
     def run_CARDAMOM_local(self, **kwargs):
     
         if "cardamom_output"  not in os.listdir("%s/%s/" % (self.paths["projects"],self.project_name)):
@@ -550,4 +622,4 @@ class CARDAMOM(object):
             data_bin=path_to_data+"%s_%05i.bin" % (self.project_name,ii+1)
             for cc in range(0,n_chains):
                 output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,ii+1,cc+1)
-                os.system(".%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
+                os.system("%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
