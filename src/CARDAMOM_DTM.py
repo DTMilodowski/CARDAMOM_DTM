@@ -169,7 +169,7 @@ class CARDAMOM(object):
         if self.paths["projects"] == "":
             self.paths["projects"] = self.paths["CARDAMOM"]+"/projects/"
 
-        self.paths["library"] = raw_input("Where are source codes kept? (provide full path or leave blank to use subdirectory \CARDAMOM\trunk\LIBRARY/CARDAMOM_F): ")
+        self.paths["library"] = raw_input("Where are source codes kept? (provide full path or leave blank to use subdirectory /CARDAMOM/trunk/LIBRARY/CARDAMOM_F): ")
         if self.paths["library"] == "":
             self.paths["library"] = self.paths["CARDAMOM"]+"/CARDAMOM/trunk/LIBRARY/CARDAMOM_F/"
 
@@ -285,10 +285,15 @@ class CARDAMOM(object):
         # Defines where the input files will be written        
         path2project = '/'.join([self.paths["projects"],self.project_name])
         path2data = path2project+"/data/"
+        path2cardamom_output = path2project+"/cardamom_output/"
 
         if "data" not in os.listdir(path2project):
             print "Directory \"%s\" not found... creating" % path2data
             os.mkdir(path2data)
+        if "cardamom_output" not in os.listdir(path2project):
+            print "Directory \"%s\" not found... creating" % path2cardamom_output
+            os.mkdir(path2data)
+
 
         print "Now creating input data in \"%s\" for project \"%s\"" % (path2data,self.project_name)
 
@@ -407,7 +412,7 @@ class CARDAMOM(object):
             os.mkdir(self.paths["projects"]+self.project_name+"/exec")
         #compile directly in good directory
         #os.system("gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm" % (path2source,path2include,path2exe+self.project_name))
-        os.system("ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe" % (path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe+self.project_name))
+        os.system("ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe" % (path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe))
 
     #-------------------------------------------------------------------------------------
     # This method compiles the code on the cluster
@@ -419,7 +424,7 @@ class CARDAMOM(object):
         path2exe = self.paths["cluster_directory"]+self.project_name+"/exec/"
 
         #os.system("ssh %s 'gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm'" % (path2cluster,path2source,path2include,path2exe+self.project_name))
-        os.system("ssh %s 'ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe'" % (path2cluster,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe+self.project_name))
+        os.system("ssh %s 'ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe'" % (path2cluster,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe))
 
     #-------------------------------------------------------------------------------------
     # Redo the setup with attributes of the object
@@ -478,3 +483,67 @@ class CARDAMOM(object):
                     os.system("scp -r %s:%s %s" % (cluster_details,src,dst))
             else:
                 os.system("scp -r %s:%s %s" % (cluster_details,src,dst))
+
+
+    #-------------------------------------------------------------------------------------
+    # run CARDAMOM locally
+    def run_CARDAMOM_local(self, **kwargs):
+    
+        runlist = os.listdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
+        if "runid" in kwargs:
+            runid = kwargs["runid"]
+            path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
+        else:
+            if len(runlist) == 0:
+                runid = 1
+                path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
+            else:
+                runlist.sort()
+                runid = int(runlist[-1].split("_")[-1])+1
+                path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/" + str(runid).zfill(3) + "/"
+        os.mkdir('%s'(path_to_output))
+
+        if 'executable' in kwargs:
+            executable = kwargs['executable']
+        else:
+            executable = self.paths["projects"]+self.project_name+"/exec/cardamom.exe"
+
+        if 'path_to_data' in kwargs:
+            path_to_data = kwargs['path_to_data']
+        else:
+            path_to_data = self.paths["projects"]+self.project_name+"/data/" 
+
+        if 'accepted_params' in kwargs:
+            accepted_params= kwargs['accepted_params']
+        else:
+            accepted_params = 10000000
+
+        if 'printing_freq' in kwargs:
+            printing_freq = kwargs['printing_freq']
+        else:
+            printing_freq = 0
+
+        if 'sample_freq' in kwargs:
+            sample_freq = kwargs['sample_freq']
+        else:
+            sample_freq = 10000
+
+        if 'n_chains' in kwargs:
+            n_chains = kwargs['n_chains']
+        else:
+            n_chains = 3
+
+        #----------------------------
+        # Run CARDAMOM for each point
+        print 'Running CARDAMOM locally'
+        print '\t- path to data: ', path_to_data
+        print '\t- path to output: ', path_to_output
+        print '\t- number of accepted parameters: ', str(accepted_params)
+        print '\t- printing frequency: ', str(printing_freq)
+        print '\t- sample frequency: ', str(sample_freq)
+
+        for ii in xrange(self.details["no_pts"]):
+            data_bin=path_to_data+"%s_%05i.bin" % (self.project_name,ii+1)
+            for cc in range(0,n_chains):
+                output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,ii+1,cc+1)
+                os.system("./%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
