@@ -145,7 +145,7 @@ for dd in range(0,N_m):
 
 # write met data to file
 outfile_drivers = "BALI_gapfilled_met_station_daily_v1.csv"
-out_drivers = open(outfile_drivers,'w')
+out_drivers = open(outdir+outfile_station,'w')
 out_drivers.write('timestep_days, date, mn2t, mx2t, vpd, ssrd, pptn, mn2t_21d, mx2t_21d, vpd_21d, ssrd_21d, pptn_21d\n')
 for tt in range(0,N_t):
     out_drivers.write(str(tt) + ',' + str(date[tt]) + ', ' + str(mn2t_in[tt]) + ',' + str(mx2t_in[tt]) + ',' + str(vpd_in[tt]) + ',' + str(ssrd_in[tt]) + ',' + str(pptn_in[tt]) + ',' + str(mn2t21_in[tt]) + ',' + str(mx2t21_in[tt]) + ',' + str(vpd21_in[tt]) + ',' + str(ssrd21_in[tt]) + ',' + str(pptn21_in[tt]) + '\n')
