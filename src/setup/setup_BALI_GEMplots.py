@@ -62,7 +62,7 @@ if project_met_npydata not in os.listdir(data_dir):
     met[:,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
     met[:,:,12] = -9999                                   # 12 = forest management practice to accompany any clearing - not applicable
     met[:,:,13] = (met_data['mn2t']+met_data['mx2t'])/2.  # 13 = mean temperature oC ???
-    print np.sum(met==-9999,axis=-1)
+    print '\tnodata test: ', np.sum(met==-9999,axis=0).sum(axis=0)
     np.save(data_dir + project_met_npydata,met)
 
 else:
