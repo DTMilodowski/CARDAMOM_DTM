@@ -20,7 +20,7 @@ rcParams['font.sans-serif'] = ['arial']
 rcParams['font.size'] = 8
 rcParams['legend.numpoints'] = 1
 axis_size = rcParams['font.size']+2
-
+colour = ['#46E900','#1A2BCE','#E0007F']
 
 class CARDAMOM(object):
     
@@ -636,7 +636,9 @@ class CARDAMOM(object):
 
 
     #-------------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
     # Plotting scripts for diagnostics
+    #-------------------------------------------------------------------------------------
     # -first, plot up the drivers used to run CARDAMOM.
     #  There are 14 fields
     #  0 -> run day
@@ -659,9 +661,6 @@ class CARDAMOM(object):
         tstep = self.details["drivers"][site,:,0]
 
         plt.figure(1, facecolor='White',figsize=[10,10])
-        colour = ['#46E900','#1A2BCE','#E0007F']
-        rgb = [[70,233,0],[26,43,206],[224,0,127]]
-        labels = ['$1^{st}$', '$2^{nd}$', '$3^{rd}$', '$4^{th}$']
         
         # day of year
         ax1a = plt.subplot2grid((3,3),(0,0))
@@ -732,3 +731,154 @@ class CARDAMOM(object):
         
         plt.tight_layout()
         plt.show()
+
+    #-------------------------------------------------------------------------------------
+    # -second, plot up the observations used to constrain the model.
+    #  There are 17 fields of interest in the first instance
+    #  0 -> GPP
+    #  1 -> LAI
+    #  2 -> NEE
+    #  3 -> woody inc
+    #  4 -> Reco
+    #  5 -> Cfol
+    #  6 -> Cwood
+    #  7 -> Croo
+    #  8 -> Clit
+    #  9 -> Csom
+    # 10 -> Cagb
+    # 22 -> Cstem
+    # 24 -> Cbranch
+    # 26 -> Ccoarseroot
+    # 28 -> max Cfol
+    # 30 -> Evapotranspiration
+    # 32 -> Litter flux
+    def plot_observations(self,site):
+        tstep = self.details["drivers"][site,:,0]
+        obs = self.details["observations"][site,:,:]
+        obs[obs==-9999]=np.nan
+
+        plt.figure(1, facecolor='White',figsize=[15,10])
+
+        # GPP
+        ax1a = plt.subplot2grid((4,4),(0,0))
+        ax1a.annotate('a - GPP', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1a.set_ylabel('GPP / g(C)m$^2$d$^{-1}$',fontsize=axis_size)
+        ax1a.set_xlabel('tstep',fontsize=axis_size)
+        ax1a.plot(tstep,obs[:,0],'.',color=colour[0])
+
+        # LAI
+        ax1b = plt.subplot2grid((4,4),(0,1),sharex = ax1a)
+        ax1b.annotate('b - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1b.set_ylabel('LAI',fontsize=axis_size)
+        ax1b.set_xlabel('tstep',fontsize=axis_size)
+        ax1b.plot(tstep,obs[:,1],'.',olor=colour[0])
+    
+        # NEE
+        ax1c = plt.subplot2grid((4,4),(0,2),sharex = ax1a)
+        ax1c.annotate('c - NEE', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1c.set_ylabel('NEE / g(C)m$^2$d$^{-1}$',fontsize=axis_size)
+        ax1c.set_xlabel('tstep',fontsize=axis_size)
+        ax1c.plot(tstep,obsp[:,2],'.',color=colour[0])
+
+        # woody inc
+        ax1d = plt.subplot2grid((4,4),(0,3),sharex = ax1a)
+        ax1d.annotate('d - woody increment', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1d.set_ylabel('increment / g(C)m$^2$d$^{-1}$',fontsize=axis_size)
+        ax1d.set_xlabel('tstep',fontsize=axis_size)
+        ax1d.plot(tstep,obs[:,3],'.',color=colour[0])
+
+        # Reco
+        ax2a = plt.subplot2grid((3,3),(1,0),sharex = ax1a)
+        ax2a.annotate('e - Reco', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2a.set_ylabel('Reco / g(C)m$^2$d$^{-1}$',fontsize=axis_size)
+        ax2a.set_xlabel('tstep',fontsize=axis_size)
+        ax2a.plot(tstep,obs[:,4],'.',color=colour[1])
+
+        # Cfol
+        ax2b = plt.subplot2grid((4,4),(1,1),sharex = ax1a)
+        ax2b.annotate('f - Cfol', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2b.set_ylabel('Cfol / g(C)m$^2$',fontsize=axis_size)
+        ax2b.set_xlabel('tstep',fontsize=axis_size)
+        ax2b.plot(tstep,obs[:,5],'.',color=colour[2])
+
+        # Cwood
+        ax2c = plt.subplot2grid((4,4),(1,2),sharex = ax1a)
+        ax2c.annotate('g - Cwood', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2c.set_ylabel('Cwood / g(C)m$^2$',fontsize=axis_size)
+        ax2c.set_xlabel('tstep',fontsize=axis_size)
+        ax2c.plot(tstep,obs[:,6],'.-',color=colour[1])
+
+        # Croo
+        ax2d = plt.subplot2grid((4,4),(1,3),sharex = ax1a)
+        ax2d.annotate('h - Croo', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2d.set_ylabel('Croo / g(C)m$^2$',fontsize=axis_size)
+        ax2d.set_xlabel('tstep',fontsize=axis_size)
+        ax2d.plot(tstep,obs[:,7],'.',color=colour[0])
+
+        # Clit
+        ax3a = plt.subplot2grid((4,4),(2,0),sharex = ax1a)
+        ax3a.annotate('i - Clit', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3a.set_ylabel('Clit / g(C)m$^2$',fontsize=axis_size)
+        ax3a.set_xlabel('tstep',fontsize=axis_size)
+        ax3a.plot(tstep,obs[:,8],'.',color=colour[0])
+
+        # Csom
+        ax3b = plt.subplot2grid((4,4),(2,1),sharex = ax1a)
+        ax3b.annotate('f - Csom', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3b.set_ylabel('Csom / g(C)m$^2$',fontsize=axis_size)
+        ax3b.set_xlabel('tstep',fontsize=axis_size)
+        ax3b.plot(tstep,obs[:,9],'.',color=colour[2])
+
+        # Cagb
+        ax3c = plt.subplot2grid((4,4),(2,2),sharex = ax1a)
+        ax3c.annotate('g - Cagb', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3c.set_ylabel('Cagb / g(C)m$^2$',fontsize=axis_size)
+        ax3c.set_xlabel('tstep',fontsize=axis_size)
+        ax3c.plot(tstep,obs[:,10],'.',color=colour[1])
+
+        # Cstem
+        ax3d = plt.subplot2grid((4,4),(2,3),sharex = ax1a)
+        ax3d.annotate('h - Cstem', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3d.set_ylabel('Cstem / g(C)m$^2$',fontsize=axis_size)
+        ax3d.set_xlabel('tstep',fontsize=axis_size)
+        ax3d.plot(tstep,obs[:,22],'.',color=colour[0])
+
+        # Cbranch
+        ax4a = plt.subplot2grid((4,4),(3,0),sharex = ax1a)
+        ax4a.annotate('i - Cbranch', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax4a.set_ylabel('Cbranch / g(C)m$^2$',fontsize=axis_size)
+        ax4a.set_xlabel('tstep',fontsize=axis_size)
+        ax4a.plot(tstep,obs[:,24],'.',color=colour[0])
+
+        # Ccroo
+        ax4b = plt.subplot2grid((4,4),(3,1),sharex = ax1a)
+        ax4b.annotate('f - Ccroo', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax4b.set_ylabel('Ccroo / g(C)m$^2$',fontsize=axis_size)
+        ax4b.set_xlabel('tstep',fontsize=axis_size)
+        ax4b.plot(tstep,obs[:,26],'.',color=colour[2])
+
+        # max Cfol
+        ax4c = plt.subplot2grid((4,4),(3,2),sharex = ax1a)
+        ax4c.annotate('g - Cfol max', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax4c.set_ylabel('Cfol max / g(C)m$^2$',fontsize=axis_size)
+        ax4c.set_xlabel('tstep',fontsize=axis_size)
+        ax4c.plot(tstep,obs[:,28],'.',color=colour[1])
+
+        # Litter flux
+        ax4d = plt.subplot2grid((4,4),(3,3),sharex = ax1a)
+        ax4d.annotate('h - ', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax4d.set_ylabel('Flit / g(C)m$^2$s$^{-1}$',fontsize=axis_size)
+        ax4d.set_xlabel('tstep',fontsize=axis_size)
+        ax4d.plot(tstep,obs[:,32],'.',color=colour[0])                
+
+        plt.tight_layout()
+        plt.show()
+
+        obs = None
+
+    #-------------------------------------------------------------------------------------
+    # -PLOT FLUXES with obs
+
+
+    #-------------------------------------------------------------------------------------
+    # -PLOT POOLS with obs
