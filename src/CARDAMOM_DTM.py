@@ -12,6 +12,16 @@ import numpy as np
 from netCDF4 import Dataset
 import shutil, socket
 
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
+# Set up some basiic parameters for the plots
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['arial']
+rcParams['font.size'] = 8
+rcParams['legend.numpoints'] = 1
+axis_size = rcParams['font.size']+2
+
+
 class CARDAMOM(object):
     
     def __init__(self, **kwargs):
@@ -623,3 +633,102 @@ class CARDAMOM(object):
             for cc in range(0,n_chains):
                 output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,ii+1,cc+1)
                 os.system("%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
+
+
+    #-------------------------------------------------------------------------------------
+    # Plotting scripts for diagnostics
+    # -first, plot up the drivers used to run CARDAMOM.
+    #  There are 14 fields
+    #  0 -> run day
+    #  1 -> min temperature in oC
+    #  2 -> max temperature
+    #  3 -> ssrd in Mj.m-2.day-1
+    #  4 -> atm CO2 in ppm
+    #  5 -> day of year
+    #  6 -> lagged pptn
+    #  7 -> fire burned fraction
+    #  8 -> deforestation fraction
+    #  9 -> 21d average min temp in K
+    # 10 -> 21d average max temp in K
+    # 11 -> 21d average vpd in Pa
+    # 12 -> forest management
+    # 13 -> mean temperature in oC    
+    # 
+    # The 'site' parameter is an index to specify the site to be plotted up
+    def plot_drivers(self,site):
+        tstep = self.details["drivers"][site,:,0]
+
+        plt.figure(1, facecolor='White',figsize=[10,10])
+        colour = ['#46E900','#1A2BCE','#E0007F']
+        rgb = [[70,233,0],[26,43,206],[224,0,127]]
+        labels = ['$1^{st}$', '$2^{nd}$', '$3^{rd}$', '$4^{th}$']
+        
+        # day of year
+        ax1a = plt.subplot2grid((3,3),(0,0))
+        ax1a.annotate('a - run day', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1a.set_ylabel('day',fontsize=axis_size)
+        ax1a.set_xlabel('tstep',fontsize=axis_size)
+        ax1a.plot(tstep,self.details["drivers"][site,:,5],'-',color=colour[0])
+
+        # min, max & average temperature
+        ax1b = plt.subplot2grid((3,3),(0,1),sharex = ax1a)
+        ax1b.annotate('b - temperature', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1b.set_ylabel('temperature / $^o$C',fontsize=axis_size)
+        ax1b.set_xlabel('tstep',fontsize=axis_size)
+        ax1b.plot(tstep,self.details["drivers"][site,:,2],'-',color=colour[2])
+        ax1b.plot(tstep,self.details["drivers"][site,:,1],'-',color=colour[1])
+        ax1b.plot(tstep,self.details["drivers"][site,:,13],'-',color=colour[0])
+    
+        # ssrd
+        ax1c = plt.subplot2grid((3,3),(0,2),sharex = ax1a)
+        ax1c.annotate('c - ssrd', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax1c.set_ylabel('ssrd / MJ.m$^{-2}$.d$^{-1}$',fontsize=axis_size)
+        ax1c.set_xlabel('tstep',fontsize=axis_size)
+        ax1c.plot(tstep,self.details["drivers"][site,:,3],'-',color=colour[0])
+
+        # atmCO2
+        ax2a = plt.subplot2grid((3,3),(1,0),sharex = ax1a)
+        ax2a.annotate('d - CO$_2$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2a.set_ylabel('[CO$_2$] / ppm',fontsize=axis_size)
+        ax2a.set_xlabel('tstep',fontsize=axis_size)
+        ax2a.plot(tstep,self.details["drivers"][site,:,4],'-',color=colour[0])
+
+        # pptn
+        ax2b = plt.subplot2grid((3,3),(1,1),sharex = ax1a)
+        ax2b.annotate('e - pptn', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2b.set_ylabel('pptn / mm',fontsize=axis_size)
+        ax2b.set_xlabel('tstep',fontsize=axis_size)
+        ax2b.plot(tstep,self.details["drivers"][site,:,6],'-',color=colour[1])
+
+        # disturbance
+        ax2c = plt.subplot2grid((3,3),(1,2),sharex = ax1a)
+        ax2c.annotate('f - disturbance', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax2c.set_ylabel('fraction loss',fontsize=axis_size)
+        ax2c.set_xlabel('tstep',fontsize=axis_size)
+        ax2c.plot(tstep,self.details["drivers"][site,:,7],'-',color=colour[2])
+        ax2c.plot(tstep,self.details["drivers"][site,:,8],'-',color=colour[1])
+
+        # 21d average T
+        ax3a = plt.subplot2grid((3,3),(2,0),sharex = ax1a)
+        ax3a.annotate('g - 21d average temp', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3a.set_ylabel('temperature / $^o$C',fontsize=axis_size)
+        ax3a.set_xlabel('tstep',fontsize=axis_size)
+        ax3a.plot(tstep,self.details["drivers"][site,:,9],'-',color=colour[1])
+        ax3a.plot(tstep,self.details["drivers"][site,:,10],'-',color=colour[2])
+
+        # 21d average vpd
+        ax3b = plt.subplot2grid((3,3),(2,1),sharex = ax1a)
+        ax3b.annotate('h - 21d average VPD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3b.set_ylabel('VPD / Pa',fontsize=axis_size)
+        ax3b.set_xlabel('tstep',fontsize=axis_size)
+        ax3b.plot(tstep,self.details["drivers"][site,:,6],'-',color=colour[0])
+
+        # management
+        ax3c = plt.subplot2grid((3,3),(2,2),sharex = ax1a)
+        ax3c.annotate('i - management', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+        ax3c.set_ylabel('management',fontsize=axis_size)
+        ax3c.set_xlabel('tstep',fontsize=axis_size)
+        ax3c.plot(tstep,self.details["drivers"][site,:,13],'-',color=colour[0])
+        
+        plt.tight_layout()
+        plt.show()
