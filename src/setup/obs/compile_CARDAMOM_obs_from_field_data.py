@@ -132,17 +132,17 @@ for pp in range(0,len(plot)):
     
     # fill obs matrix with relevant data
     obs[obs_h=='Cwoo',:]=Cwood_in.copy()
-    obs[obs_h=='Cwoo_u',:]=Cwood_unc.copy()
+    obs[obs_h=='Cwoo_u',:]=Cwood_unc.copy() # Cwood uncertainty is the only parameter with non-log uncertainty bounds
     obs[obs_h=='Croo',:]=Croot_in.copy()
-    obs[obs_h=='Croo_u',:]=Croot_std_in.copy()
+    obs[obs_h=='Croo_u',:]= 2.# Currently using log uncertainties, assuming value of 2. Croot_std_in.copy()
     obs[obs_h=='flit',:]=Litter_in.copy()
-    obs[obs_h=='flit_u',:]=Litter_std_in.copy()
+    obs[obs_h=='flit_u',:]=2.# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
     obs[obs_h=='NPProo',:]=root_npp_in.copy()
-    obs[obs_h=='NPProo_u',:]=root_npp_std_in.copy()
-    obs[obs_h=='LAI',:]=LAI_rad_in.copy()
-    #obs[obs_h=='LAI_u',:]=LAI_rad_std_in.copy()
+    obs[obs_h=='NPProo_u',:]=2.# Currently using log uncertainties, assuming value of 2. root_npp_std_in.copy()
+    obs[obs_h=='LAI',:]=LAI_MH_in.copy()
+    obs[obs_h=='LAI_u',:]=2.# Currently using log uncertainties, assuming value of 2. LAI_rad_std_in.copy()
     obs[obs_h=='Csom',:]=Csoil_in.copy()
-    obs[obs_h=='Csom_u',:]=Csoil_unc.copy()
+    obs[obs_h=='Csom_u',:]=2.# Currently using log uncertainties, assuming value of 2. Csoil_unc.copy()
 
     # write output to file
     outfile_obs = "CARDAMOM_obs_"+plot[pp]+".csv"
