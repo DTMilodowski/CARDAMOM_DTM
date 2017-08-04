@@ -721,14 +721,14 @@ class CARDAMOM(object):
         ax3b.annotate('h - 21d average VPD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
         ax3b.set_ylabel('VPD / Pa',fontsize=axis_size)
         ax3b.set_xlabel('tstep',fontsize=axis_size)
-        ax3b.plot(tstep,self.details["drivers"][site,:,6],'-',color=colour[0])
+        ax3b.plot(tstep,self.details["drivers"][site,:,11],'-',color=colour[0])
 
         # management
         ax3c = plt.subplot2grid((3,3),(2,2),sharex = ax1a)
         ax3c.annotate('i - management', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
         ax3c.set_ylabel('management',fontsize=axis_size)
         ax3c.set_xlabel('tstep',fontsize=axis_size)
-        ax3c.plot(tstep,self.details["drivers"][site,:,13],'-',color=colour[0])
+        ax3c.plot(tstep,self.details["drivers"][site,:,12],'-',color=colour[0])
         
         plt.tight_layout()
         plt.show()
