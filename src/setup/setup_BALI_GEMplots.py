@@ -55,8 +55,8 @@ if project_met_npydata not in os.listdir(data_dir):
     met[:,:,4] = 400.                                     #  4 = atmospheric CO2 concentration ppm
     met[:,:,5] = DoY.copy()                               #  5 = day of year
     met[:,:,6] = met_data['pptn']                         #  6 = lagged precipitation
-    met[:,:,7] = -9999                                    #  7 = fire burned deforestation fraction - not applicable 
-    met[:,:,8] = -9999                                    #  8 = fire burned deforestation fraction - not applicable 
+    met[:,:,7] = -9999                                    #  7 = fire burned fraction - not applicable 
+    met[:,:,8] = -9999                                    #  8 = deforestation fraction - not applicable 
     met[:,:,9] = met_data['mn2t_21d']+273.15              #  9 = 21 day average min temperature K
     met[:,:,10] = met_data['mx2t_21d']+273.15             # 10 = 21 day average max temperature K
     met[:,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
