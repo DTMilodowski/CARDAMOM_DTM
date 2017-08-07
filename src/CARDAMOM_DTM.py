@@ -550,7 +550,7 @@ class CARDAMOM(object):
         if "target_point" in kwargs:
             target_point = kwargs["target_point"]
         else:
-            target_point = 1
+            target_point = 0
 
         #----------------------------
         # Run CARDAMOM for each point
