@@ -713,7 +713,7 @@ class CARDAMOM(object):
         ax3a.set_ylabel('temperature / $^o$C',fontsize=axis_size)
         ax3a.set_xlabel('tstep',fontsize=axis_size)
         ax3a.plot(tstep,self.details["drivers"][site,:,9],'-',color=colour[1])
-        ax3a.plot(tstep,self.details["drivers"][site,:,10],'-',color=colour[2])
+        #ax3a.plot(tstep,self.details["drivers"][site,:,10],'-',color=colour[2])
 
         # 21d average vpd
         ax3b = plt.subplot2grid((3,3),(2,1),sharex = ax1a)
