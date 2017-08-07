@@ -36,7 +36,7 @@ for i in range(0,len(plot)):
 # start date ### read from data file
 dates = met_data['date'].astype('datetime64[D]')
 d0 = dates[0]#met_data['date'][0]
-DoY = dates-dates.astype('datetime64[Y]')
+DoY = (dates-dates.astype('datetime64[Y]')+1).astype('float')
 tstep = met_data['tstep_days']
 sim_length = tstep[-1]+1
 nosites = len(plot)
@@ -47,8 +47,9 @@ met = np.zeros((nosites,sim_length,14))
 
 if project_met_npydata not in os.listdir(data_dir):
     
+
     # First load the met data into the met array - use same driving data for now
-    met[:,:,0] = tstep.copy()                             #  0 = run day
+    met[:,:,0] = tstep+1                                  #  0 = run day
     met[:,:,1] = met_data['mn2t']                         #  1 = minimum temperature oC
     met[:,:,2] = met_data['mx2t']                         #  2 = maximum temperature oC
     met[:,:,3] = met_data['ssrd']                         #  3 = surface shortwave radiation in MJ.m-2.day-1
@@ -57,11 +58,22 @@ if project_met_npydata not in os.listdir(data_dir):
     met[:,:,6] = met_data['pptn']                         #  6 = lagged precipitation
     met[:,:,7] = -9999                                    #  7 = fire burned fraction - not applicable 
     met[:,:,8] = -9999                                    #  8 = deforestation fraction - not applicable 
-    met[:,:,9] = met_data['mn2t_21d']+273.15              #  9 = 21 day average min temperature K
-    met[:,:,10] = met_data['mx2t_21d']+273.15             # 10 = 21 day average max temperature K
+    met[:,:,9] = met_data['mn2t_21d']                     #  9 = 21 day average min temperature oC
     met[:,:,11] = met_data['vpd_21d']                     # 11 = 21 day average vpd Pa
     met[:,:,12] = -9999                                   # 12 = forest management practice to accompany any clearing - not applicable
     met[:,:,13] = (met_data['mn2t']+met_data['mx2t'])/2.  # 13 = mean temperature oC ???
+    
+    # Next calculate photoperiod in s for each day in time series
+    dayl = np.zeros(met.shape[:-1])
+    dec = - np.arcsin( np.sin( 23.45 * np.pi/180. ) * np.cos( 2.0 * np.pi * ( DoY + 10.0 ) / 365.0 ) )
+    ones = np.ones(sim_length)
+    for ss in range(0,nosites):
+        mult = latitude[ss]*np.pi/180.
+        sinld = np.sin( mult ) * np.sin( dec )
+        cosld = np.cos( mult ) * np.cos( dec )
+        aob = np.max((-1.0*ones,np.min((ones,sinld / cosld), axis=0)),axis=0)
+        met[ss,:,10] = 12.*60.*60.*(1.+2.*np.arcsin(aob)/np.pi) # 10 = photoperiod in s
+    
     print '\tnodata test: ', np.sum(met==-9999,axis=0).sum(axis=0)
     np.save(data_dir + project_met_npydata,met)
 
