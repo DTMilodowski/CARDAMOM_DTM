@@ -635,9 +635,80 @@ class CARDAMOM(object):
                 os.system("%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
 
 
+
+    """
     #-------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------
-    # Plotting scripts for diagnostics
+    # RERUN LOCALLY
+    #-------------------------------------------------------------------------------------
+    # kwargs to include:
+    # - run id (default is latest run)
+    def rerun_local(self,*kwargs):
+        proj_path = self.paths["projects"]+self.project_name
+        rerun_path = self.paths["projects"]+self.project_name+"/rerun"
+
+        if "runid" in kwargs:
+            runid = kwargs["runid"]
+        else:
+            runlist = os.listdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
+            runid = int(runlist[-1])
+
+        #create directory structure for the rerun output
+        if "rerun" not in os.listdir(proj_path):
+            os.mkdir(rerun_path)
+        if "%03i" % runid not in os.listdir(rerun_path):
+            os.mkdir(rerun_path+"/%03i" % runid)
+        
+        # setup the arrays to host the rerun output
+        tsteps = self.details["tsteps"]
+
+        no_fluxes = ???
+        fluxes = np.zeros((tsteps,no_fluxes))
+        
+        no_pools = ???
+        pools = np.zeros((tsteps,no_pools))
+
+        # Loop through the sites/pixels
+        no_pts = self.details["no_pts"]
+        for pp in range(0,no_pts):
+            pixno = pp+1
+            # Note that Jeff uses a check here to make sure that there is the required data in the directory.  
+            # Will leave this for now, and add in later
+            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
+            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
+            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
+            
+            # This line comes from Jeff's original code - it skips the first 500 records. Need to change this to
+            # a user-definable variable
+            outall = np.vstack([out1[500:,:],out2[500:,:],out3[500:,:]])
+
+            keeplike = []; tmpdiff =[]; tmp_neediff = []; tmp_neediff2 = []
+            tmppools = np.zeros([outall.shape[0],tsteps,no_pools+1]) # add extra pool for total C
+            tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
+            
+            prob = 0.
+
+            for jj,parset in enumerate(outall):
+                fluxes,pools = f2py.dalec_gsi(fluxes,pools,project_data["details"]["drivers"][ii],lat[ii],deltat,removal,fires,parset[:-1],1,1)
+                prob = f2py.calc_likelihood(prob,fluxes,pools,project_data["details"]["observations"][ii],parset[:-1],parprior,parpriorunc,otherprior,otherpriorunc)
+                keeplike.append(np.abs(parset[-1]-prob))
+
+                tmpfluxes[jj,:,:no_fluxes] = fluxes.copy() # fluxes
+                tmpfluxes[jj,:,-6] = fluxes[:,0]-fluxes[:,2] # npp
+                tmpfluxes[jj,:,-5] = fluxes[:,12]+fluxes[:,13] #rh
+                tmpfluxes[jj,:,-4] = fluxes[:,2]+fluxes[:,12]+fluxes[:,13] #reco
+                tmpfluxes[jj,:,-3] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13] #nee
+                tmpfluxes[jj,:,-2] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13]+fluxes[:,16]+fluxes[:,32] #nbp
+                tmpfluxes[jj,:,-1] = pools[:-1,1]/parset[16] #lai
+
+                tmppools[jj,:,:6] = pools[1:]
+                tmppools[jj,:,6] = pools[1:].sum(1)
+
+                print pixno,max(keeplike)
+    """
+    #-------------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
+    # Plotting scripts
     #-------------------------------------------------------------------------------------
     # -first, plot up the drivers used to run CARDAMOM.
     #  There are 14 fields
@@ -771,7 +842,7 @@ class CARDAMOM(object):
         ax1b.annotate('b - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
         ax1b.set_ylabel('LAI',fontsize=axis_size)
         ax1b.set_xlabel('tstep',fontsize=axis_size)
-        ax1b.plot(tstep,obs[:,1],'.',olor=colour[0])
+        ax1b.plot(tstep,obs[:,1],'.',color=colour[0])
     
         # NEE
         ax1c = plt.subplot2grid((4,4),(0,2),sharex = ax1a)
@@ -878,6 +949,12 @@ class CARDAMOM(object):
 
     #-------------------------------------------------------------------------------------
     # -PLOT FLUXES with obs
+    def plot_fluxes_with_obs(self,site):
+        tstep = self.details["drivers"][site,:,0]
+        obs = self.details["observations"][site,:,:]
+        obs[obs==-9999]=np.nan
+
+        plt.figure(1, facecolor='White',figsize=[15,10])
 
 
     #-------------------------------------------------------------------------------------
