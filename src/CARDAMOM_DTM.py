@@ -6,7 +6,7 @@
 # work with Luke Smallman's versions of DALEC, which will be used during both the BALI and
 # Forests2020 projects.
 # ----------------------------------------------------------------------------------------
-import os, cPickle, time, struct         
+import os, cPickle, time, struct, sys         
 import datetime as dt       
 import numpy as np
 from netCDF4 import Dataset
@@ -21,6 +21,13 @@ rcParams['font.size'] = 8
 rcParams['legend.numpoints'] = 1
 axis_size = rcParams['font.size']+2
 colour = ['#46E900','#1A2BCE','#E0007F']
+
+# Now load rerun stuff
+sys.path.append('./rerun/')
+import f2py_dalec_gsi_dfol_cwd_fr as f2py
+
+from DALEC_f2py import readParsDALEC, readDevelopmentParams, write2netCDF, GR
+
 
 class CARDAMOM(object):
     
@@ -636,7 +643,7 @@ class CARDAMOM(object):
 
 
 
-    """
+    
     #-------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------
     # RERUN LOCALLY
@@ -659,14 +666,16 @@ class CARDAMOM(object):
         if "%03i" % runid not in os.listdir(rerun_path):
             os.mkdir(rerun_path+"/%03i" % runid)
         
-        # setup the arrays to host the rerun output
+        # setup the arrays to host the rerun output - in future versions, these should be set automatically according to the model version
         tsteps = self.details["tsteps"]
 
-        no_fluxes = ???
+        no_fluxes = 20
         fluxes = np.zeros((tsteps,no_fluxes))
         
-        no_pools = ???
+        no_pools = 7
         pools = np.zeros((tsteps,no_pools))
+
+        no_pars = 38
 
         # Loop through the sites/pixels
         no_pts = self.details["no_pts"]
@@ -674,9 +683,10 @@ class CARDAMOM(object):
             pixno = pp+1
             # Note that Jeff uses a check here to make sure that there is the required data in the directory.  
             # Will leave this for now, and add in later
-            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
-            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
-            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (rerun_path,runid,self.project_name,pixno),npar=38)
+            # Currently assume that there are three chains - will also need to alter this in due course
+            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
+            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
+            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
             
             # This line comes from Jeff's original code - it skips the first 500 records. Need to change this to
             # a user-definable variable
@@ -705,7 +715,7 @@ class CARDAMOM(object):
                 tmppools[jj,:,6] = pools[1:].sum(1)
 
                 print pixno,max(keeplike)
-    """
+    
     #-------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------
     # Plotting scripts
