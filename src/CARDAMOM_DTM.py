@@ -653,6 +653,7 @@ class CARDAMOM(object):
     def rerun_local(self,*kwargs):
         proj_path = self.paths["projects"]+self.project_name
         rerun_path = self.paths["projects"]+self.project_name+"/rerun"
+        mcmc_out_path = self.paths["projects"]+self.project_name+"/cardamom_output"
 
         if "runid" in kwargs:
             runid = kwargs["runid"]
@@ -669,37 +670,107 @@ class CARDAMOM(object):
         # setup the arrays to host the rerun output - in future versions, these should be set automatically according to the model version
         tsteps = self.details["tsteps"]
 
+        # Loop through the sites/pixels
+        no_pts = self.details["no_pts"]
+
         no_fluxes = 20
-        fluxes = np.zeros((tsteps,no_fluxes))
+        fluxes = []#np.zeros((no_pts,tsteps,no_fluxes))
         
         no_pools = 7
-        pools = np.zeros((tsteps,no_pools))
+        pools = []#np.zeros((no_pts,tsteps,no_pools+1))
 
         no_pars = 38
 
+        #-----------------------------------
+        # Retrieve parameters from earlier MCMC
+        #-----------------------------------
         # Loop through the sites/pixels
-        no_pts = self.details["no_pts"]
         for pp in range(0,no_pts):
             pixno = pp+1
-            # Note that Jeff uses a check here to make sure that there is the required data in the directory.  
-            # Will leave this for now, and add in later
+            """
             # Currently assume that there are three chains - will also need to alter this in due course
-            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
-            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
-            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (rerun_path,runid,self.project_name,pixno),npar=no_pars)
-            
-            # This line comes from Jeff's original code - it skips the first 500 records. Need to change this to
-            # a user-definable variable
-            outall = np.vstack([out1[500:,:],out2[500:,:],out3[500:,:]])
+            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
+            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
+            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
+            """
+            # read in parameters + likelihood and test for convergence
+            # all_params, 0 =  parameters, 1 = parameters + likelihood
+            if '%s_1_PARS' % (exp) in done:
+                print "Reading in %s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
+                out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=1,all_params=1)[-500:]
+            else:
+                out1 = np.zeros([500,no_pars+1])-9999.
+        
+            if '%s_2_PARS' % (exp) in done:
+                print "Reading in %s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
+                out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=2,all_params=1)[-500:]
+            else:
+                out2 = np.zeros([500,no_pars+1])-9999.
 
+            if '%s_3_PARS' % (exp) in done:
+                print "Reading in %s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
+                out2 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=3,all_params=1)[-500:]
+            else:
+                out3 = np.zeros([500,no_pars+1])-9999.
+	
+            outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
+
+
+            #-----------------------------------
+            # test for convergence
+            #-----------------------------------
+            conv123 = GR([out1[-500:,-1],out2[-500:,-1],out3[-500:,-1]])
+
+
+
+            #if all converged keep them all
+            if conv123 < 1.2:
+                print 'kept all chains',
+                conv_code[ii] = 123
+                outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
+
+            else: #else test whether a pair of chains has converged and that 3rd pair has lower likelihood
+                print 'test whether a pair of chains has converged and that 3rd pair has lower likelihood' 
+                conv12  = GR([out1[:,-1],out2[:,-1]])
+                conv23  = GR([out2[:,-1],out3[:,-1]])
+                conv13 = GR([out1[:,-1],out3[:,-1]])
+
+                if conv12 < 1.2 and out3[:,-1].max() < max(out1[:,-1].max(),out2[:,-1].max()):
+                    print 'kept chains 1 and 2',
+                    outall = np.row_stack([out1[-500:],out2[-500:]])
+                    conv_code[ii] = 12
+                elif conv23 < 1.2 and out1[:,-1].max() < max(out2[:,-1].max(),out3[:,-1].max()):
+                    print 'kept chains 2 and 3',
+                    outall = np.row_stack([out2[-500:],out3[-500:]])
+                    conv_code[ii] = 23
+                elif conv13 < 1.2 and out2[:,-1].max() < max(out1[:,-1].max(),out3[:,-1].max()):
+                    print 'kept chains 1 and 3',
+                    outall = np.row_stack([out1[-500:],out3[-500:]])
+                    conv_code[ii] = 13
+                else:
+                    print 'chains did not converge! ' ,
+                    if out3.min() == -9999.:
+                        outall = np.row_stack([out1[-500:],out2[-500:]])
+                    if out2.min() == -9999.:
+                        outall = np.row_stack([out1[-500:],out3[-500:]])
+                    if out1.min() == -9999.:
+                        outall = np.row_stack([out2[-500:],out3[-500:]])
+                    else: 
+                        outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
+
+            #-----------------------------------
+            # test for convergence
+            #-----------------------------------
             keeplike = []; tmpdiff =[]; tmp_neediff = []; tmp_neediff2 = []
             tmppools = np.zeros([outall.shape[0],tsteps,no_pools+1]) # add extra pool for total C
             tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
             
             prob = 0.
-
+            #-----------------------------------
+            # forward run of DALEC
+            #-----------------------------------
             for jj,parset in enumerate(outall):
-                fluxes,pools = f2py.dalec_gsi(fluxes,pools,project_data["details"]["drivers"][ii],lat[ii],deltat,removal,fires,parset[:-1],1,1)
+                fluxes,pools = f2py.dalec_gsi_dfol_cwd_fr(fluxes,pools,project_data["details"]["drivers"][ii],lat[ii],deltat,removal,fires,parset[:-1],1,1)
                 prob = f2py.calc_likelihood(prob,fluxes,pools,project_data["details"]["observations"][ii],parset[:-1],parprior,parpriorunc,otherprior,otherpriorunc)
                 keeplike.append(np.abs(parset[-1]-prob))
 
@@ -711,11 +782,15 @@ class CARDAMOM(object):
                 tmpfluxes[jj,:,-2] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13]+fluxes[:,16]+fluxes[:,32] #nbp
                 tmpfluxes[jj,:,-1] = pools[:-1,1]/parset[16] #lai
 
-                tmppools[jj,:,:6] = pools[1:]
-                tmppools[jj,:,6] = pools[1:].sum(1)
-
+                tmppools[jj,:,:no_pools] = pools.copy()
+                tmppools[jj,:,-1] = pools[:].sum(1)
+                
                 print pixno,max(keeplike)
-    
+                
+            pools.append(tmppools)
+            fluxes.append(tmpfluxes)
+
+        return pools, fluxes
     #-------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------
     # Plotting scripts
