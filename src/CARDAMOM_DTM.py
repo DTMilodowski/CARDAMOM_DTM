@@ -688,17 +688,14 @@ class CARDAMOM(object):
         for pp in range(0,no_pts):
             pixno = pp+1
 
+            # some useful stuff for clarity of code
             tstep = self.details["drivers"][pp,:,8]
             removal = self.details["drivers"][pp,:,6]
             fires = self.details["drivers"][pp,:,7]
- 
-           """
-            # Currently assume that there are three chains - will also need to alter this in due course
-            out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
-            out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
-            out3 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
-            """
-            # read in parameters + likelihood and test for convergence
+
+            #-----------------------------------
+            # read in parameters
+            #-----------------------------------
             # all_params, 0 =  parameters, 1 = parameters + likelihood
             if '%s_1_PARS' % (exp) in done:
                 print "Reading in %s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
