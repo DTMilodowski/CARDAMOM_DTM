@@ -766,8 +766,8 @@ class CARDAMOM(object):
             #-----------------------------------
             tmppools = np.zeros([outall.shape[0],tsteps+1,no_pools+1]) # add extra pool for total C
             tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
-            fluxes_iter = np.zeros((no_pts,tsteps,no_fluxes))
-            pools_iter = np.zeros((no_pts,tsteps+1,no_pools))
+            fluxes_iter = np.zeros((tsteps,no_fluxes))
+            pools_iter = np.zeros((tsteps+1,no_pools))
             for jj,parset in enumerate(outall):
                 fluxes_iter,pools_iter = f2py.dalec_gsi_dfol_cwd_fr(fluxes_iter,pools_iter,self.details["drivers"][pp],lat[pp],tstep,removal,fires,parset[:-1],1,1)
                 tmpfluxes[jj,:,:no_fluxes] = fluxes.copy() # fluxes
