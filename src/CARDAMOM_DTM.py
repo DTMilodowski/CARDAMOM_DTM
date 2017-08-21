@@ -650,7 +650,7 @@ class CARDAMOM(object):
     #-------------------------------------------------------------------------------------
     # kwargs to include:
     # - run id (default is latest run)
-    def rerun_local(self,*kwargs):
+    def rerun_DALEC_local(self,*kwargs):
         proj_path = self.paths["projects"]+self.project_name
         rerun_path = self.paths["projects"]+self.project_name+"/rerun"
         mcmc_out_path = self.paths["projects"]+self.project_name+"/cardamom_output"
@@ -669,15 +669,15 @@ class CARDAMOM(object):
         
         # setup the arrays to host the rerun output - in future versions, these should be set automatically according to the model version
         tsteps = self.details["tsteps"]
-
+        lat = self.details["latitude"]
         # Loop through the sites/pixels
         no_pts = self.details["no_pts"]
 
         no_fluxes = 20
-        fluxes = []#np.zeros((no_pts,tsteps,no_fluxes))
+        fluxes = [] #np.zeros((no_pts,tsteps,no_fluxes))
         
         no_pools = 7
-        pools = []#np.zeros((no_pts,tsteps,no_pools+1))
+        pools = [] #np.zeros((no_pts,tsteps,no_pools+1))
 
         no_pars = 38
 
@@ -687,7 +687,12 @@ class CARDAMOM(object):
         # Loop through the sites/pixels
         for pp in range(0,no_pts):
             pixno = pp+1
-            """
+
+            tstep = self.details["drivers"][pp,:,8]
+            removal = self.details["drivers"][pp,:,6]
+            fires = self.details["drivers"][pp,:,7]
+ 
+           """
             # Currently assume that there are three chains - will also need to alter this in due course
             out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
             out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno),npar=no_pars)
@@ -715,13 +720,10 @@ class CARDAMOM(object):
 	
             outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
 
-
             #-----------------------------------
             # test for convergence
             #-----------------------------------
             conv123 = GR([out1[-500:,-1],out2[-500:,-1],out3[-500:,-1]])
-
-
 
             #if all converged keep them all
             if conv123 < 1.2:
@@ -758,22 +760,16 @@ class CARDAMOM(object):
                     else: 
                         outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
 
-            #-----------------------------------
-            # test for convergence
-            #-----------------------------------
-            keeplike = []; tmpdiff =[]; tmp_neediff = []; tmp_neediff2 = []
-            tmppools = np.zeros([outall.shape[0],tsteps,no_pools+1]) # add extra pool for total C
-            tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
-            
-            prob = 0.
+
             #-----------------------------------
             # forward run of DALEC
             #-----------------------------------
+            tmppools = np.zeros([outall.shape[0],tsteps+1,no_pools+1]) # add extra pool for total C
+            tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
+            fluxes_iter = np.zeros((no_pts,tsteps,no_fluxes))
+            pools_iter = np.zeros((no_pts,tsteps+1,no_pools))
             for jj,parset in enumerate(outall):
-                fluxes,pools = f2py.dalec_gsi_dfol_cwd_fr(fluxes,pools,project_data["details"]["drivers"][ii],lat[ii],deltat,removal,fires,parset[:-1],1,1)
-                prob = f2py.calc_likelihood(prob,fluxes,pools,project_data["details"]["observations"][ii],parset[:-1],parprior,parpriorunc,otherprior,otherpriorunc)
-                keeplike.append(np.abs(parset[-1]-prob))
-
+                fluxes_iter,pools_iter = f2py.dalec_gsi_dfol_cwd_fr(fluxes_iter,pools_iter,self.details["drivers"][pp],lat[pp],tstep,removal,fires,parset[:-1],1,1)
                 tmpfluxes[jj,:,:no_fluxes] = fluxes.copy() # fluxes
                 tmpfluxes[jj,:,-6] = fluxes[:,0]-fluxes[:,2] # npp
                 tmpfluxes[jj,:,-5] = fluxes[:,12]+fluxes[:,13] #rh
