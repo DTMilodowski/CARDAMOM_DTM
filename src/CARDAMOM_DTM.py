@@ -760,7 +760,6 @@ class CARDAMOM(object):
                     else: 
                         outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
 
-
             #-----------------------------------
             # forward run of DALEC
             #-----------------------------------
@@ -768,10 +767,11 @@ class CARDAMOM(object):
             tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
             fluxes_iter = np.zeros((tsteps,no_fluxes))
             pools_iter = np.zeros((tsteps+1,no_pools))
-
+            # loop through parameter sets
             for jj,parset in enumerate(outall):
+                # run DALEC
                 fluxes_iter,pools_iter = f2py.dalec_gsi_dfol_cwd_fr(fluxes_iter,pools_iter,self.details["drivers"][pp],lat[pp],tstep,removal,fires,parset[:-1],1,1)
-
+                # calculate extra fluxes fields
                 tmpfluxes[jj,:,:no_fluxes] = fluxes.copy() # fluxes
                 tmpfluxes[jj,:,-6] = fluxes[:,0]-fluxes[:,2] # npp
                 tmpfluxes[jj,:,-5] = fluxes[:,12]+fluxes[:,13] #rh
@@ -779,10 +779,12 @@ class CARDAMOM(object):
                 tmpfluxes[jj,:,-3] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13] #nee
                 tmpfluxes[jj,:,-2] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13]+fluxes[:,16]+fluxes[:,32] #nbp
                 tmpfluxes[jj,:,-1] = pools[:-1,1]/parset[16] #lai
-
+                
+                # calculate extra pools fields
                 tmppools[jj,:,:no_pools] = pools.copy()
                 tmppools[jj,:,-1] = pools[:].sum(1)
-                
+            
+            # append into pools and fluxes list
             pools.append(tmppools)
             fluxes.append(tmpfluxes)
 
