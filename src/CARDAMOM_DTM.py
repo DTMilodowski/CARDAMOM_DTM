@@ -23,10 +23,10 @@ axis_size = rcParams['font.size']+2
 colour = ['#46E900','#1A2BCE','#E0007F']
 
 # Now load rerun stuff
-sys.path.append('./rerun/')
-import f2py_dalec_gsi_dfol_cwd_fr as f2py
+#sys.path.append('./rerun/')
+#import f2py_dalec_gsi_dfol_cwd_fr as f2py
 
-from DALEC_f2py import readParsDALEC, readDevelopmentParams, write2netCDF, GR
+#from DALEC_f2py import readParsDALEC, readDevelopmentParams, write2netCDF, GR
 
 
 class CARDAMOM(object):
