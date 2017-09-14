@@ -4,13 +4,12 @@
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
 site <- "SAFE"
+path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
 run <- "001"
 
-mcmcoutputdirectory <- paste("/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/",project,"/rerun/",run)
-
-path2files <- paste(site, "/PARS/", sep="")
-path2files <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/BALI_GEMplots_daily/cardamom_output/001"
+path2rerun <- paste(path2root,"/projects/",project,"/rerun/",run, sep="")
+path2mcmcfiles <- paste(path2root,"/projects/",project,"/cardamom_output/",run,"/", sep="")
 
 integer_count_of_sites <- 6
 
@@ -58,10 +57,10 @@ nopools=array(npools,integer_count_of_sites) ;
 nopars=array(npars,integer_count_of_sites) ;
 nofluxes=array(nfluxes,integer_count_of_sites)
 
-ctessel_pft = 1
+ctessel_pft = 1   # what is this for?
 
 # in this case, all sites are crops
-vector_of_site_pfts_1_is_crops = as.vector(rep(1, integer_count_of_sites))
+vector_of_site_pfts_1_is_crops = as.vector(rep(1, integer_count_of_sites))  # what is this for?
 
 #print(vector_of_site_pfts_1_is_crops)
 
@@ -74,14 +73,18 @@ for(i in 1:integer_count_of_sites) {
 
 print("Removing old files")
 if (modelname == "DALEC_GSI_BUCKET"){
-	f_out = paste(site, "_weekly_Crop_", startyear, "_", endyear, "_bucket", sep="")		
+	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_bucket", sep="")		
 } else if (modelname == "DALEC_GSI_DFOL_CWD_FR"){
-	f_out = paste(site, "_weekly_Crop_", startyear, "_", endyear, "_no_bucket", sep="")
+	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_dfol_cwd_fr", sep="")
 }
 
 for(i in 1:integer_count_of_sites) {
-	if (file.exists(paste(site,"/DALECc_output/",f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))) file.remove(paste(site,"/DALECc_output/",f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))
-	if (file.exists(paste(site,"/DALECc_output/",f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))) file.remove(paste(site,"/DALECc_output/",f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))	
+	if (file.exists(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))){
+            file.remove(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))
+        }
+	if (file.exists(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))){
+            file.remove(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))
+        }
 }
 
 #if (specific_pft == "pft_specific") {nopars[which(ctessel_pft ==
@@ -93,17 +96,17 @@ model = list(name=modelname,nopools=nopools,nofluxes=nofluxes,nomet=16,nopars=no
 # nsubsamples is the target number of accepted parameters you wanted to end up with in the *PARS file, typically this is 1000.
 
 PROJECT=list(name = f_out
-                   ,exepath = "source/"
-                   ,datapath = paste(site, "/bin/", sep="")
-                   ,results_processedpath = paste(site, "/DALECc_output/", sep="")
-                   ,resultspath = paste(site, "/PARS", sep="")
+                   ,exepath = "source/" # what is this path to?
+                   ,datapath = paste(site, "/bin/", sep="") # what is this path to?
+                   ,results_processedpath = path2rerun # what is this path to?
+                   ,resultspath = paste(site, "/PARS", sep="") # what is this path to?
                    ,nosites=integer_count_of_sites
                    ,sites = vector_of_site_names_or_ids
-                   ,ctessel_pft = vector_of_site_pfts_1_is_crops
+                   ,ctessel_pft = vector_of_site_pfts_1_is_crops # what is this referring to?
                    ,spatial_type = "site"
                    ,nsubsamples = 1000
                    ,latter_sample_frac = 0.5
-		   ,parameter_type = "pft_specific"
+		   ,parameter_type = "pft_specific" # what is this referring to?
                    ,model=model)
 
 mcmc_results = run_mcmc_results(PROJECT)
