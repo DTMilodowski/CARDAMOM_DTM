@@ -57,10 +57,10 @@ nopools=array(npools,integer_count_of_sites) ;
 nopars=array(npars,integer_count_of_sites) ;
 nofluxes=array(nfluxes,integer_count_of_sites)
 
-ctessel_pft = 1   # what is this for?
+ctessel_pft = 0   # what is this for? distinction between crop model 1=crop, other number = generic (forest)
 
 # in this case, all sites are crops
-vector_of_site_pfts_1_is_crops = as.vector(rep(1, integer_count_of_sites))  # what is this for?
+vector_of_site_pfts_1_is_crops = as.vector(rep(0, integer_count_of_sites))
 
 #print(vector_of_site_pfts_1_is_crops)
 
@@ -102,11 +102,11 @@ PROJECT=list(name = f_out
                    ,resultspath = paste(site, "/PARS", sep="") # what is this path to?
                    ,nosites=integer_count_of_sites
                    ,sites = vector_of_site_names_or_ids
-                   ,ctessel_pft = vector_of_site_pfts_1_is_crops # what is this referring to?
+                   ,ctessel_pft = vector_of_site_pfts_1_is_crops
                    ,spatial_type = "site"
                    ,nsubsamples = 1000
                    ,latter_sample_frac = 0.5
-		   ,parameter_type = "pft_specific" # what is this referring to?
+		   ,parameter_type = "pft_specific"
                    ,model=model)
 
 mcmc_results = run_mcmc_results(PROJECT)
