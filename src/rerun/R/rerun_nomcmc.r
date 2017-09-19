@@ -8,8 +8,10 @@ path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
 run <- "001"
 
-path2rerun <- paste(path2root,"/projects/",project,"/rerun/",run, sep="")
-path2mcmcfiles <- paste(path2root,"/projects/",project,"/cardamom_output/",run,"/", sep="")
+path2rerun <- paste(path2root,"projects/",project,"/rerun/",run, sep="")
+path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/", sep="")
+path2data <- paste(path2root,"projects/",project,"/data/", sep="")
+path2exe <- paste(path2root,"CARDAMOM_DTM/src/rerun/R/", sep="")
 
 integer_count_of_sites <- 6
 
@@ -57,12 +59,10 @@ nopools=array(npools,integer_count_of_sites) ;
 nopars=array(npars,integer_count_of_sites) ;
 nofluxes=array(nfluxes,integer_count_of_sites)
 
-ctessel_pft = 0   # what is this for? distinction between crop model 1=crop, other number = generic (forest)
+ctessel_pft = 0   # distinction between crop model 1=crop, other number = generic (forest)
 
 # in this case, all sites are crops
 vector_of_site_pfts_1_is_crops = as.vector(rep(0, integer_count_of_sites))
-
-#print(vector_of_site_pfts_1_is_crops)
 
 # create vector of site ids, 00001, 00002, etc.
 vector_of_site_names_or_ids <- 0
@@ -87,19 +87,15 @@ for(i in 1:integer_count_of_sites) {
         }
 }
 
-#if (specific_pft == "pft_specific") {nopars[which(ctessel_pft ==
-#1)]=35+2 ; nofluxes[which(ctessel_pft == 1)]=21 ;
-#nopools[which(ctessel_pft == 1)]=9}
-
 model = list(name=modelname,nopools=nopools,nofluxes=nofluxes,nomet=16,nopars=nopars)
 
 # nsubsamples is the target number of accepted parameters you wanted to end up with in the *PARS file, typically this is 1000.
 
 PROJECT=list(name = f_out
                    ,exepath = "source/" # what is this path to?
-                   ,datapath = paste(site, "/bin/", sep="") # what is this path to?
-                   ,results_processedpath = path2rerun # what is this path to?
-                   ,resultspath = paste(site, "/PARS", sep="") # what is this path to?
+                   ,datapath = path2data
+                   ,results_processedpath = path2rerun
+                   ,resultspath = path2mcmcfiles 
                    ,nosites=integer_count_of_sites
                    ,sites = vector_of_site_names_or_ids
                    ,ctessel_pft = vector_of_site_pfts_1_is_crops
