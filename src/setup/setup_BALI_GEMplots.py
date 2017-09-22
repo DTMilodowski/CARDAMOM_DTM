@@ -175,41 +175,41 @@ obs = np.zeros((nosites,sim_length,34))-9999.  # check number of observations an
 if project_obs_npydata not in os.listdir(data_dir):
     
     for pp in range(0,nosites):
-        obs[pp,:,0] = obs_data[plot[pp]]['GPP']       # GPP
-        obs[pp,:,1] = obs_data[plot[pp]]['LAI']       # LAI
-        obs[pp,:,2] = obs_data[plot[pp]]['NEE']       # NEE
-        obs[pp,:,3] = obs_data[plot[pp]]['woo']       # woody increment
-        obs[pp,:,4] = obs_data[plot[pp]]['Reco']      # Reco
-        obs[pp,:,5] = obs_data[plot[pp]]['Cfol']      # Cfol
-        obs[pp,:,6] = obs_data[plot[pp]]['Cwoo']      # Cwood
-        obs[pp,:,7] = obs_data[plot[pp]]['Croo']      # Croot
-        obs[pp,:,8] = obs_data[plot[pp]]['Clit']      # Clit
-        obs[pp,:,9] = obs_data[plot[pp]]['Csom']      # Csom
-        obs[pp,:,10] = obs_data[plot[pp]]['Cagb']     # Cagb
-        obs[pp,:,22] = obs_data[plot[pp]]['Cstem']    # Cstem
-        obs[pp,:,24] = obs_data[plot[pp]]['Cbranch']  # Cbranch
-        obs[pp,:,26] = obs_data[plot[pp]]['Ccroo']    # Ccoarseroot
-        obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max'] # maximum Cfol
-        obs[pp,:,30] = obs_data[plot[pp]]['Evap']     # Evapotranspiration
-        obs[pp,:,32] = obs_data[plot[pp]]['flit']      # Litter flux
+        obs[pp,:,0] = obs_data[plot[pp]]['GPP']         # GPP
+        obs[pp,:,1] = obs_data[plot[pp]]['LAI']         # LAI
+        obs[pp,:,2] = obs_data[plot[pp]]['NEE']         # NEE
+        obs[pp,:,3] = obs_data[plot[pp]]['woo']         # woody increment
+        obs[pp,:,4] = obs_data[plot[pp]]['Reco']        # Reco
+        obs[pp,:,5] = obs_data[plot[pp]]['Cfol']        # Cfol
+        obs[pp,:,6] = obs_data[plot[pp]]['Cwoo']        # Cwood
+        obs[pp,:,7] = obs_data[plot[pp]]['Croo']        # Croot
+        obs[pp,:,8] = obs_data[plot[pp]]['Clit']        # Clit
+        obs[pp,:,9] = obs_data[plot[pp]]['Csom']        # Csom
+        obs[pp,:,10] = obs_data[plot[pp]]['Cagb']       # Cagb
+        obs[pp,:,22] = obs_data[plot[pp]]['Cstem']      # Cstem
+        obs[pp,:,24] = obs_data[plot[pp]]['Cbranch']    # Cbranch
+        obs[pp,:,26] = obs_data[plot[pp]]['Ccroo']      # Ccoarseroot
+        obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max']   # maximum Cfol
+        obs[pp,:,30] = obs_data[plot[pp]]['Evap']       # Evapotranspiration
+        obs[pp,:,32] = obs_data[plot[pp]]['flit']       # Litter flux
 
-        obs[pp,:,11] = obs_data[plot[pp]]['GPP_u']       # GPP
-        obs[pp,:,12] = obs_data[plot[pp]]['LAI_u']       # LAI
-        obs[pp,:,13] = obs_data[plot[pp]]['NEE_u']       # NEE
-        obs[pp,:,14] = obs_data[plot[pp]]['woo_u']       # woody increment
-        obs[pp,:,15] = obs_data[plot[pp]]['Reco_u']      # Reco
-        obs[pp,:,16] = obs_data[plot[pp]]['Cfol_u']      # Cfol
-        obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_u']      # Cwood
-        obs[pp,:,18] = obs_data[plot[pp]]['Croo_u']      # Croot
-        obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']      # Clit
-        obs[pp,:,20] = obs_data[plot[pp]]['Csom_u']      # Csom
+        obs[pp,:,11] = obs_data[plot[pp]]['GPP_u']      # GPP
+        obs[pp,:,12] = obs_data[plot[pp]]['LAI_u']      # LAI
+        obs[pp,:,13] = obs_data[plot[pp]]['NEE_u']      # NEE
+        obs[pp,:,14] = obs_data[plot[pp]]['woo_u']      # woody increment
+        obs[pp,:,15] = obs_data[plot[pp]]['Reco_u']     # Reco
+        obs[pp,:,16] = obs_data[plot[pp]]['Cfol_u']     # Cfol
+        obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_u']     # Cwood
+        obs[pp,:,18] = obs_data[plot[pp]]['Croo_u']     # Croot
+        obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']     # Clit
+        obs[pp,:,20] = obs_data[plot[pp]]['Csom_u']     # Csom
         obs[pp,:,21] = obs_data[plot[pp]]['Cagb_u']     # Cagb
         obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']    # Cstem
         obs[pp,:,25] = obs_data[plot[pp]]['Cbranch_u']  # Cbranch
         obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_u']    # Ccoarseroot
         obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol
         obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
-        obs[pp,:,33] = obs_data[plot[pp]]['flit_u']      # Litter flux
+        obs[pp,:,33] = obs_data[plot[pp]]['flit_u']     # Litter flux
                 
     np.save(data_dir + project_obs_npydata,obs)
 
