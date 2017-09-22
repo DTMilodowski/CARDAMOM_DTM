@@ -421,15 +421,23 @@ class CARDAMOM(object):
     # This method compiles the code and saves a backup
     def compile_local_code(self):
 
-        path2source=self.paths["projects"]+self.project_name+"/src/"
-        path2include="%s/models/%s/likelihood/MODEL_LIKELIHOOD.c" % (path2source,self.project_type)
-        path2exe = self.paths["projects"]+self.project_name+"/exec/"
+        path2source=self.paths["library"]
+        path2model=self.paths["library"]+'model/'+self.project_type+'/src/'+self.project_type
+        path2likelihood=self.paths["library"]+'model/'+self.project_type+'/likelihood/'
+        path2misc=self.paths["library"]+'misc/'
+        path2method=self.paths["library"]+'method/'
+        path2general = self.paths["library"]+'general/'
+        path2exe = self.paths["library"]+"executable/"
 
-        if "exec" not in os.listdir(self.paths["projects"]+self.project_name):
+        if "executable" not in os.listdir(self.paths["projects"]+self.project_name):
             os.mkdir(self.paths["projects"]+self.project_name+"/exec")
+
         #compile directly in good directory
-        #os.system("gcc -O3 %s/general/cardamom_main.c --include %s -o %s.exe -lm" % (path2source,path2include,path2exe+self.project_name))
-        os.system("ifort -O2  %s/misc/math_functions.f90 %s/misc/oksofar.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_CROP.f90 %s/general/cardamom_structures.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/src/DALEC_GSI_DFOL_CWD_FR_PARS.f90 %s/general/cardamom_io.f90 %s/method/MHMCMC/MCMC_FUN/MHMCMC.f90 %s/model/DALEC_GSI_DFOL_CWD_FR/likelihood/MODEL_LIKELIHOOD.f90 %s/general/cardamom_main.f90 -o %s/cardamom.exe" % (path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2source,path2exe))
+        print "ifort -O2  -xhost -ipo -no-ftz  %smath_functions.f90 \n%soksofar.f90 \n%s.f90 \n%s_CROP.f90 \n%scardamom_structures.f90 \n%sMHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 \n%s_PARS.f90 \n%scardamom_io.f90 \n%sMHMCMC/MCMC_FUN/MHMCMC.f90 \n%sMODEL_LIKELIHOOD.f90 \n%scardamom_main.f90 \n-o %s/cardamom.exe" % (path2misc,path2misc,path2model,path2model,path2general,path2method,path2model,path2general,path2method,path2likelihood,path2general,path2exe)
+
+        os.system("ifort -O2  -xhost -ipo -no-ftz  %smath_functions.f90 %soksofar.f90 %s.f90 %s_CROP.f90 %scardamom_structures.f90 %sMHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s_PARS.f90 %scardamom_io.f90 %sMHMCMC/MCMC_FUN/MHMCMC.f90 %sMODEL_LIKELIHOOD.f90 %scardamom_main.f90 -o %s/cardamom.exe" % (path2misc,path2misc,path2model,path2model,path2general,path2method,path2model,path2general,path2method,path2likelihood,path2general,path2exe))
+        
+        os.system("mv *.mod %s" % path2exe)
 
     #-------------------------------------------------------------------------------------
     # This method compiles the code on the cluster
@@ -526,7 +534,7 @@ class CARDAMOM(object):
         if "executable" in kwargs:
             executable = kwargs["executable"]
         else:
-            executable = self.paths["projects"]+self.project_name+"/exec/cardamom.exe"
+            executable = self.paths["library"]+"executable/cardamom.exe"
 
         if 'path_to_data' in kwargs:
             path_to_data = kwargs['path_to_data']
@@ -562,7 +570,7 @@ class CARDAMOM(object):
         #----------------------------
         # Run CARDAMOM for each point
         print 'Running CARDAMOM locally'
-        print '\t- path to exe: ', self.paths["projects"]+self.project_name+"/exec/"
+        print '\t- path to exe: ', self.paths["library"]+"executable/" 
         print '\t- path to data: ', path_to_data
         print '\t- path to output: ', path_to_output
         print '\t- number of accepted parameters: ', str(accepted_params)
@@ -592,13 +600,12 @@ class CARDAMOM(object):
                 runid = int(runlist[-1].split("_")[-1])+1
         if "run_%03i" % runid not in runlist:
             path_to_output = self.paths["projects"]+self.project_name+"/cardamom_output/%03i/" % (runid)
-            print path_to_output
             os.system("mkdir %s" % (path_to_output))
 
         if "executable" in kwargs:
             executable = kwargs["executable"]
         else:
-            executable = self.paths["projects"]+self.project_name+"/exec/cardamom.exe"
+            executable = self.paths["library"]+"executable/cardamom.exe"
 
         if 'path_to_data' in kwargs:
             path_to_data = kwargs['path_to_data']
@@ -628,7 +635,7 @@ class CARDAMOM(object):
         #----------------------------
         # Run CARDAMOM for each point
         print 'Running CARDAMOM locally'
-        print '\t- path to exe: ', self.paths["projects"]+self.project_name+"/exec/"
+        print '\t- path to exe: ', self.paths["library"]+"executable/cardamom.exe"
         print '\t- path to data: ', path_to_data
         print '\t- path to output: ', path_to_output
         print '\t- number of accepted parameters: ', str(accepted_params)
