@@ -270,9 +270,11 @@ class CARDAMOM(object):
             #copy the source code
             self.backup_source()
 
+            """            
             #create a directory for the executable
             if "exec" not in os.listdir(self.paths["projects"]+self.project_name):
                 os.mkdir(self.paths["projects"]+self.project_name+"/exec")
+            """
 
             compile_code = raw_input("Compile local code <y/n>? ")
             if compile_code == "y":
@@ -309,7 +311,7 @@ class CARDAMOM(object):
             os.mkdir(path2data)
         if "cardamom_output" not in os.listdir(path2project):
             print "Directory \"%s\" not found... creating" % path2cardamom_output
-            os.mkdir(path2data)
+            os.mkdir(path2cardamom_output)
 
 
         print "Now creating input data in \"%s\" for project \"%s\"" % (path2data,self.project_name)
@@ -421,16 +423,12 @@ class CARDAMOM(object):
     # This method compiles the code and saves a backup
     def compile_local_code(self):
 
-        path2source=self.paths["library"]
         path2model=self.paths["library"]+'model/'+self.project_type+'/src/'+self.project_type
         path2likelihood=self.paths["library"]+'model/'+self.project_type+'/likelihood/'
         path2misc=self.paths["library"]+'misc/'
         path2method=self.paths["library"]+'method/'
         path2general = self.paths["library"]+'general/'
         path2exe = self.paths["library"]+"executable/"
-
-        if "executable" not in os.listdir(self.paths["projects"]+self.project_name):
-            os.mkdir(self.paths["projects"]+self.project_name+"/exec")
 
         #compile directly in good directory
         print "ifort -O2  -xhost -ipo -no-ftz  %smath_functions.f90 \n%soksofar.f90 \n%s.f90 \n%s_CROP.f90 \n%scardamom_structures.f90 \n%sMHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 \n%s_PARS.f90 \n%scardamom_io.f90 \n%sMHMCMC/MCMC_FUN/MHMCMC.f90 \n%sMODEL_LIKELIHOOD.f90 \n%scardamom_main.f90 \n-o %s/cardamom.exe" % (path2misc,path2misc,path2model,path2model,path2general,path2method,path2model,path2general,path2method,path2likelihood,path2general,path2exe)
