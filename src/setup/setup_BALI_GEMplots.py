@@ -47,7 +47,6 @@ met = np.zeros((nosites,sim_length,14))
 
 if project_met_npydata not in os.listdir(data_dir):
     
-
     # First load the met data into the met array - use same driving data for now
     met[:,:,0] = tstep+1                                  #  0 = run day
     met[:,:,1] = met_data['mn2t']                         #  1 = minimum temperature oC
