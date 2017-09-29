@@ -3,70 +3,19 @@
 # Script which reads in R binary file and writes the data to netcdf files
 
 # can be DALEC_GSI_BUCKET or DALEC_GSI_DFOL_CWD_FR 
-modelname <- "DALEC_GSI_BUCKET"
+modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
-site <- "Grignon"
+project <-
+run <- '001'
+site <- ""
+lat <- ""
+lon <- ""
+startyear <- 2011
+endyear <- 2016
 
-# Aurade - 43.5496, 1.1061  
-# Grignon - 48.8442, 1.9519 
-# Gebesee - 51.1001, 10.9143 
-# Oensingen - 47.2863, 7.7343
-# Lonzee - 50.5516, 4.7461   
-# Avignon - 43.9161, 4.8781 
-# Klingenberg - 50.8929, 13.5225 
-# Lamasquere - 43.4965, 1.2379
-# Risbyholm - 55.5303, 12.0972
-
-if (site=="Aurade"){
-	startyear <- 2005
-	endyear <- 2010
-	lat <- 43.5496
-	lon <- 1.1061  
-} else if (site == "Avignon"){
-	startyear <- 2004
-	endyear <- 2007
-	lat <- 43.9161
-	lon <- 4.8781  
-} else if (site == "Gebesee"){
-	startyear <- 2002
-	endyear <- 2010
-	lat <- 51.1001
-	lon <- 10.9143
-} else if (site == "Grignon"){
-	startyear <- 2004
-	endyear <- 2007
-	lat <- 48.8442
-	lon <- 1.9519
-} else if (site == "Klingenberg"){
-	startyear <- 2004
-	endyear <- 2012
-	lat <- 50.8929
-	lon <- 13.5225
-} else if (site == "Lamasquere"){
-	startyear <- 2005
-	endyear <- 2010
-	lat <- 43.4965
-	lon <- 1.2379
-} else if (site == "Lonzee"){
-	startyear <- 2004
-	endyear <- 2011
-	lat <- 50.5516
-	lon <- 4.7461
-} else if (site == "Oensingen"){
-	startyear <- 2004
-	endyear <- 2011
-	lat <- 47.2863
-	lon <- 7.7343
-} else if (site == "Risbyholm"){
-	startyear <- 2004
-	endyear <- 2008
-	lat <- 55.5303
-	lon <- 12.0972
-}
-
-path2files <- paste(site, "/DALECc_output/", sep="")
-
-integer_count_of_sites <- 1
+path2root <- 
+path2files <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
+integer_count_of_sites <- 6
 
 #############################################################################################
 # create vector of site ids, 00001, 00002, etc.
@@ -77,7 +26,7 @@ for(i in 1:integer_count_of_sites) {
 }
 
 # read in binary files
-bfile=paste(path2files,site, "_weekly_Crop_", startyear, "_", endyear, "_bucket_",vector_of_site_names_or_ids[1],".RData",sep="")
+bfile=paste(path2files,site, "_daily_", startyear, "_", endyear, "_", modelname, "_", vector_of_site_names_or_ids[1],".RData",sep="")
 
 print(paste("Reading in ",bfile,sep=""))
 load(bfile)
