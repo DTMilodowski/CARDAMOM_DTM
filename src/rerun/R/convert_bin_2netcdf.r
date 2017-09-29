@@ -5,15 +5,15 @@
 # can be DALEC_GSI_BUCKET or DALEC_GSI_DFOL_CWD_FR 
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
-project <-
-run <- '001'
+project <- "BALI_GEMplots_daily"
+run <- "001"
 site <- ""
 lat <- ""
 lon <- ""
 startyear <- 2011
 endyear <- 2016
 
-path2root <- 
+path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 path2files <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
 integer_count_of_sites <- 6
 
@@ -26,9 +26,9 @@ for(i in 1:integer_count_of_sites) {
 }
 
 # read in binary files
-bfile=paste(path2files,site, "_daily_", startyear, "_", endyear, "_", modelname, "_", vector_of_site_names_or_ids[1],".RData",sep="")
+bfile=paste(path2files,vector_of_site_names_or_ids[1],".RData",sep="")
 
-print(paste("Reading in ",bfile,sep=""))
+print(paste("Reading in",bfile))
 load(bfile)
 
 lai=states_all$lai
@@ -71,13 +71,10 @@ for(i in 1:ntsteps){
 # create and write to netcdf
 library(ncdf4)
 
-f_out=paste(path2files,site, "_weekly_Crop_", startyear, "_", endyear, "_bucket",".nc", sep="")
+f_out=paste(path2files,project, "_", startyear, "_", endyear, "_",modelname,".nc", sep="")
 
-# write out all runs for lai
-f_out_lai=paste(path2files,site, "_weekly_Crop_", startyear, "_", endyear, "_bucket_lai",".nc", sep="")
-
-print("Removing old files")
-if (file.exists(paste(site,"/DALECc_output/",f_out,sep=""))) file.remove(paste(site,"/DALECc_output/",f_out,sep=""))
+## write out all runs for lai
+#f_out_lai=paste(path2files,site, "_weekly_Crop_", startyear, "_", endyear, "_bucket_lai",".nc", sep="")
 
 xvals <- lon
 yvals <- lat 
@@ -92,25 +89,23 @@ stats <- ncdim_def("stats","dimenisonless (1-5)",1:nstats)
 
 var_lai <- ncvar_def("lai", "m2m-2", list(latdim,londim,stats,timedim), longname="Leaf Area Index (LAI) calculated using DALECC-BUCKET")
 var_gpp <- ncvar_def("gpp", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Gross Primary Productivity (GPP) calculated using DALECC-BUCKET")
-var_evap <- ncvar_def("et", "kgH2O m-2day-1", list(latdim,londim,stats,timedim), longname="Evapotranspiration (ET) calculated using DALECC-BUCKET")
 
-ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_evap))
+ncnew <- nc_create(f_out, list(var_lai,var_gpp))
 
-# write lai from all model dalecc runs to file
-parsdim <- ncdim_def("params","nparams",1:paramsets)
-var_lai_all <- ncvar_def("lai", "m2m-2", list(latdim,londim,parsdim,timedim), longname="Leaf Area Index (LAI) calculated using DALECC-BUCKET")
-ncnew_lai <- nc_create(f_out_lai, list(var_lai_all))
+## write lai from all model dalecc runs to file
+#parsdim <- ncdim_def("params","nparams",1:paramsets)
+#var_lai_all <- ncvar_def("lai", "m2m-2", list(latdim,londim,parsdim,timedim), longname="Leaf Area Index (LAI) calculated using DALECC-BUCKET")
+#ncnew_lai <- nc_create(f_out_lai, list(var_lai_all))
 
 print("Writing data to file")
 ncvar_put(ncnew,var_lai,lai_out)
 ncvar_put(ncnew,var_gpp,gpp_out)
-ncvar_put(ncnew,var_evap,evap_out)
 
 # write lai from all model runs
 ncvar_put(ncnew_lai,var_lai_all,lai)
 nc_close(ncnew_lai)
 
-print(paste("The file has", ncnew$nvars,"variable(s): lai, gpp, evap"))
+print(paste("The file has", ncnew$nvars,"variable(s): lai, gpp"))
 print(paste("The file has", ncnew$ndim,"dimension(s): time, stats, lon, lat"))
 
 # Don't forget to close the file
