@@ -8,10 +8,10 @@ path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
 run <- "001"
 
-path2rerun <- paste(path2root,"projects/",project,"/rerun/",run, sep="")
+path2rerun <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
 path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/", sep="")
 path2data <- paste(path2root,"projects/",project,"/data/", sep="")
-path2exe <- paste(path2root,"CARDAMOM_DTM/src/rerun/R/", sep="")
+path2exe <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/CARDAMOM/trunk/LIBRARY/CARDAMOM_F/executable/"
 
 integer_count_of_sites <- 6
 
@@ -49,9 +49,9 @@ if (modelname == "DALEC_GSI_BUCKET"){
 	npars = 37
 	nfluxes = 21	
 } else if (modelname == "DALEC_GSI_DFOL_CWD_FR"){
-	npools = 8
-	npars = 35
-	nfluxes = 16	
+	npools = 7
+	npars = 38
+	nfluxes = 24
 }
 
 # create some project related information
@@ -72,11 +72,13 @@ for(i in 1:integer_count_of_sites) {
 }
 
 print("Removing old files")
-if (modelname == "DALEC_GSI_BUCKET"){
-	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_bucket", sep="")		
-} else if (modelname == "DALEC_GSI_DFOL_CWD_FR"){
-	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_dfol_cwd_fr", sep="")
-}
+#if (modelname == "DALEC_GSI_BUCKET"){
+#	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_bucket", sep="")		
+#} else if (modelname == "DALEC_GSI_DFOL_CWD_FR"){
+#	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_dfol_cwd_fr", sep="")
+#
+
+f_out <- "BALI_GEMplots_daily"
 
 for(i in 1:integer_count_of_sites) {
 	if (file.exists(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))){
@@ -92,7 +94,7 @@ model = list(name=modelname,nopools=nopools,nofluxes=nofluxes,nomet=16,nopars=no
 # nsubsamples is the target number of accepted parameters you wanted to end up with in the *PARS file, typically this is 1000.
 
 PROJECT=list(name = f_out
-                   ,exepath = "source/" # what is this path to?
+                   ,exepath = path2exe
                    ,datapath = path2data
                    ,results_processedpath = path2rerun
                    ,resultspath = path2mcmcfiles 
