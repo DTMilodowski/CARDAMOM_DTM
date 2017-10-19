@@ -78,14 +78,14 @@ print("Removing old files")
 #	f_out = paste(site, "_daily_", startyear, "_", endyear, "_gsi_dfol_cwd_fr", sep="")
 #
 
-f_out <- "BALI_GEMplots_daily"
+#f_out <- "BALI_GEMplots_daily"
 
 for(i in 1:integer_count_of_sites) {
-	if (file.exists(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))){
-            file.remove(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],".RData",sep=""))
+	if (file.exists(paste(path2rerun,vector_of_site_names_or_ids[i],".RData",sep=""))){
+            file.remove(paste(path2rerun,vector_of_site_names_or_ids[i],".RData",sep=""))
         }
-	if (file.exists(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))){
-            file.remove(paste(path2rerun,f_out,"_",vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))
+	if (file.exists(paste(path2rerun,vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))){
+            file.remove(paste(path2rerun,vector_of_site_names_or_ids[i],"_parameters.RData",sep=""))
         }
 }
 
