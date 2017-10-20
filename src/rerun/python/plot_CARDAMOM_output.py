@@ -53,11 +53,11 @@ def plot_carbon_pools_ts(model,obs,start_tstep=0,end_tstep=-1):
     ax1e.annotate('e - C$_{litter}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     
     # Plot f -> Ccwd
-    ax1f = plt.subplot2grid((7,1),(3,0))
+    ax1f = plt.subplot2grid((7,1),(5,0))
     ax1f.annotate('f - C$_{cwd}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     
     # Plot g -> Csom
-    ax1g = plt.subplot2grid((7,1),(4,0))
+    ax1g = plt.subplot2grid((7,1),(6,0))
     ax1g.annotate('g - C$_{SOM}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
     return 0
