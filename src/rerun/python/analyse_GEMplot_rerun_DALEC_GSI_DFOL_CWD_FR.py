@@ -13,6 +13,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 from netCDF4 import Dataset
 
+import sys
+sys.path.append('/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/rerun/python')
+
+import plot_CARDAMOM_output as pCAR
+
 path2project = '/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/'
 project = 'BALI_GEMplots_daily'
 run = '001'
@@ -22,3 +27,4 @@ filename = 'BALI_GEMplots_daily_2011_2016_DALEC_GSI_DFOL_CWD_FR.nc'
 NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 dataset = Dataset(NetCDF_file)
 
+# plot Carbon stocks
