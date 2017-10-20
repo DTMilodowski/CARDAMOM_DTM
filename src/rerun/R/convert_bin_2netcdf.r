@@ -33,7 +33,29 @@ load(bfile)
 
 lai=states_all$lai
 gpp=states_all$gpp
-#evap=states_all$evap
+nee=states_all$nee
+reco=states_all$reco
+rauto=states_all$rauto
+rhet=states_all$rhet
+wood=states_all$wood
+som=states_all$som
+bio=states_all$bio
+root=states_all$root
+lab=states_all$lab
+lit=states_all$lit
+fol=states_all$fol
+gsi=states_all$gsi
+gsi_itemp=states_all$gsi_itemp
+gsi_iphoto=states_all$gsi_iphoto
+aNPP=states_all$aNPP
+litwood=states_all$litwood
+litfol_flx=states_all$litfol_flx
+litwood_flx=states_all$litwood_flx
+litroot_flx=states_all$litroot_flx
+litcwd_flx=states_all$litcwd_flx
+decomp_lit=states_all$decomp_lit
+Rhet_lit=states_all$Rhet_lit
+
 
 ntsteps=length(lai[1,])
 paramsets=length(lai[,1])
@@ -100,11 +122,11 @@ for(i in 1:ntsteps){
 	Rauto_out[4,i] <- quantile(rauto[,i], 0.25) # 25th percentile
 	Rauto_out[5,i] <- quantile(rauto[,i], 0.75) # 75th percentile
 
-	rhet_out[1,i] <- mean(rhet[,i]) 	
-	rhet_out[2,i] <- median(rhet[,i])
-	rhet_out[3,i] <- sd(rhet[,i])
-	rhet_out[4,i] <- quantile(rhet[,i], 0.25)
-	rhet_out[5,i] <- quantile(rhet[,i], 0.75)
+	Rhet_out[1,i] <- mean(rhet[,i]) 	
+	Rhet_out[2,i] <- median(rhet[,i])
+	Rhet_out[3,i] <- sd(rhet[,i])
+	Rhet_out[4,i] <- quantile(rhet[,i], 0.25)
+	Rhet_out[5,i] <- quantile(rhet[,i], 0.75)
         
 	Cwoo_out[1,i] <- mean(wood[,i]) 	
 	Cwoo_out[2,i] <- median(wood[,i])
