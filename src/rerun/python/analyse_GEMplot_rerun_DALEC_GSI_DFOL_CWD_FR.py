@@ -9,3 +9,17 @@
 # Author: D.T.Milodowski
 # Date: October 2017
 #===============================================================================
+import numpy as np
+from matplotlib import pyplot as plt
+from netCDF4 import Dataset
+
+
+
+
+
+dataset = Dataset(NetCDF_file)
+
+# Get the spatial information from the layer
+Lat = dataset.variables[lat_var][:]
+Long = dataset.variables[lon_var][:]
+
