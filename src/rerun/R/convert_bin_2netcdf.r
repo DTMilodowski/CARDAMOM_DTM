@@ -304,7 +304,7 @@ ncvar_put(ncnew,var_flux_fol_lit,flux_fol_lit_out)
 ncvar_put(ncnew,var_flux_wood_cwd,flux_wood_cwd_out)
 ncvar_put(ncnew,var_flux_root_lit,flux_root_lit_out)
 ncvar_put(ncnew,var_flux_cwd_lit,flux_cwd_lit_out)
-ncvar_put(ncnew,var_Rh_lit,Rh_lit_out)
+ncvar_put(ncnew,var_Rh_lit,Rhet_lit_out)
 ncvar_put(ncnew,var_decomp_lit,decomp_lit_out)
 
 ## write lai from all model runs
