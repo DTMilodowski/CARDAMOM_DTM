@@ -47,7 +47,6 @@ fol=states_all$fol
 gsi=states_all$gsi
 gsi_itemp=states_all$gsi_itemp
 gsi_iphoto=states_all$gsi_iphoto
-aNPP=states_all$aNPP
 litwood=states_all$litwood
 litfol_flx=states_all$litfol_flx
 litwood_flx=states_all$litwood_flx
@@ -81,7 +80,6 @@ gsi_out=array(0., c(nstats,ntsteps))
 gsi_itemp_out=array(0., c(nstats,ntsteps))
 gsi_iphoto_out=array(0., c(nstats,ntsteps))
 gsi_ivpd_out=array(0., c(nstats,ntsteps))
-aNPP_out=array(0., c(nstats,ntsteps))
 Ccwd_out=array(0., c(nstats,ntsteps))
 flux_fol_lit_out=array(0., c(nstats,ntsteps))
 flux_wood_cwd_out=array(0., c(nstats,ntsteps))
@@ -187,12 +185,6 @@ for(i in 1:ntsteps){
 	gsi_iphoto_out[3,i] <- sd(gsi_iphoto[,i])
 	gsi_iphoto_out[4,i] <- quantile(gsi_iphoto[,i], 0.25)
 	gsi_iphoto_out[5,i] <- quantile(gsi_iphoto[,i], 0.75)
-
-	aNPP_out[1,i] <- mean(aNPP[,i]) 	
-	aNPP_out[2,i] <- median(aNPP[,i])
-	aNPP_out[3,i] <- sd(aNPP[,i])
-	aNPP_out[4,i] <- quantile(aNPP[,i], 0.25)
-	aNPP_out[5,i] <- quantile(aNPP[,i], 0.75)
         
 	Ccwd_out[1,i] <- mean(litwood[,i]) 	
 	Ccwd_out[2,i] <- median(litwood[,i])
@@ -274,16 +266,15 @@ var_gsi <- ncvar_def("gsi", "unspecified units", list(latdim,londim,stats,timedi
 var_gsi_itemp <- ncvar_def("gsi_itemp", "unspecified units", list(latdim,londim,stats,timedim), longname="Growing Season Index (GSI) - temperature component")
 var_gsi_iphoto <- ncvar_def("gsi_iphoto", "unspecified units", list(latdim,londim,stats,timedim), longname="Growing Season Index (GSI) - photoperiod component")
 var_gsi_ivpd <- ncvar_def("gsi_ivpd", "unspecified units", list(latdim,londim,stats,timedim), longname="Growing Season Index (GSI) - vapour pressure deficit component")
-var_aNPP <- ncvar_def("aNPP", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Autotrophic NPP (aNPP)")
 var_Ccwd <- ncvar_def("Ccwd", "gC m-2", list(latdim,londim,stats,timedim), longname="Coarse woody debris carbon stock (Ccwd)")
 var_flux_fol_lit <- ncvar_def("flux_fol_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Carbon flux from foliage to litter")
 var_flux_wood_cwd <- ncvar_def("flux_wood_cwd", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Carbon flux from wood to cwd")
 var_flux_root_lit <- ncvar_def("flux_root_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Carbon flux from roots to litter")
-var_flux_cwd_lit <- ncvar_def("flux_root_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Carbon flux from cwd to litter")
+var_flux_cwd_lit <- ncvar_def("flux_cwd_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Carbon flux from cwd to litter")
 var_Rh_lit <- ncvar_def("Rh_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="Heterotrophic respiration flux from litter")
 var_decomp_lit <- ncvar_def("decomp_lit", "gC m-2day-1", list(latdim,londim,stats,timedim), longname="decomposition flux from litter")
 
-ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_nee,var_Reco,var_Rauto,var_Rhet,var_Cwoo,var_Clab,var_Cfol,var_Croo,var_Clit,var_Ccwd,var_Csom,var_Cbio,var_gsi,var_gsi_itemp,ar_gsi_iphoto,var_gsi_ivpd,var_aNPP,var_flux_fol_lit,var_flux_wood_cwd,var_flux_root_lit,var_flux_cwd_lit,var_Rh_lit,var_decomp_lit))
+ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_nee,var_Reco,var_Rauto,var_Rhet,var_Cwoo,var_Clab,var_Cfol,var_Croo,var_Clit,var_Ccwd,var_Csom,var_Cbio,var_gsi,var_gsi_itemp,var_gsi_iphoto,var_gsi_ivpd,var_flux_fol_lit,var_flux_wood_cwd,var_flux_root_lit,var_flux_cwd_lit,var_Rh_lit,var_decomp_lit))
 
 ## write lai from all model dalecc runs to file
 #parsdim <- ncdim_def("params","nparams",1:paramsets)
@@ -309,7 +300,6 @@ ncvar_put(ncnew,var_gsi,gsi_out)
 ncvar_put(ncnew,var_gsi_itemp,gsi_itemp_out)
 ncvar_put(ncnew,var_gsi_iphoto,gsi_iphoto_out)
 ncvar_put(ncnew,var_gsi_ivpd,gsi_ivpd_out)
-ncvar_put(ncnew,var_aNPP,aNPP_out)
 ncvar_put(ncnew,var_flux_fol_lit,flux_fol_lit_out)
 ncvar_put(ncnew,var_flux_wood_cwd,flux_wood_cwd_out)
 ncvar_put(ncnew,var_flux_root_lit,flux_root_lit_out)
