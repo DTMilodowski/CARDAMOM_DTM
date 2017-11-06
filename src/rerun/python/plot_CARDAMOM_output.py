@@ -58,9 +58,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Cfol' in obs.keys(): # check for observations
         if 'Cfol_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Cfol'],yerr=obs['Cfol_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1b.error_bar(obs['time'],obs['Cfol'],yerr=obs['Cfol_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Cfol'],marker='o',c='black',mec='black',mfc='black')
+            ax1b.plot(obs['time'],obs['Cfol'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot c -> Croot
     ax1c = plt.subplot2grid((7,1),(2,0),sharex=ax1a)
@@ -72,9 +72,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Croo' in obs.keys(): # check for observations
         if 'Cwro_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1c.error_bar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
+            ax1c.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot d -> Clab
     ax1d = plt.subplot2grid((7,1),(3,0),sharex=ax1a)
@@ -86,9 +86,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Clab' in obs.keys(): # check for observations
         if 'Clab_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Clab'],yerr=obs['Clab_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1d.error_bar(obs['time'],obs['Clab'],yerr=obs['Clab_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Clab'],marker='o',c='black',mec='black',mfc='black')
+            ax1d.plot(obs['time'],obs['Clab'],marker='o',c='black',mec='black',mfc='black')
             
     # Plot e -> Clit
     ax1e = plt.subplot2grid((7,1),(4,0),sharex=ax1a)
@@ -100,9 +100,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Clit' in obs.keys(): # check for observations
         if 'Clit_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1e.error_bar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
+            ax1e.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot f -> Ccwd
     ax1f = plt.subplot2grid((7,1),(5,0),sharex=ax1a)
@@ -114,9 +114,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Ccwd' in obs.keys(): # check for observations
         if 'Ccwd_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1f.error_bar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Ccwd'],marker='o',c='black',mec='black',mfc='black')    
+            ax1f.plot(obs['time'],obs['Ccwd'],marker='o',c='black',mec='black',mfc='black')    
     
     # Plot g -> Csom
     ax1g = plt.subplot2grid((7,1),(6,0),sharex=ax1a)
@@ -129,9 +129,9 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Csom' in obs.keys(): # check for observations
         if 'Csom_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Csom'],yerr=obs['Csom_u'],marker='o',c='black',mec='black',mfc='black')
+            ax1g.error_bar(obs['time'],obs['Csom'],yerr=obs['Csom_u'],marker='o',c='black',mec='black',mfc='black')
         else:
-            ax1a.plot(obs['time'],obs['Csom'],marker='o',c='black',mec='black',mfc='black')    
+            ax1g.plot(obs['time'],obs['Csom'],marker='o',c='black',mec='black',mfc='black')    
     
 
     # set xlimits if desired
