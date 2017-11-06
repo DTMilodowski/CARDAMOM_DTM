@@ -145,3 +145,46 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     plt.tight_layout()
     plt.show()
     return 0
+
+
+#----------------------
+# plot_carbon_fluxes_ts
+# ---------------------
+# Plot a time series of C fluxes into and out of ecosystem, with observations if
+# available. LAI time series also plotted to provide context
+# The function reads in two dictionaries:
+# - the model output (median, ulim, llim)
+# - the obserations where available
+# Note that these dictionaries should have uniform naming structures for the
+# carbon fluxes
+# - lai : leaf area index
+# - gpp : Gross Primary Production
+# - nee : Net ecosystem exchange
+# - Rauto : autotrophic respiration
+# - Rhet : heterotrophic respiration
+# Also takes optional arguments for start and end timestep. initially these will
+# be index references (i.e. model timestep) but this will ultimately be altered
+# to give options to specify date ranges.
+
+#----------------------
+# plot_litter_components_ts
+# ---------------------
+# Plot a time series of the model output relating specifically to the litter
+# component of DALEC
+# The function reads in two dictionaries:
+# - the model output (median, ulim, llim)
+# - the obserations where available
+# Note that these dictionaries should have uniform naming structures
+# - lai : leaf area index
+# - gsi : growth season index
+# - Cfol : litter stocks
+# - Croo : root carbon stocks
+# - Ccwd : coarse woody debris stocks
+# - flux_fol_lit : carbon flux from foliar pool to litter (litterfall)
+# - flux_cwd_lit : carbon flux from CWD pool to litter
+# - flux_root_lit : carbon flux from root pool to litter
+# - Rh_lit : heterotrophic respiration from litter pool
+# - decomp_lit : decomposition flux of carbon from litter to SOM
+# Also takes optional arguments for start and end timestep. initially these will
+# be index references (i.e. model timestep) but this will ultimately be altered
+# to give options to specify date ranges.
