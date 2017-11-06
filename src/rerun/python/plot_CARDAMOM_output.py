@@ -40,6 +40,13 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     ax1a.fill_between(model['time'],model['Cwoo'][:,3],model['Cwoo'][:,4],color=colour[0],alpha=0.2)
     ax1a.plot(model['time'],model['Cwoo'][:,1],'-',color=colour[0])
+
+    if 'Cwoo' in obs.keys(): # check for observations
+        if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
+
     
     # Plot b -> Cfol
     ax1b = plt.subplot2grid((7,1),(1,0),sharex=ax1a)
@@ -49,6 +56,12 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     ax1b.fill_between(model['time'],model['Cfol'][:,3],model['Cfol'][:,4],color=colour[0],alpha=0.2)
     ax1b.plot(model['time'],model['Cfol'][:,1],'-',color=colour[0])
     
+    if 'Cfol' in obs.keys(): # check for observations
+        if 'Cfol_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Cfol'],yerr=obs['Cfol_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Cfol'],marker='o',c='black',mec='black',mfc='black')
+    
     # Plot c -> Croot
     ax1c = plt.subplot2grid((7,1),(2,0),sharex=ax1a)
     ax1c.annotate('c - C$_{root}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -57,6 +70,12 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     ax1c.fill_between(model['time'],model['Croo'][:,3],model['Croo'][:,4],color=colour[0],alpha=0.2)
     ax1c.plot(model['time'],model['Croo'][:,1],'-',color=colour[0])
     
+    if 'Croo' in obs.keys(): # check for observations
+        if 'Cwro_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
+    
     # Plot d -> Clab
     ax1d = plt.subplot2grid((7,1),(3,0),sharex=ax1a)
     ax1d.annotate('d - C$_{labile}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -64,7 +83,13 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     ax1d.fill_between(model['time'],model['Clab'][:,3],model['Clab'][:,4],color=colour[0],alpha=0.2)
     ax1d.plot(model['time'],model['Clab'][:,1],'-',color=colour[0])
-    
+
+    if 'Clab' in obs.keys(): # check for observations
+        if 'Clab_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Clab'],yerr=obs['Clab_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Clab'],marker='o',c='black',mec='black',mfc='black')
+            
     # Plot e -> Clit
     ax1e = plt.subplot2grid((7,1),(4,0),sharex=ax1a)
     ax1e.annotate('e - C$_{litter}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -73,6 +98,12 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     ax1e.fill_between(model['time'],model['Clit'][:,3],model['Clit'][:,4],color=colour[1],alpha=0.2)
     ax1e.plot(model['time'],model['Clit'][:,1],'-',color=colour[1])
     
+    if 'Clit' in obs.keys(): # check for observations
+        if 'Clit_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
+    
     # Plot f -> Ccwd
     ax1f = plt.subplot2grid((7,1),(5,0),sharex=ax1a)
     ax1f.annotate('f - C$_{cwd}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -80,6 +111,12 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     ax1f.fill_between(model['time'],model['Ccwd'][:,3],model['Ccwd'][:,4],color=colour[1],alpha=0.2)
     ax1f.plot(model['time'],model['Ccwd'][:,1],'-',color=colour[1])
+
+    if 'Ccwd' in obs.keys(): # check for observations
+        if 'Ccwd_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Ccwd'],marker='o',c='black',mec='black',mfc='black')    
     
     # Plot g -> Csom
     ax1g = plt.subplot2grid((7,1),(6,0),sharex=ax1a)
@@ -89,6 +126,13 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     ax1g.fill_between(model['time'],model['Csom'][:,3],model['Csom'][:,4],color=colour[1],alpha=0.2)
     ax1g.plot(model['time'],model['Csom'][:,1],'-',color=colour[1])
+    
+    if 'Csom' in obs.keys(): # check for observations
+        if 'Csom_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.error_bar(obs['time'],obs['Csom'],yerr=obs['Csom_u'],marker='o',c='black',mec='black',mfc='black')
+        else:
+            ax1a.plot(obs['time'],obs['Csom'],marker='o',c='black',mec='black',mfc='black')    
+    
 
     # set xlimits if desired
     if start_tstep!=False:
