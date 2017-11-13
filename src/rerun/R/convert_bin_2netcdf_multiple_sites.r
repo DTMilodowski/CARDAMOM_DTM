@@ -8,7 +8,7 @@ modelname <- "DALEC_GSI_DFOL_CWD_FR"
 project <- "BALI_GEMplots_daily"
 run <- "001"
 site <- c("MLA01","MLA02","SAF04","SAF03","SAF02","SAF01")
-lat <- c(4.747, 4.437, 4,765, 4.690, 4,744, 4,729)
+lat <- c(4.747, 4.437, 4.765, 4.690, 4.744, 4.729)
 lon <- c(116.951, 116.951, 117.702, 117.586, 117.618, 117.618)
 startyear <- 2011
 endyear <- 2016
@@ -219,48 +219,40 @@ library(ncdf4)
 
 f_out=paste(path2files,project, "_", startyear, "_", endyear, "_",modelname,".nc", sep="")
 
-xvals <- lon
-yvals <- lat
-
 # define dimensions
 sitedim <- ncdim_def("sites","dimensionless",1:nsites) 
 timedim <- ncdim_def("time","weeks",1:ntsteps,unlim=TRUE)
 stats <- ncdim_def("stats","dimenisonless (1-5)",1:nstats) 
 
-var_lai <- ncvar_def("lai", "m2m-2", list(stats,timedim,sitedim), longname="Leaf Area Index (LAI)")
-var_gpp <- ncvar_def("gpp", "gC m-2day-1", list(stats,timedim,sitedim), longname="Gross Primary Productivity (GPP)")
-var_nee <- ncvar_def("nee", "gC m-2day-1", list(stats,timedim,sitedim), longname="Net Ecosystem Exchange (NEE) ")
-var_Reco <- ncvar_def("Reco", "gC m-2day-1", list(stats,timedim,sitedim), longname="Ecosystem respiration (Reco)")
-var_Rauto <- ncvar_def("Rauto", "gC m-2day-1", list(stats,timedim,sitedim), longname="Autotrophic respiration (Rauto) ")
-var_Rhet <- ncvar_def("Rhet", "gC m-2day-1", list(stats,timedim,sitedim), longname="Heterotrophic respiration (Rhet) ")
-var_Cwoo <- ncvar_def("Cwoo", "gC m-2", list(stats,timedim,sitedim), longname="Wood carbon stock (Cwoo)")
-var_Clit <- ncvar_def("Clit", "gC m-2", list(stats,timedim,sitedim), longname="Litter carbon stock (Clit)")
-var_Clab <- ncvar_def("Clab", "gC m-2", list(stats,timedim,sitedim), longname="Labile carbon stock (Clab)")
-var_Csom <- ncvar_def("Csom", "gC m-2", list(stats,timedim,sitedim), longname="Soil organic matter carbon stock (Csom)")
-var_Croo <- ncvar_def("Croo", "gC m-2", list(stats,timedim,sitedim), longname="Root carbon stock (Croo)")
-var_Cbio <- ncvar_def("Cbio", "gC m-2", list(stats,timedim,sitedim), longname="Aggregated biotic carbon stock (Cbio)")
-var_Cfol <- ncvar_def("Cfol", "gC m-2", list(stats,timedim,sitedim), longname="Foliage carbon stock (Cfol)")
-var_gsi <- ncvar_def("gsi", "unspecified units", list(stats,timedim,sitedim), longname="Growing Season Index (GSI)")
-var_gsi_itemp <- ncvar_def("gsi_itemp", "unspecified units", list(stats,timedim,sitedim), longname="Growing Season Index (GSI) - temperature component")
-var_gsi_iphoto <- ncvar_def("gsi_iphoto", "unspecified units", list(stats,timedim,sitedim), longname="Growing Season Index (GSI) - photoperiod component")
-var_gsi_ivpd <- ncvar_def("gsi_ivpd", "unspecified units", list(stats,timedim,sitedim), longname="Growing Season Index (GSI) - vapour pressure deficit component")
-var_Ccwd <- ncvar_def("Ccwd", "gC m-2", list(stats,timedim,sitedim), longname="Coarse woody debris carbon stock (Ccwd)")
-var_flux_fol_lit <- ncvar_def("flux_fol_lit", "gC m-2day-1", list(stats,timedim,sitedim), longname="Carbon flux from foliage to litter")
-var_flux_wood_cwd <- ncvar_def("flux_wood_cwd", "gC m-2day-1", list(,stats,timedim,sitedim), longname="Carbon flux from wood to cwd")
-var_flux_root_lit <- ncvar_def("flux_root_lit", "gC m-2day-1", list(stats,timedim,sitedim), longname="Carbon flux from roots to litter")
-var_flux_cwd_lit <- ncvar_def("flux_cwd_lit", "gC m-2day-1", list(stats,timedim,sitedim), longname="Carbon flux from cwd to litter")
-var_Rh_lit <- ncvar_def("Rh_lit", "gC m-2day-1", list(stats,timedim,sitedim), longname="Heterotrophic respiration flux from litter")
-var_decomp_lit <- ncvar_def("decomp_lit", "gC m-2day-1", list(stats,timedim,sitedim), longname="decomposition flux from litter")
+var_lai <- ncvar_def("lai", "m2m-2", list(sitedim,stats,timedim), longname="Leaf Area Index (LAI)")
+var_gpp <- ncvar_def("gpp", "gC m-2day-1", list(sitedim,stats,timedim), longname="Gross Primary Productivity (GPP)")
+var_nee <- ncvar_def("nee", "gC m-2day-1", list(sitedim,stats,timedim), longname="Net Ecosystem Exchange (NEE) ")
+var_Reco <- ncvar_def("Reco", "gC m-2day-1", list(sitedim,stats,timedim), longname="Ecosystem respiration (Reco)")
+var_Rauto <- ncvar_def("Rauto", "gC m-2day-1", list(sitedim,stats,timedim), longname="Autotrophic respiration (Rauto) ")
+var_Rhet <- ncvar_def("Rhet", "gC m-2day-1", list(sitedim,stats,timedim), longname="Heterotrophic respiration (Rhet) ")
+var_Cwoo <- ncvar_def("Cwoo", "gC m-2", list(sitedim,stats,timedim), longname="Wood carbon stock (Cwoo)")
+var_Clit <- ncvar_def("Clit", "gC m-2", list(sitedim,stats,timedim), longname="Litter carbon stock (Clit)")
+var_Clab <- ncvar_def("Clab", "gC m-2", list(sitedim,stats,timedim), longname="Labile carbon stock (Clab)")
+var_Csom <- ncvar_def("Csom", "gC m-2", list(sitedim,stats,timedim), longname="Soil organic matter carbon stock (Csom)")
+var_Croo <- ncvar_def("Croo", "gC m-2", list(sitedim,stats,timedim), longname="Root carbon stock (Croo)")
+var_Cbio <- ncvar_def("Cbio", "gC m-2", list(sitedim,stats,timedim), longname="Aggregated biotic carbon stock (Cbio)")
+var_Cfol <- ncvar_def("Cfol", "gC m-2", list(sitedim,stats,timedim), longname="Foliage carbon stock (Cfol)")
+var_gsi <- ncvar_def("gsi", "unspecified units", list(sitedim,stats,timedim), longname="Growing Season Index (GSI)")
+var_gsi_itemp <- ncvar_def("gsi_itemp", "unspecified units", list(sitedim,stats,timedim), longname="Growing Season Index (GSI) - temperature component")
+var_gsi_iphoto <- ncvar_def("gsi_iphoto", "unspecified units", list(sitedim,stats,timedim), longname="Growing Season Index (GSI) - photoperiod component")
+var_gsi_ivpd <- ncvar_def("gsi_ivpd", "unspecified units", list(sitedim,stats,timedim), longname="Growing Season Index (GSI) - vapour pressure deficit component")
+var_Ccwd <- ncvar_def("Ccwd", "gC m-2", list(sitedim,stats,timedim), longname="Coarse woody debris carbon stock (Ccwd)")
+var_flux_fol_lit <- ncvar_def("flux_fol_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="Carbon flux from foliage to litter")
+var_flux_wood_cwd <- ncvar_def("flux_wood_cwd", "gC m-2day-1", list(sitedim,stats,timedim), longname="Carbon flux from wood to cwd")
+var_flux_root_lit <- ncvar_def("flux_root_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="Carbon flux from roots to litter")
+var_flux_cwd_lit <- ncvar_def("flux_cwd_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="Carbon flux from cwd to litter")
+var_Rh_lit <- ncvar_def("Rh_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="Heterotrophic respiration flux from litter")
+var_decomp_lit <- ncvar_def("decomp_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="decomposition flux from litter")
 var_lat <- ncvar_def("latitude", "degrees_north", list(sitedim), longname="latitude of site")
 var_lon <- ncvar_def("longitude", "decimal_east", list(sitedim), longname="longitude of site")
 var_site <- ncvar_def("GEM_code", "text", list(sitedim), longname="GEM code for plot")
 
 ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_nee,var_Reco,var_Rauto,var_Rhet,var_Cwoo,var_Clab,var_Cfol,var_Croo,var_Clit,var_Ccwd,var_Csom,var_Cbio,var_gsi,var_gsi_itemp,var_gsi_iphoto,var_gsi_ivpd,var_flux_fol_lit,var_flux_wood_cwd,var_flux_root_lit,var_flux_cwd_lit,var_Rh_lit,var_decomp_lit,var_lat,var_lon,var_site))
-
-## write lai from all model dalecc runs to file
-#parsdim <- ncdim_def("params","nparams",1:paramsets)
-#var_lai_all <- ncvar_def("lai", "m2m-2", list(latdim,londim,parsdim,timedim), longname="Leaf Area Index (LAI) calculated using DALECC-BUCKET")
-#ncnew_lai <- nc_create(f_out_lai, list(var_lai_all))
 
 print("Writing data to file")
 ncvar_put(ncnew,var_lai,lai_out)
@@ -291,8 +283,7 @@ ncvar_put(ncnew,var_lat,lat)
 ncvar_put(ncnew,var_lon,lon)
 ncvar_put(ncnew,var_site,site)
 
-#print(paste("The file has", ncnew$nvars,"variable(s): lai, gpp"))
-print(paste("The file has", ncnew$ndim,"dimension(s): sites, time, stats"))#lon, lat"))
+print(paste("The file has", ncnew$ndim,"dimension(s): sites, time, stats"))
 
 # Don't forget to close the file
 nc_close(ncnew)
