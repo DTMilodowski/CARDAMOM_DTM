@@ -19,7 +19,8 @@ sys.path.append('/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/sr
 import plot_CARDAMOM_output as pCAR
 
 path2project = '/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/'
-# Project data file (to load in if already generated
+
+# Project data file
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
 project_met = "BALI_GEMplots_daily_drivers.npy"
 project_par = "BALI_GEMplots_daily_params.npy"
@@ -73,26 +74,27 @@ model['gsi_itemp']=mod.variables['gsi_itemp'][:,:,0,0]
 obs_in = np.load('%s%s' % (data_dir,project_obs))
 obs_in[obs_in==-9999]=np.nan
 obs={}
-obs['gpp'] = obs[site_index,:,0]
-obs['gpp_u'] = obs[site_index,:,11]
-obs['nee'] = obs[site_index,:,2]
-obs['nee_u'] = obs[site_index,:,13]
-obs['lai'] = obs[site_index,:,1]
-obs['lai_u'] = obs[site_index,:,12]
-obs['Cwoo'] = obs[site_index,:,6]
-obs['Cwoo_u'] = obs[site_index,:,17]
-obs['Cfol'] = obs[site_index,:,5]
-obs['Cfol_u'] = obs[site_index,:,16]
-obs['Croo'] = obs[site_index,:,7]
-obs['Croo_u'] = obs[site_index,:,18
-obs['Clit'] = obs[site_index,:,8]
-obs['Clit_u'] = obs[site_index,:,19]
-obs['Csom'] = obs[site_index,:,9]
-obs['Csom_u'] = obs[site_index,:,20]
-obs['Reco'] = obs[site_index,:,4]
-obs['Reco_u'] = obs[site_index,:,15]
-obs['flux_fol_lit'] = obs[site_index,:,32]
-obs['flux_fol_lit_u'] = obs[site_index,:,33]
+obs['time'] = 
+obs['gpp'] = obs_in[site_index,:,0]
+obs['gpp_u'] = obs_in[site_index,:,11]
+obs['nee'] = obs_in[site_index,:,2]
+obs['nee_u'] = obs_in[site_index,:,13]
+obs['lai'] = obs_in[site_index,:,1]
+obs['lai_u'] = obs_in[site_index,:,12]
+obs['Cwoo'] = obs_in[site_index,:,6]
+obs['Cwoo_u'] = obs_in[site_index,:,17]
+obs['Cfol'] = obs_in[site_index,:,5]
+obs['Cfol_u'] = obs_in[site_index,:,16]
+obs['Croo'] = obs_in[site_index,:,7]
+obs['Croo_u'] = obs_in[site_index,:,18]
+obs['Clit'] = obs_in[site_index,:,8]
+obs['Clit_u'] = obs_in[site_index,:,19]
+obs['Csom'] = obs_in[site_index,:,9]
+obs['Csom_u'] = obs_in[site_index,:,20]
+obs['Reco'] = obs_in[site_index,:,4]
+obs['Reco_u'] = obs_in[site_index,:,15]
+obs['flux_fol_lit'] = obs_in[site_index,:,32]
+obs['flux_fol_lit_u'] = obs_in[site_index,:,33]
 
 # plot Carbon stocks
 pCAR.plot_carbon_pools_ts(model,obs)
