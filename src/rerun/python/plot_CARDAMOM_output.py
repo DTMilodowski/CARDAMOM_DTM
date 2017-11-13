@@ -43,7 +43,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Cwoo' in obs.keys(): # check for observations
         if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1a.errorbar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1a.plot(obs['time'],obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
 
@@ -58,7 +58,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Cfol' in obs.keys(): # check for observations
         if 'Cfol_u' in obs.keys(): # check for uncertainty bounds
-            ax1b.error_bar(obs['time'],obs['Cfol'],yerr=obs['Cfol_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1b.errorbar(obs['time'],obs['Cfol'],yerr=obs['Cfol_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1b.plot(obs['time'],obs['Cfol'],marker='o',c='black',mec='black',mfc='black')
     
@@ -72,7 +72,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Croo' in obs.keys(): # check for observations
         if 'Cwro_u' in obs.keys(): # check for uncertainty bounds
-            ax1c.error_bar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1c.errorbar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1c.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
     
@@ -86,7 +86,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Clab' in obs.keys(): # check for observations
         if 'Clab_u' in obs.keys(): # check for uncertainty bounds
-            ax1d.error_bar(obs['time'],obs['Clab'],yerr=obs['Clab_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1d.errorbar(obs['time'],obs['Clab'],yerr=obs['Clab_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1d.plot(obs['time'],obs['Clab'],marker='o',c='black',mec='black',mfc='black')
             
@@ -100,7 +100,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Clit' in obs.keys(): # check for observations
         if 'Clit_u' in obs.keys(): # check for uncertainty bounds
-            ax1e.error_bar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1e.errorbar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1e.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
     
@@ -114,7 +114,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Ccwd' in obs.keys(): # check for observations
         if 'Ccwd_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.error_bar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1f.errorbar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1f.plot(obs['time'],obs['Ccwd'],marker='o',c='black',mec='black',mfc='black')    
     
@@ -129,7 +129,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Csom' in obs.keys(): # check for observations
         if 'Csom_u' in obs.keys(): # check for uncertainty bounds
-            ax1g.error_bar(obs['time'],obs['Csom'],yerr=obs['Csom_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1g.errorbar(obs['time'],obs['Csom'],yerr=obs['Csom_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1g.plot(obs['time'],obs['Csom'],marker='o',c='black',mec='black',mfc='black')
     
@@ -199,7 +199,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'lai' in obs.keys(): # check for observations
         if 'lai' in obs.keys(): # check for uncertainty bounds
-            ax1a.error_bar(obs['time'],obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1a.errorbar(obs['time'],obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1a.plot(obs['time'],obs['lai'],marker='o',c='black',mec='black',mfc='black')
 
@@ -223,7 +223,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Clit' in obs.keys(): # check for observations
         if 'Clit_u' in obs.keys(): # check for uncertainty bounds
-            ax1c.error_bar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1c.errorbar(obs['time'],obs['Clit'],yerr=obs['Clit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1c.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
 
@@ -238,7 +238,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'Croo' in obs.keys(): # check for observations
         if 'Cwro_u' in obs.keys(): # check for uncertainty bounds
-            ax1d.error_bar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1d.errorbar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1d.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
     
@@ -252,7 +252,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
 
     if 'Ccwd' in obs.keys(): # check for observations
         if 'Ccwd_u' in obs.keys(): # check for uncertainty bounds
-            ax1e.error_bar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1e.errorbar(obs['time'],obs['Ccwd'],yerr=obs['Ccwd_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1e.plot(obs['time'],obs['Ccwd'],marker='o',c='black',mec='black',mfc='black')
             
@@ -266,7 +266,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'flux_fol_lit' in obs.keys(): # check for observations
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.error_bar(obs['time'],obs['flux_fol_lit'],yerr=obs['flux_fol_lit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1f.errorbar(obs['time'],obs['flux_fol_lit'],yerr=obs['flux_fol_lit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1f.plot(obs['time'],obs['flux_fol_lit'],marker='o',c='black',mec='black',mfc='black')
 
