@@ -191,7 +191,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
 
     # Plot a -> LAI
     ax1a = plt.subplot2grid((8,1),(0,0))
-    ax1a.annotate('a - LAI$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1a.annotate('a - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1a.set_ylabel('LAI / m$^2$m$^{-2}$',fontsize = axis_size)
     
     ax1a.fill_between(model['time'],model['lai'][:,3],model['lai'][:,4],color=colour[0],alpha=0.2)
@@ -209,8 +209,8 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     ax1b.annotate('b - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1b.set_ylabel('GSI',fontsize = axis_size)
     
-    ax1b.fill_between(model['time'],model['gsi'][:,3],model['gsi'][:,4],color=colour[0],alpha=0.2)
-    ax1b.plot(model['time'],model['gsi'][:,1],'-',color=colour[0])
+    ax1b.fill_between(model['time'],model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.2)
+    ax1b.plot(model['time'],model['gsi'][:,1],'-',color=colour[2])
     
     
     # Plot c -> Clit
@@ -218,8 +218,8 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     ax1c.annotate('e - C$_{litter}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1c.set_ylabel('C$_{lit}$ / g(C) m$^{-2}$',fontsize = axis_size)
     
-    ax1c.fill_between(model['time'],model['Clit'][:,3],model['Clit'][:,4],color=colour[1],alpha=0.2)
-    ax1c.plot(model['time'],model['Clit'][:,1],'-',color=colour[1])
+    ax1c.fill_between(model['time'],model['Clit'][:,3],model['Clit'][:,4],color=colour[0],alpha=0.2)
+    ax1c.plot(model['time'],model['Clit'][:,1],'-',color=colour[0])
     
     if 'Clit' in obs.keys(): # check for observations
         if 'Clit_u' in obs.keys(): # check for uncertainty bounds
@@ -259,7 +259,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     # Plot f -> Cfol into Clit
     ax1f = plt.subplot2grid((8,1),(5,0),sharex=ax1a)
     ax1f.annotate('f - litterfall', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1f.set_ylabel('litter flux from foliage / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1f.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
     ax1f.fill_between(model['time'],model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
     ax1f.plot(model['time'],model['flux_fol_lit'][:,1],'-',color=colour[1])
@@ -273,26 +273,20 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     # Plot g -> cwd fluxes into litter pool
     ax1g = plt.subplot2grid((8,1),(6,0),sharex=ax1a)
     ax1g.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1g.set_ylabel('litter flux from CWD / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1g.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
     ax1g.fill_between(model['time'],model['flux_cwd_lit'][:,3],model['flux_cwd_lit'][:,4],color=colour[1],alpha=0.2)
     ax1g.plot(model['time'],model['flux_cwd_lit'][:,1],'-',color=colour[1])
 
 
     # Plot h -> root fluxes into litter pool
-    ax1h = plt.subplot2grid((8,1),(6,0),sharex=ax1a)
-    ax1h.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1h.set_ylabel('litter flux from CWD / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
-    
-    ax1h.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1h.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
     ax1h = plt.subplot2grid((8,1),(7,0),sharex=ax1a)
-    ax1h.annotate('f - litter loss fluxes', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1h.set_ylabel('litter flux from roots / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1h.annotate('f - litter flux from roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1h.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
     ax1h.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
     ax1h.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
-
+    
     # set xlimits if desired
     if start_tstep!=False:
         ax1a.set_xlim(xmin=start_tstep)
