@@ -28,15 +28,43 @@ NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 mod = Dataset(NetCDF_file)
 
 site_index = 0
+# Get model output
 mod_pools = {}
-mod_pools['Cwoo']=mod.variables['Cwoo'][:,:,0,0]
-mod_pools['Croo']=mod.variables['Croo'][:,:,0,0]
-mod_pools['Clit']=mod.variables['Clit'][:,:,0,0]
-mod_pools['Csom']=mod.variables['Csom'][:,:,0,0]
-mod_pools['Ccwd']=mod.variables['Ccwd'][:,:,0,0]
-mod_pools['Clab']=mod.variables['Clab'][:,:,0,0]
-mod_pools['Cfol']=mod.variables['Cfol'][:,:,0,0]
-mod_pools['time']=mod.variables['time']
+# carbon pools
+model['Cwoo']=mod.variables['Cwoo'][:,:,0,0]
+model['Croo']=mod.variables['Croo'][:,:,0,0]
+model['Clit']=mod.variables['Clit'][:,:,0,0]
+model['Csom']=mod.variables['Csom'][:,:,0,0]
+model['Ccwd']=mod.variables['Ccwd'][:,:,0,0]
+model['Clab']=mod.variables['Clab'][:,:,0,0]
+model['Cfol']=mod.variables['Cfol'][:,:,0,0]
+model['Cbio']=mod.variables['Cbio'][:,:,0,0]
+model['time']=mod.variables['time']
+
+# Litter/foliage related components
+model['lai']=mod.variables['lai'][:,:,0,0]
+model['flux_fol_lit']=mod.variables['flux_fol_lit'][:,:,0,0]
+model['flux_root_lit']=mod.variables['flux_root_lit'][:,:,0,0]
+model['flux_cwd_lit']=mod.variables['flux_cwd_lit'][:,:,0,0]
+model['flux_wood_cwd']=mod.variables['flux_wood_cwd'][:,:,0,0]
+model['']=mod.variables[''][:,:,0,0]
+
+# fluxes
+model['Reco']=mod.variables['Reco'][:,:,0,0]
+model['Rauto']=mod.variables['Rauto'][:,:,0,0]
+model['Rhet']=mod.variables['Rhet'][:,:,0,0]
+model['Rh_lit']=mod.variables['Rh_lit'][:,:,0,0]
+model['gpp']=mod.variables['gpp'][:,:,0,0]
+model['nee']=mod.variables['nee'][:,:,0,0]
+model['decomp_lit']=mod.variables['decomp_lit'][:,:,0,0]
+
+# GSI
+model['gsi']=mod.variables['gsi'][:,:,0,0]
+model['gsi_iphoto']=mod.variables['gsi_iphoto'][:,:,0,0]
+model['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,0,0]
+model['gsi_itemp']=mod.variables['gsi_itemp'][:,:,0,0]
+
+# Get corresponding observations
 
 obs_pools={}
 
