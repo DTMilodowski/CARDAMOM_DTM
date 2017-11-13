@@ -181,11 +181,8 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 # - Croo : root carbon stocks
 # - Ccwd : coarse woody debris stocks
 # - flux_fol_lit : carbon flux from foliar pool to litter (litterfall)
-# - flux_cwd_lit* : carbon flux from CWD pool to litter
-# - flux_root_lit* : carbon flux from root pool to litter
-# - Rh_lit** : heterotrophic respiration from litter pool
-# - decomp_lit** : decomposition flux of carbon from litter to SOM
-# fields marked * and ** are combined for brevity in plotting
+# - flux_cwd_lit : carbon flux from CWD pool to litter
+# - flux_root_lit : carbon flux from root pool to litter
 # Also takes optional arguments for start and end timestep. initially these will
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
