@@ -28,6 +28,12 @@ for(i in 1:nsites) {
 # Setup output arrays
 nstats = 5 # mean, median, standard deviation, 25th percentile and 75th percentile
 
+bfile=paste(path2files,vector_of_site_ids[1],".RData",sep="")
+print(paste("Reading in",bfile))
+load(bfile)
+lai=states_all$lai
+ntsteps = length(lai[1,])
+
 # compute statistics, for each timestep
 lai_out=array(0., c(nsites,nstats,ntsteps)) 
 gpp_out=array(0., c(nsites,nstats,ntsteps))
@@ -56,180 +62,155 @@ decomp_lit_out=array(0., c(nsites,nstats,ntsteps))
 
 
 for(ss in 1:nsites) {
+    print(paste("SITE: ", site[ss]))
     # read in binary files
     bfile=paste(path2files,vector_of_site_ids[ss],".RData",sep="")
 
     print(paste("Reading in",bfile))
     load(bfile)
 
-    lai=states_all$lai
-    gpp=states_all$gpp
-    nee=states_all$nee
-    reco=states_all$reco
-    rauto=states_all$rauto
-    rhet=states_all$rhet
-    wood=states_all$wood
-    som=states_all$som
-    bio=states_all$bio
-    root=states_all$root
-    lab=states_all$lab
-    lit=states_all$lit
-    fol=states_all$fol
-    gsi=states_all$gsi
-    gsi_itemp=states_all$gsi_itemp
-    gsi_iphoto=states_all$gsi_iphoto
-    litwood=states_all$litwood
-    litfol_flx=states_all$litfol_flx
-    litwood_flx=states_all$litwood_flx
-    litroot_flx=states_all$litroot_flx
-    litcwd_flx=states_all$litcwd_flux
-    decomp_lit=states_all$decomp_lit
-    Rhet_lit=states_all$Rhet_lit
-
-
-    ntsteps=length(lai[1,])
-    paramsets=length(lai[,1])
+    paramsets=length(states_all$lai[,1])
     print(paste("Number of param sets is ",paramsets,sep=""))
 
     print("Calculating the mean, median, standard deviation, 25th percentile and 75th percentile values for each timestep")
     for(i in 1:ntsteps){
-	lai_out[ss,1,i] <- mean(lai[,i]) 	
-	lai_out[ss,2,i] <- median(lai[,i])
-	lai_out[ss,3,i] <- sd(lai[,i]) # standard deviation
-	lai_out[ss,4,i] <- quantile(lai[,i], 0.25) # 25th percentile
-	lai_out[ss,5,i] <- quantile(lai[,i], 0.75) # 75th percentile
+	lai_out[ss,1,i] <- mean(states_all$lai[,i]) 	
+	lai_out[ss,2,i] <- median(states_all$lai[,i])
+	lai_out[ss,3,i] <- sd(states_all$lai[,i]) # standard deviation
+	lai_out[ss,4,i] <- quantile(states_all$lai[,i], 0.25) # 25th percentile
+	lai_out[ss,5,i] <- quantile(states_all$lai[,i], 0.75) # 75th percentile
 
-	gpp_out[ss,1,i] <- mean(gpp[,i]) 	
-	gpp_out[ss,2,i] <- median(gpp[,i])
-	gpp_out[ss,3,i] <- sd(gpp[,i])
-	gpp_out[ss,4,i] <- quantile(gpp[,i], 0.25)
-	gpp_out[ss,5,i] <- quantile(gpp[,i], 0.75)
+	gpp_out[ss,1,i] <- mean(states_all$gpp[,i]) 	
+	gpp_out[ss,2,i] <- median(states_all$gpp[,i])
+	gpp_out[ss,3,i] <- sd(states_all$gpp[,i])
+	gpp_out[ss,4,i] <- quantile(states_all$gpp[,i], 0.25)
+	gpp_out[ss,5,i] <- quantile(states_all$gpp[,i], 0.75)
         
-	nee_out[ss,1,i] <- mean(nee[,i]) 	
-	nee_out[ss,2,i] <- median(nee[,i])
-	nee_out[ss,3,i] <- sd(nee[,i])
-	nee_out[ss,4,i] <- quantile(nee[,i], 0.25)
-	nee_out[ss,5,i] <- quantile(nee[,i], 0.75)
+	nee_out[ss,1,i] <- mean(states_all$nee[,i]) 	
+	nee_out[ss,2,i] <- median(states_all$nee[,i])
+	nee_out[ss,3,i] <- sd(states_all$nee[,i])
+	nee_out[ss,4,i] <- quantile(states_all$nee[,i], 0.25)
+	nee_out[ss,5,i] <- quantile(states_all$nee[,i], 0.75)
 
-	Reco_out[ss,1,i] <- mean(reco[,i]) 	
-	Reco_out[ss,2,i] <- median(reco[,i])
-	Reco_out[ss,3,i] <- sd(reco[,i])
-	Reco_out[ss,4,i] <- quantile(reco[,i], 0.25)
-	Reco_out[ss,5,i] <- quantile(reco[,i], 0.75)
+	Reco_out[ss,1,i] <- mean(states_all$reco[,i]) 	
+	Reco_out[ss,2,i] <- median(states_all$reco[,i])
+	Reco_out[ss,3,i] <- sd(states_all$reco[,i])
+	Reco_out[ss,4,i] <- quantile(states_all$reco[,i], 0.25)
+	Reco_out[ss,5,i] <- quantile(states_all$reco[,i], 0.75)
         
-	Rauto_out[ss,1,i] <- mean(rauto[,i]) 	
-	Rauto_out[ss,2,i] <- median(rauto[,i])
-	Rauto_out[ss,3,i] <- sd(rauto[,i])
-	Rauto_out[ss,4,i] <- quantile(rauto[,i], 0.25)
-	Rauto_out[ss,5,i] <- quantile(rauto[,i], 0.75)
+	Rauto_out[ss,1,i] <- mean(states_all$rauto[,i]) 	
+	Rauto_out[ss,2,i] <- median(states_all$rauto[,i])
+	Rauto_out[ss,3,i] <- sd(states_all$rauto[,i])
+	Rauto_out[ss,4,i] <- quantile(states_all$rauto[,i], 0.25)
+	Rauto_out[ss,5,i] <- quantile(states_all$rauto[,i], 0.75)
         
-	Rhet_out[ss,1,i] <- mean(rhet[,i]) 	
-	Rhet_out[ss,2,i] <- median(rhet[,i])
-	Rhet_out[ss,3,i] <- sd(rhet[,i])
-	Rhet_out[ss,4,i] <- quantile(rhet[,i], 0.25)
-	Rhet_out[ss,5,i] <- quantile(rhet[,i], 0.75)
+	Rhet_out[ss,1,i] <- mean(states_all$rhet[,i]) 	
+	Rhet_out[ss,2,i] <- median(states_all$rhet[,i])
+	Rhet_out[ss,3,i] <- sd(states_all$rhet[,i])
+	Rhet_out[ss,4,i] <- quantile(states_all$rhet[,i], 0.25)
+	Rhet_out[ss,5,i] <- quantile(states_all$rhet[,i], 0.75)
         
-	Cwoo_out[ss,1,i] <- mean(wood[,i]) 	
-	Cwoo_out[ss,2,i] <- median(wood[,i])
-	Cwoo_out[ss,3,i] <- sd(wood[,i]) 
-	Cwoo_out[ss,4,i] <- quantile(wood[,i], 0.25) 
-	Cwoo_out[ss,5,i] <- quantile(wood[,i], 0.75) 
+	Cwoo_out[ss,1,i] <- mean(states_all$wood[,i]) 	
+	Cwoo_out[ss,2,i] <- median(states_all$wood[,i])
+	Cwoo_out[ss,3,i] <- sd(states_all$wood[,i]) 
+	Cwoo_out[ss,4,i] <- quantile(states_all$wood[,i], 0.25) 
+	Cwoo_out[ss,5,i] <- quantile(states_all$wood[,i], 0.75) 
 
-	Csom_out[ss,1,i] <- mean(som[,i]) 	
-	Csom_out[ss,2,i] <- median(som[,i])
-	Csom_out[ss,3,i] <- sd(som[,i])
-	Csom_out[ss,4,i] <- quantile(som[,i], 0.25)
-	Csom_out[ss,5,i] <- quantile(som[,i], 0.75)
+	Csom_out[ss,1,i] <- mean(states_all$som[,i]) 	
+	Csom_out[ss,2,i] <- median(states_all$som[,i])
+	Csom_out[ss,3,i] <- sd(states_all$som[,i])
+	Csom_out[ss,4,i] <- quantile(states_all$som[,i], 0.25)
+	Csom_out[ss,5,i] <- quantile(states_all$som[,i], 0.75)
 
-	Cbio_out[ss,1,i] <- mean(bio[,i]) 	
-	Cbio_out[ss,2,i] <- median(bio[,i])
-	Cbio_out[ss,3,i] <- sd(bio[,i])
-	Cbio_out[ss,4,i] <- quantile(bio[,i], 0.25)
-	Cbio_out[ss,5,i] <- quantile(bio[,i], 0.75)
+	Cbio_out[ss,1,i] <- mean(states_all$bio[,i]) 	
+	Cbio_out[ss,2,i] <- median(states_all$bio[,i])
+	Cbio_out[ss,3,i] <- sd(states_all$bio[,i])
+	Cbio_out[ss,4,i] <- quantile(states_all$bio[,i], 0.25)
+	Cbio_out[ss,5,i] <- quantile(states_all$bio[,i], 0.75)
 
-	Croo_out[ss,1,i] <- mean(root[,i]) 	
-	Croo_out[ss,2,i] <- median(root[,i])
-	Croo_out[ss,3,i] <- sd(root[,i])
-	Croo_out[ss,4,i] <- quantile(root[,i], 0.25)
-	Croo_out[ss,5,i] <- quantile(root[,i], 0.75)
+	Croo_out[ss,1,i] <- mean(states_all$root[,i]) 	
+	Croo_out[ss,2,i] <- median(states_all$root[,i])
+	Croo_out[ss,3,i] <- sd(states_all$root[,i])
+	Croo_out[ss,4,i] <- quantile(states_all$root[,i], 0.25)
+	Croo_out[ss,5,i] <- quantile(states_all$root[,i], 0.75)
 
-	Clit_out[ss,1,i] <- mean(lit[,i]) 	
-	Clit_out[ss,2,i] <- median(lit[,i])
-	Clit_out[ss,3,i] <- sd(lit[,i])
-	Clit_out[ss,4,i] <- quantile(lit[,i], 0.25)
-	Clit_out[ss,5,i] <- quantile(lit[,i], 0.75)
+	Clit_out[ss,1,i] <- mean(states_all$lit[,i]) 	
+	Clit_out[ss,2,i] <- median(states_all$lit[,i])
+	Clit_out[ss,3,i] <- sd(states_all$lit[,i])
+	Clit_out[ss,4,i] <- quantile(states_all$lit[,i], 0.25)
+	Clit_out[ss,5,i] <- quantile(states_all$lit[,i], 0.75)
         
-	Clab_out[ss,1,i] <- mean(lab[,i]) 	
-	Clab_out[ss,2,i] <- median(lab[,i])
-	Clab_out[ss,3,i] <- sd(lab[,i])
-	Clab_out[ss,4,i] <- quantile(lab[,i], 0.25)
-	Clab_out[ss,5,i] <- quantile(lab[,i], 0.75)
+	Clab_out[ss,1,i] <- mean(states_all$lab[,i]) 	
+	Clab_out[ss,2,i] <- median(states_all$lab[,i])
+	Clab_out[ss,3,i] <- sd(states_all$lab[,i])
+	Clab_out[ss,4,i] <- quantile(states_all$lab[,i], 0.25)
+	Clab_out[ss,5,i] <- quantile(states_all$lab[,i], 0.75)
 
-	Cfol_out[ss,1,i] <- mean(fol[,i]) 	
-	Cfol_out[ss,2,i] <- median(fol[,i])
-	Cfol_out[ss,3,i] <- sd(fol[,i])
-	Cfol_out[ss,4,i] <- quantile(fol[,i], 0.25)
-	Cfol_out[ss,5,i] <- quantile(fol[,i], 0.75)
+	Cfol_out[ss,1,i] <- mean(states_all$fol[,i]) 	
+	Cfol_out[ss,2,i] <- median(states_all$fol[,i])
+	Cfol_out[ss,3,i] <- sd(states_all$fol[,i])
+	Cfol_out[ss,4,i] <- quantile(states_all$fol[,i], 0.25)
+	Cfol_out[ss,5,i] <- quantile(states_all$fol[,i], 0.75)
         
-	gsi_out[ss,1,i] <- mean(gsi[,i]) 	
-	gsi_out[ss,2,i] <- median(gsi[,i])
-	gsi_out[ss,3,i] <- sd(gsi[,i])
-	gsi_out[ss,4,i] <- quantile(gsi[,i], 0.25)
-	gsi_out[ss,5,i] <- quantile(gsi[,i], 0.75)
+	gsi_out[ss,1,i] <- mean(states_all$gsi[,i]) 	
+	gsi_out[ss,2,i] <- median(states_all$gsi[,i])
+	gsi_out[ss,3,i] <- sd(states_all$gsi[,i])
+	gsi_out[ss,4,i] <- quantile(states_all$gsi[,i], 0.25)
+	gsi_out[ss,5,i] <- quantile(states_all$gsi[,i], 0.75)
 
-	gsi_itemp_out[ss,1,i] <- mean(gsi_itemp[,i]) 	
-	gsi_itemp_out[ss,2,i] <- median(gsi_itemp[,i])
-	gsi_itemp_out[ss,3,i] <- sd(gsi_itemp[,i])
-	gsi_itemp_out[ss,4,i] <- quantile(gsi_itemp[,i], 0.25)
-	gsi_itemp_out[ss,5,i] <- quantile(gsi_itemp[,i], 0.75)
+	gsi_itemp_out[ss,1,i] <- mean(states_all$gsi_itemp[,i]) 	
+	gsi_itemp_out[ss,2,i] <- median(states_all$gsi_itemp[,i])
+	gsi_itemp_out[ss,3,i] <- sd(states_all$gsi_itemp[,i])
+	gsi_itemp_out[ss,4,i] <- quantile(states_all$gsi_itemp[,i], 0.25)
+	gsi_itemp_out[ss,5,i] <- quantile(states_all$gsi_itemp[,i], 0.75)
         
-	gsi_iphoto_out[ss,1,i] <- mean(gsi_iphoto[,i]) 	
-	gsi_iphoto_out[ss,2,i] <- median(gsi_iphoto[,i])
-	gsi_iphoto_out[ss,3,i] <- sd(gsi_iphoto[,i])
-	gsi_iphoto_out[ss,4,i] <- quantile(gsi_iphoto[,i], 0.25)
-	gsi_iphoto_out[ss,5,i] <- quantile(gsi_iphoto[,i], 0.75)
+	gsi_iphoto_out[ss,1,i] <- mean(states_all$gsi_iphoto[,i]) 	
+	gsi_iphoto_out[ss,2,i] <- median(states_all$gsi_iphoto[,i])
+	gsi_iphoto_out[ss,3,i] <- sd(states_all$gsi_iphoto[,i])
+	gsi_iphoto_out[ss,4,i] <- quantile(states_all$gsi_iphoto[,i], 0.25)
+	gsi_iphoto_out[ss,5,i] <- quantile(states_all$gsi_iphoto[,i], 0.75)
         
-	Ccwd_out[ss,1,i] <- mean(litwood[,i]) 	
-	Ccwd_out[ss,2,i] <- median(litwood[,i])
-	Ccwd_out[ss,3,i] <- sd(litwood[,i])
-	Ccwd_out[ss,4,i] <- quantile(litwood[,i], 0.25)
-	Ccwd_out[ss,5,i] <- quantile(litwood[,i], 0.75)
+	Ccwd_out[ss,1,i] <- mean(states_all$litwood[,i]) 	
+	Ccwd_out[ss,2,i] <- median(states_all$litwood[,i])
+	Ccwd_out[ss,3,i] <- sd(states_all$litwood[,i])
+	Ccwd_out[ss,4,i] <- quantile(states_all$litwood[,i], 0.25)
+	Ccwd_out[ss,5,i] <- quantile(states_all$litwood[,i], 0.75)
 
-	flux_fol_lit_out[ss,1,i] <- mean(litfol_flx[,i]) 	
-	flux_fol_lit_out[ss,2,i] <- median(litfol_flx[,i])
-	flux_fol_lit_out[ss,3,i] <- sd(litfol_flx[,i])
-	flux_fol_lit_out[ss,4,i] <- quantile(litfol_flx[,i], 0.25)
-	flux_fol_lit_out[ss,5,i] <- quantile(litfol_flx[,i], 0.75)
+	flux_fol_lit_out[ss,1,i] <- mean(states_all$litfol_flx[,i]) 	
+	flux_fol_lit_out[ss,2,i] <- median(states_all$litfol_flx[,i])
+	flux_fol_lit_out[ss,3,i] <- sd(states_all$litfol_flx[,i])
+	flux_fol_lit_out[ss,4,i] <- quantile(states_all$litfol_flx[,i], 0.25)
+	flux_fol_lit_out[ss,5,i] <- quantile(states_all$litfol_flx[,i], 0.75)
         
-	flux_wood_cwd_out[ss,1,i] <- mean(litwood_flx[,i]) 	
-	flux_wood_cwd_out[ss,2,i] <- median(litwood_flx[,i])
-	flux_wood_cwd_out[ss,3,i] <- sd(litwood_flx[,i])
-	flux_wood_cwd_out[ss,4,i] <- quantile(litwood_flx[,i], 0.25)
-	flux_wood_cwd_out[ss,5,i] <- quantile(litwood_flx[,i], 0.75)
+	flux_wood_cwd_out[ss,1,i] <- mean(states_all$litwood_flx[,i]) 	
+	flux_wood_cwd_out[ss,2,i] <- median(states_all$litwood_flx[,i])
+	flux_wood_cwd_out[ss,3,i] <- sd(states_all$litwood_flx[,i])
+	flux_wood_cwd_out[ss,4,i] <- quantile(states_all$litwood_flx[,i], 0.25)
+	flux_wood_cwd_out[ss,5,i] <- quantile(states_all$litwood_flx[,i], 0.75)
 
-	flux_root_lit_out[ss,1,i] <- mean(litroot_flx[,i]) 	
-	flux_root_lit_out[ss,2,i] <- median(litroot_flx[,i])
-	flux_root_lit_out[ss,3,i] <- sd(litroot_flx[,i])
-	flux_root_lit_out[ss,4,i] <- quantile(litroot_flx[,i], 0.25)
-	flux_root_lit_out[ss,5,i] <- quantile(litroot_flx[,i], 0.75)
+	flux_root_lit_out[ss,1,i] <- mean(states_all$litroot_flx[,i]) 	
+	flux_root_lit_out[ss,2,i] <- median(states_all$litroot_flx[,i])
+	flux_root_lit_out[ss,3,i] <- sd(states_all$litroot_flx[,i])
+	flux_root_lit_out[ss,4,i] <- quantile(states_all$litroot_flx[,i], 0.25)
+	flux_root_lit_out[ss,5,i] <- quantile(states_all$litroot_flx[,i], 0.75)
         
-	flux_cwd_lit_out[ss,1,i] <- mean(litcwd_flx[,i]) 	
-	flux_cwd_lit_out[ss,2,i] <- median(litcwd_flx[,i])
-	flux_cwd_lit_out[ss,3,i] <- sd(litcwd_flx[,i])
-	flux_cwd_lit_out[ss,4,i] <- quantile(litcwd_flx[,i], 0.25)
-	flux_cwd_lit_out[ss,5,i] <- quantile(litcwd_flx[,i], 0.75)
+	flux_cwd_lit_out[ss,1,i] <- mean(states_all$litcwd_flux[,i]) 	
+	flux_cwd_lit_out[ss,2,i] <- median(states_all$litcwd_flux[,i])
+	flux_cwd_lit_out[ss,3,i] <- sd(states_all$litcwd_flux[,i])
+	flux_cwd_lit_out[ss,4,i] <- quantile(states_all$litcwd_flux[,i], 0.25)
+	flux_cwd_lit_out[ss,5,i] <- quantile(states_all$litcwd_flux[,i], 0.75)
 
-	Rhet_lit_out[ss,1,i] <- mean(Rhet_lit[,i]) 	
-	Rhet_lit_out[ss,2,i] <- median(Rhet_lit[,i])
-	Rhet_lit_out[ss,3,i] <- sd(Rhet_lit[,i])
-	Rhet_lit_out[ss,4,i] <- quantile(Rhet_lit[,i], 0.25)
-	Rhet_lit_out[ss,5,i] <- quantile(Rhet_lit[,i], 0.75)
+	Rhet_lit_out[ss,1,i] <- mean(states_all$Rhet_lit[,i]) 	
+	Rhet_lit_out[ss,2,i] <- median(states_all$Rhet_lit[,i])
+	Rhet_lit_out[ss,3,i] <- sd(states_all$Rhet_lit[,i])
+	Rhet_lit_out[ss,4,i] <- quantile(states_all$Rhet_lit[,i], 0.25)
+	Rhet_lit_out[ss,5,i] <- quantile(states_all$Rhet_lit[,i], 0.75)
 
-	decomp_lit_out[ss,1,i] <- mean(decomp_lit[,i]) 	
-	decomp_lit_out[ss,2,i] <- median(decomp_lit[,i])
-	decomp_lit_out[ss,3,i] <- sd(decomp_lit[,i])
-	decomp_lit_out[ss,4,i] <- quantile(decomp_lit[,i], 0.25)
-	decomp_lit_out[ss,5,i] <- quantile(decomp_lit[,i], 0.75)
+	decomp_lit_out[ss,1,i] <- mean(states_all$decomp_lit[,i]) 	
+	decomp_lit_out[ss,2,i] <- median(states_all$decomp_lit[,i])
+	decomp_lit_out[ss,3,i] <- sd(states_all$decomp_lit[,i])
+	decomp_lit_out[ss,4,i] <- quantile(states_all$decomp_lit[,i], 0.25)
+	decomp_lit_out[ss,5,i] <- quantile(states_all$decomp_lit[,i], 0.75)
     }
 }
 #############################################################################################
