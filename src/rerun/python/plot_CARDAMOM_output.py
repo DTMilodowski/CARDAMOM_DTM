@@ -273,22 +273,28 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
         else:
             ax1f.plot(obs['time'],obs['flux_fol_lit'],marker='o',c='black',mec='black',mfc='black')
 
-    # Plot g -> other fluxes into litter pool
+    # Plot g -> cwd fluxes into litter pool
     ax1g = plt.subplot2grid((8,1),(6,0),sharex=ax1a)
-    ax1g.annotate('f - litter flux from CWD and roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1g.set_ylabel('litter flux from cwd and roots / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1g.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1g.set_ylabel('litter flux from CWD / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1g.fill_between(model['time'],model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1g.plot(model['time'],model['flux_fol_lit'][:,1],'-',color=colour[1])
+    ax1g.fill_between(model['time'],model['flux_cwd_lit'][:,3],model['flux_cwd_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1g.plot(model['time'],model['flux_cwd_lit'][:,1],'-',color=colour[1])
 
 
-    # Plot h -> litter loss fluxes
+    # Plot h -> root fluxes into litter pool
+    ax1h = plt.subplot2grid((8,1),(6,0),sharex=ax1a)
+    ax1h.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1h.set_ylabel('litter flux from CWD / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    
+    ax1h.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1h.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
     ax1h = plt.subplot2grid((8,1),(7,0),sharex=ax1a)
     ax1h.annotate('f - litter loss fluxes', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1h.set_ylabel('litter loss / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1h.set_ylabel('litter flux from roots / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1h.fill_between(model['time'],model['Rh_lit'][:,3],model['Rh_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1h.plot(model['time'],model['Rh_lit'][:,1],'-',color=colour[1])
+    ax1h.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1h.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
 
     # set xlimits if desired
     if start_tstep!=False:
