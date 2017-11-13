@@ -19,17 +19,23 @@ sys.path.append('/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/sr
 import plot_CARDAMOM_output as pCAR
 
 path2project = '/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/'
+# Project data file (to load in if already generated
+data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
+project_met = "BALI_GEMplots_daily_drivers.npy"
+project_par = "BALI_GEMplots_daily_params.npy"
+project_obs = "BALI_GEMplots_daily_obs.npy"
+
 project = 'BALI_GEMplots_daily'
 run = '001'
 filename = 'BALI_GEMplots_daily_2011_2016_DALEC_GSI_DFOL_CWD_FR.nc'
 
-# find NetCDF_file and load
+# find NetCDF_file for rerun and load
 NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 mod = Dataset(NetCDF_file)
 
 site_index = 0
 # Get model output
-mod_pools = {}
+model = {}
 # carbon pools
 model['Cwoo']=mod.variables['Cwoo'][:,:,0,0]
 model['Croo']=mod.variables['Croo'][:,:,0,0]
@@ -47,7 +53,6 @@ model['flux_fol_lit']=mod.variables['flux_fol_lit'][:,:,0,0]
 model['flux_root_lit']=mod.variables['flux_root_lit'][:,:,0,0]
 model['flux_cwd_lit']=mod.variables['flux_cwd_lit'][:,:,0,0]
 model['flux_wood_cwd']=mod.variables['flux_wood_cwd'][:,:,0,0]
-model['']=mod.variables[''][:,:,0,0]
 
 # fluxes
 model['Reco']=mod.variables['Reco'][:,:,0,0]
@@ -65,8 +70,30 @@ model['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,0,0]
 model['gsi_itemp']=mod.variables['gsi_itemp'][:,:,0,0]
 
 # Get corresponding observations
-
-obs_pools={}
+obs_in = np.load('%s%s' % (data_dir,project_obs))
+obs_in[obs_in==-9999]=np.nan
+obs={}
+obs['gpp'] = obs[site_index,:,0]
+obs['gpp_u'] = obs[site_index,:,11]
+obs['nee'] = obs[site_index,:,2]
+obs['nee_u'] = obs[site_index,:,13]
+obs['lai'] = obs[site_index,:,1]
+obs['lai_u'] = obs[site_index,:,12]
+obs['Cwoo'] = obs[site_index,:,6]
+obs['Cwoo_u'] = obs[site_index,:,17]
+obs['Cfol'] = obs[site_index,:,5]
+obs['Cfol_u'] = obs[site_index,:,16]
+obs['Croo'] = obs[site_index,:,7]
+obs['Croo_u'] = obs[site_index,:,18
+obs['Clit'] = obs[site_index,:,8]
+obs['Clit_u'] = obs[site_index,:,19]
+obs['Csom'] = obs[site_index,:,9]
+obs['Csom_u'] = obs[site_index,:,20]
+obs['Reco'] = obs[site_index,:,4]
+obs['Reco_u'] = obs[site_index,:,15]
+obs['flux_fol_lit'] = obs[site_index,:,32]
+obs['flux_fol_lit_u'] = obs[site_index,:,33]
 
 # plot Carbon stocks
-pCAR.plot_carbon_pools_ts(mod_pools,obs_pools)
+pCAR.plot_carbon_pools_ts(model,obs)
+pCAR.plot_litter_components_ts(model,obs)
