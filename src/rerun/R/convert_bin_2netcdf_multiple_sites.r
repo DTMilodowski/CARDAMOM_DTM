@@ -238,17 +238,10 @@ library(ncdf4)
 
 f_out=paste(path2files,project, "_", startyear, "_", endyear, "_",modelname,".nc", sep="")
 
-## write out all runs for lai
-#f_out_lai=paste(path2files,site, "_weekly_Crop_", startyear, "_", endyear, "_bucket_lai",".nc", sep="")
-
 xvals <- lon
-yvals <- lat 
-#nx <- length(xvals)
-#ny <- length(yvals)
+yvals <- lat
 
 # define dimensions
-#londim <- ncdim_def("lon","degrees_east",xvals) 
-#latdim <- ncdim_def("lat","degrees_north",yvals) 
 sitedim <- ncdim_def("sites","dimensionless",1:nsites) 
 timedim <- ncdim_def("time","weeks",1:ntsteps,unlim=TRUE)
 stats <- ncdim_def("stats","dimenisonless (1-5)",1:nstats) 
@@ -316,10 +309,6 @@ ncvar_put(ncnew,var_decomp_lit,decomp_lit_out)
 ncvar_put(ncnew,var_lat,lat)
 ncvar_put(ncnew,var_lon,lon)
 ncvar_put(ncnew,var_site,site)
-
-## write lai from all model runs
-#ncvar_put(ncnew_lai,var_lai_all,lai)
-#nc_close(ncnew_lai)
 
 #print(paste("The file has", ncnew$nvars,"variable(s): lai, gpp"))
 print(paste("The file has", ncnew$ndim,"dimension(s): sites, time, stats"))#lon, lat"))
