@@ -3,7 +3,7 @@
 # can be DALEC_GSI_BUCKET or DALEC_GSI_DFOL_CWD_FR 
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
-site <- "SAFE"
+site <- "BALI GEM plots"
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
 run <- "001"
