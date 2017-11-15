@@ -12,7 +12,10 @@ sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/
 import load_data as data
 
 # Project data file (to load in if already generated
+run = '002'
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
+if data_dir + run not in os.listdir(data_dir):
+    os.mkdir(data_dir + run)
 project_met_npydata = "BALI_GEMplots_daily_drivers.npy"
 project_par_npydata = "BALI_GEMplots_daily_params.npy"
 project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
@@ -20,7 +23,8 @@ project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 # File list containing drivers, observations and plot coordinates
 coordinate_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_plot_coordinates.csv"
 met_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_data/BALI_metstation_daily_v1.csv"
-par_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_GEM_plot_params.csv"
+# note that plot parameters may change each run, so use specified parameter file
+par_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_GEM_plot_params_"+run+".csv"
 
 # first load in coordinates and other data
 obs_dir = '/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/setup/obs/'
@@ -35,7 +39,7 @@ for i in range(0,len(plot)):
 
 # start date ### read from data file
 dates = met_data['date'].astype('datetime64[D]')
-d0 = dates[0]#met_data['date'][0]
+d0 = dates[0]
 DoY = (dates-dates.astype('datetime64[Y]')+1).astype('float')
 tstep = met_data['tstep_days']
 sim_length = tstep[-1]+1
@@ -45,7 +49,7 @@ nosites = len(plot)
 # First deal with the met data 
 met = np.zeros((nosites,sim_length,14))
 
-if project_met_npydata not in os.listdir(data_dir):
+if project_met_npydata not in os.listdir(data_dir+run):
     
     # First load the met data into the met array - use same driving data for now
     met[:,:,0] = tstep+1                                  #  0 = run day
@@ -74,11 +78,11 @@ if project_met_npydata not in os.listdir(data_dir):
         met[ss,:,10] = 12.*60.*60.*(1.+2.*np.arcsin(aob)/np.pi) # 10 = photoperiod in s
     
     print '\tnodata test: ', np.sum(met==-9999,axis=0).sum(axis=0)
-    np.save(data_dir + project_met_npydata,met)
+    np.save(data_dir+run+'/'+project_met_npydata,met)
 
 else:
     print "Loading met drivers"
-    met = np.load(data_dir+project_met_npydata)
+    met = np.load(data_dir+run+'/'+project_met_npydata)
 
 #-----------------------------------------------------------------------------
 # Now deal with the parameters 
@@ -87,7 +91,7 @@ parprior_unc = np.zeros((nosites,100))-9999.
 otherprior = np.zeros((nosites,100))-9999. # What are these for????
 otherprior_unc = np.zeros((nosites,100))-9999.
 
-if project_par_npydata not in os.listdir(data_dir):
+if project_par_npydata not in os.listdir(data_dir+run):
     
     for pp in range(0,nosites):
         ii = par_data['plot']==plot[pp]
@@ -161,17 +165,17 @@ if project_par_npydata not in os.listdir(data_dir):
         parprior[pp,37] = par_data['Ccwd_i'][ii]    # initial C stock for CWD
         parprior_unc[pp,37] = par_data['Ccwd_i_u'][ii]
 
-    np.save(data_dir + project_par_npydata,[parprior,parprior_unc])
+    np.save(data_dir+run+'/' + project_par_npydata,[parprior,parprior_unc])
    
 else:
     print "Loading parameters"
-    parprior, parprior_unc = np.load(data_dir+project_par_npydata)
+    parprior, parprior_unc = np.load(data_dir+run+'/'+project_par_npydata)
 
 #-----------------------------------------------------------------------------
 # Now deal with the observations 
 obs = np.zeros((nosites,sim_length,34))-9999.  # check number of observations and their uncertainties
 
-if project_obs_npydata not in os.listdir(data_dir):
+if project_obs_npydata not in os.listdir(data_dir+run):
     
     for pp in range(0,nosites):
         obs[pp,:,0] = obs_data[plot[pp]]['GPP']         # GPP
@@ -210,11 +214,11 @@ if project_obs_npydata not in os.listdir(data_dir):
         obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
         obs[pp,:,33] = obs_data[plot[pp]]['flit_u']     # Litter flux
                 
-    np.save(data_dir + project_obs_npydata,obs)
+    np.save(data_dir+run+'/' + project_obs_npydata,obs)
 
 else:
     print "Loading observations"
-    obs = np.load(data_dir+project_obs_npydata)
+    obs = np.load(data_dir+run+'/'+project_obs_npydata)
 
 prj=CAR.CARDAMOM(project_name="BALI_GEMplots_daily")
 prj.setup(latitude,longitude,met,obs,parprior,parprior_unc,otherprior,otherprior_unc)
