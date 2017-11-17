@@ -6,7 +6,7 @@ modelname <- "DALEC_GSI_DFOL_CWD_FR"
 site <- "BALI GEM plots"
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
-run <- "001"
+run <- "002"
 
 path2rerun <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
 path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/", sep="")
@@ -93,7 +93,7 @@ model = list(name=modelname,nopools=nopools,nofluxes=nofluxes,nomet=16,nopars=no
 
 # nsubsamples is the target number of accepted parameters you wanted to end up with in the *PARS file, typically this is 1000.
 
-PROJECT=list(name = f_out
+PROJECT=list(name = project
                    ,exepath = path2exe
                    ,datapath = path2data
                    ,results_processedpath = path2rerun
