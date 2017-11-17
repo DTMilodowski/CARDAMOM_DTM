@@ -14,7 +14,7 @@ import load_data as data
 # Project data file (to load in if already generated
 run = '002'
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
-if (data_dir + run) not in os.listdir(data_dir):
+if run not in os.listdir(data_dir):
     os.mkdir(data_dir + run)
 project_met_npydata = "BALI_GEMplots_daily_drivers.npy"
 project_par_npydata = "BALI_GEMplots_daily_params.npy"
