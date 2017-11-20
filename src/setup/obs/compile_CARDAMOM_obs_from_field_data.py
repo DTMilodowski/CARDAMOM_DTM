@@ -31,8 +31,8 @@ LAI_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/SAFE_CarbonPlots_L
 start_date= '01/01/2011'
 end_date= '31/12/2015'
 plot = ['Belian','LF','B North','B South', 'E', 'Seraya', 'DC1', 'DC2']
-LAI_MH = [6.69,4.78,3.00,2.26,3.84,6.22,5.93,5.89]
-LAI_rad = [8.30,5.76,4.87,3.73,5.70,9.01,8.25,9.35]
+LAI_MH = [8.8,6.3,4.0,3.0,5.1,8.2,7.8,7.8]
+LAI_rad = [10.3,6.8,5.4,4.2,6.6,9.9,9.1,9.5]
 LAI_hemiphot = [4.46,3.76,3.65,3.44,3.93,4.27,4.40,4.05]
 Csoil = [8295.66, 11275.18, 3934.03, 4916.91, 11925.08, 24347.79, 8144.94, -9999.]
 
@@ -56,6 +56,7 @@ for pp in range(0,len(plot)):
     Csoil_in = np.zeros(N_t)*np.nan#-9999.
     Litter_in = np.zeros(N_t)*np.nan#-9999.
     Litter_std_in = np.zeros(N_t)*np.nan#-9999.
+    Litter_accumulation_days_in = np.zeros(N_t)*np.nan#-9999.
     LAI_in = np.zeros(N_t)*np.nan#-9999.
     LAI_std_in = np.zeros(N_t)*np.nan#-9999.
     LAI_MH_in = np.zeros(N_t)*np.nan#-9999.
@@ -100,13 +101,14 @@ for pp in range(0,len(plot)):
     # Initially assume average flux rates for litter between collection dates 
     N_lit=litter_flux.size
     for tt in range(0,N_lit):
-        indices = np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0)
-        Litter_in[indices]= litter_flux[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
-        Litter_std_in[indices]= litter_std[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
+        Litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
+        Litter_in[date == litter_collection_date[tt]]= litter_flux[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
+        Litter_std_in[date == litter_collection_date[tt]]= litter_std[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
         
     # Convert nodata to -9999
     Litter_in[np.isnan(Litter_in)]=-9999.
     Litter_std_in[np.isnan(Litter_std_in)]=-9999.
+    Litter_accumulation_days_in[np.isnan(Litter_std_in)]=-9999.
     root_npp_in[np.isnan(root_npp_in)]=-9999.
     root_npp_std_in[np.isnan(root_npp_std_in)]=-9999.
     LAI_MH_in[np.isnan(LAI_MH_in)]=-9999.
@@ -136,7 +138,8 @@ for pp in range(0,len(plot)):
     obs[obs_h=='Croo',:]=Croot_in.copy()
     obs[obs_h=='Croo_u',:]= 2.# Currently using log uncertainties, assuming value of 2. Croot_std_in.copy()
     obs[obs_h=='flit',:]=Litter_in.copy()
-    obs[obs_h=='flit_u',:]=2.# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
+    obs[obs_h=='flit_u',:]=Litter_std_in.copy()
+    obs[obs_h=='flit_acc_days',:]=Litter_accumulation_days_in.copy()# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
     obs[obs_h=='NPProo',:]=root_npp_in.copy()
     obs[obs_h=='NPProo_u',:]=2.# Currently using log uncertainties, assuming value of 2. root_npp_std_in.copy()
     obs[obs_h=='LAI',:]=LAI_MH_in.copy()
