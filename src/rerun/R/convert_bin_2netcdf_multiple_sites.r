@@ -6,7 +6,7 @@
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
 project <- "BALI_GEMplots_daily"
-run <- "001"
+run <- "002"
 site <- c("MLA01","MLA02","SAF04","SAF03","SAF02","SAF01")
 lat <- c(4.747, 4.437, 4.765, 4.690, 4.744, 4.729)
 lon <- c(116.951, 116.951, 117.702, 117.586, 117.618, 117.618)

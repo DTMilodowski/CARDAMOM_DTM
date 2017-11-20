@@ -266,7 +266,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     
     if 'flux_fol_lit' in obs.keys(): # check for observations
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.errorbar(obs['time'],obs['flux_fol_lit'],yerr=obs['flux_fol_lit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1f.errorbar(obs['time'],obs['flux_fol_lit'],yerr=obs['flux_fol_lit_u'],marker='.',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1f.plot(obs['time'],obs['flux_fol_lit'],marker='o',c='black',mec='black',mfc='black')
 
