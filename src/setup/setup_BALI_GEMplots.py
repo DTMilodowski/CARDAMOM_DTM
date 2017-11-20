@@ -186,15 +186,17 @@ if project_obs_npydata not in os.listdir(data_dir+run):
         obs[pp,:,5] = obs_data[plot[pp]]['Cfol']        # Cfol
         obs[pp,:,6] = obs_data[plot[pp]]['Cwoo']        # Cwood
         obs[pp,:,7] = obs_data[plot[pp]]['Croo']        # Croot
-        obs[pp,:,8] = obs_data[plot[pp]]['Clit']        # Clit
+        #obs[pp,:,8] = obs_data[plot[pp]]['Clit']       # Clit
+        obs[pp,:,8] = obs_data[plot[pp]]['flit']        # Note hack here - changed Clit intake to flit for easy inclusion into likelihood function
         obs[pp,:,9] = obs_data[plot[pp]]['Csom']        # Csom
         obs[pp,:,10] = obs_data[plot[pp]]['Cagb']       # Cagb
         obs[pp,:,22] = obs_data[plot[pp]]['Cstem']      # Cstem
         obs[pp,:,24] = obs_data[plot[pp]]['Cbranch']    # Cbranch
         obs[pp,:,26] = obs_data[plot[pp]]['Ccroo']      # Ccoarseroot
-        obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max']   # maximum Cfol
+        #obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max']  # maximum Cfol
+        obs[pp,:,28] = obs_data[plot[pp]]['flit_acc_days'] # Note hack here - changed Cfol_max to flit_acc_days for easy inclusion into likelihood function
         obs[pp,:,30] = obs_data[plot[pp]]['Evap']       # Evapotranspiration
-        obs[pp,:,32] = obs_data[plot[pp]]['flit']       # Litter flux
+        obs[pp,:,32] = obs_data[plot[pp]]['flit']       # Litter flux - this does not get used yet, but will once Fortran code updated
 
         obs[pp,:,11] = obs_data[plot[pp]]['GPP_u']      # GPP
         obs[pp,:,12] = obs_data[plot[pp]]['LAI_u']      # LAI
@@ -210,7 +212,7 @@ if project_obs_npydata not in os.listdir(data_dir+run):
         obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']    # Cstem
         obs[pp,:,25] = obs_data[plot[pp]]['Cbranch_u']  # Cbranch
         obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_u']    # Ccoarseroot
-        obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol
+        obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol - note this does not get used
         obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
         obs[pp,:,33] = obs_data[plot[pp]]['flit_u']     # Litter flux
                 
