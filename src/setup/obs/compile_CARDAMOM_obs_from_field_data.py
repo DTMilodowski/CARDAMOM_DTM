@@ -129,7 +129,7 @@ for pp in range(0,len(plot)):
     Csoil_unc[np.isnan(Csoil_unc)]=-9999.
 
     # build an output matrix for the observations file
-    obs_h = np.asarray(['GPP','GPP_u','LAI','LAI_u','NEE','NEE_u','woo','woo_u','Reco','Reco_u','Cfol','Cfol_u','Cwoo','Cwoo_u','Croo','Croo_u','Clit','Clit_u','Csom','Csom_u','Cagb','Cagb_u','Cstem','Cstem_u','Cbranch','Cbranch_u','Ccroo','Ccroo_u','Cfol_max','Cfol_max_u','Evap','Evap_u','flit','flit_u','NPProo','NPProo_u'])
+    obs_h = np.asarray(['GPP','GPP_u','LAI','LAI_u','NEE','NEE_u','woo','woo_u','Reco','Reco_u','Cfol','Cfol_u','Cwoo','Cwoo_u','Croo','Croo_u','Clit','Clit_u','Csom','Csom_u','Cagb','Cagb_u','Cstem','Cstem_u','Cbranch','Cbranch_u','Ccroo','Ccroo_u','Cfol_max','Cfol_max_u','Evap','Evap_u','flit','flit_u','flit_acc_days','NPProo','NPProo_u'])
     obs = np.zeros((len(obs_h),N_t))-9999.
     
     # fill obs matrix with relevant data
