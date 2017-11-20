@@ -170,6 +170,12 @@ for(ss in 1:nsites) {
 	gsi_iphoto_out[ss,4,i] <- quantile(states_all$gsi_iphoto[,i], 0.25)
 	gsi_iphoto_out[ss,5,i] <- quantile(states_all$gsi_iphoto[,i], 0.75)
         
+	gsi_ivpd_out[ss,1,i] <- mean(states_all$gsi_ivpd[,i]) 	
+	gsi_ivpd_out[ss,2,i] <- median(states_all$gsi_ivpd[,i])
+	gsi_ivpd_out[ss,3,i] <- sd(states_all$gsi_ivpd[,i])
+	gsi_ivpd_out[ss,4,i] <- quantile(states_all$gsi_ivpd[,i], 0.25)
+	gsi_ivpd_out[ss,5,i] <- quantile(states_all$gsi_ivpd[,i], 0.75)
+        
 	Ccwd_out[ss,1,i] <- mean(states_all$litwood[,i]) 	
 	Ccwd_out[ss,2,i] <- median(states_all$litwood[,i])
 	Ccwd_out[ss,3,i] <- sd(states_all$litwood[,i])
