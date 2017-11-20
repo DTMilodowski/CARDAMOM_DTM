@@ -71,7 +71,7 @@ model['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,site]
 model['gsi_itemp']=mod.variables['gsi_itemp'][:,:,site]
 
 # Get corresponding observations
-obs_in = np.load('%s%s' % (data_dir,project_obs))
+obs_in = np.load('%s%s/%s' % (data_dir,run,project_obs))
 obs_in[obs_in==-9999]=np.nan
 obs={}
 obs['time'] = mod.variables['time']
@@ -99,3 +99,4 @@ obs['flux_fol_lit_u'] = obs_in[site,:,33]
 # plot Carbon stocks
 pCAR.plot_carbon_pools_ts(model,obs)
 pCAR.plot_litter_components_ts(model,obs)
+plt.show()
