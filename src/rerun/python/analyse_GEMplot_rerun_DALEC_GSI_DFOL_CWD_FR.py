@@ -87,14 +87,14 @@ obs['Cfol'] = obs_in[site,:,5]
 obs['Cfol_u'] = obs_in[site,:,16]
 obs['Croo'] = obs_in[site,:,7]
 obs['Croo_u'] = obs_in[site,:,18]
-obs['Clit'] = obs_in[site,:,8]
-obs['Clit_u'] = obs_in[site,:,19]
+#obs['Clit'] = obs_in[site,:,8]
+#obs['Clit_u'] = obs_in[site,:,19]
 obs['Csom'] = obs_in[site,:,9]
 obs['Csom_u'] = obs_in[site,:,20]
 obs['Reco'] = obs_in[site,:,4]
 obs['Reco_u'] = obs_in[site,:,15]
-obs['flux_fol_lit'] = obs_in[site,:,32]
-obs['flux_fol_lit_u'] = obs_in[site,:,33]
+obs['flux_fol_lit'] = obs_in[site,:,8]
+obs['flux_fol_lit_u'] = obs_in[site,:,19]/5.
 
 # plot Carbon stocks
 pCAR.plot_carbon_pools_ts(model,obs)
