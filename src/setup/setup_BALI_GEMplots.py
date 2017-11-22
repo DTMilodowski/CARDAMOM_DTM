@@ -206,7 +206,8 @@ if project_obs_npydata not in os.listdir(data_dir+run):
         obs[pp,:,16] = obs_data[plot[pp]]['Cfol_u']     # Cfol
         obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_u']     # Cwood
         obs[pp,:,18] = obs_data[plot[pp]]['Croo_u']     # Croot
-        obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']     # Clit
+        #obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']     # Clit
+        obs[pp,:,19] = obs_data[plot[pp]]['flit_u']      # Note hack here - changed Clit intake to flit for easy inclusion into likelihood function
         obs[pp,:,20] = obs_data[plot[pp]]['Csom_u']     # Csom
         obs[pp,:,21] = obs_data[plot[pp]]['Cagb_u']     # Cagb
         obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']    # Cstem
