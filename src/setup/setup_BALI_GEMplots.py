@@ -12,7 +12,7 @@ sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/
 import load_data as data
 
 # Project data file (to load in if already generated
-run = '004'
+run = '005'
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
 if run not in os.listdir(data_dir):
     os.mkdir(data_dir + run)
