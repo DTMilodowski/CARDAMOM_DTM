@@ -6,7 +6,7 @@ modelname <- "DALEC_GSI_DFOL_CWD_FR"
 site <- "BALI GEM plots"
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
-run <- "003"
+run <- "005"
 
 path2rerun <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
 path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/", sep="")
