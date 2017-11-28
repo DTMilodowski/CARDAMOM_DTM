@@ -108,7 +108,7 @@ for pp in range(0,len(plot)):
     # Convert nodata to -9999
     Litter_in[np.isnan(Litter_in)]=-9999.
     Litter_std_in[np.isnan(Litter_std_in)]=-9999.
-    Litter_accumulation_days_in[np.isnan(Litter_std_in)]=-9999.
+    Litter_accumulation_days_in[np.isnan(Litter_accumulation_days_in)]=-9999.
     root_npp_in[np.isnan(root_npp_in)]=-9999.
     root_npp_std_in[np.isnan(root_npp_std_in)]=-9999.
     LAI_MH_in[np.isnan(LAI_MH_in)]=-9999.
