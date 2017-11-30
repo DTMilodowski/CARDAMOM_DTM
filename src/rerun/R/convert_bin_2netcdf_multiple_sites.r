@@ -6,7 +6,7 @@
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
 project <- "BALI_GEMplots_daily"
-run <- "005"
+run <- "006"
 site <- c("MLA01","MLA02","SAF04","SAF03","SAF02","SAF01")
 lat <- c(4.747, 4.437, 4.765, 4.690, 4.744, 4.729)
 lon <- c(116.951, 116.951, 117.702, 117.586, 117.618, 117.618)
@@ -15,7 +15,7 @@ endyear <- 2016
 
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 path2files <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
-nsites <- 6
+nsites <- 1#6
 
 #############################################################################################
 # create vector of site ids, 00001, 00002, etc.

@@ -6,14 +6,14 @@ modelname <- "DALEC_GSI_DFOL_CWD_FR"
 site <- "BALI GEM plots"
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 project <- "BALI_GEMplots_daily"
-run <- "005"
+run <- "007"
 
 path2rerun <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
 path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/", sep="")
 path2data <- paste(path2root,"projects/",project,"/data/", sep="")
 path2exe <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/CARDAMOM/trunk/LIBRARY/CARDAMOM_F/executable/"
 
-integer_count_of_sites <- 6
+integer_count_of_sites <- 1#6
 
 startyear <- 2011
 endyear <- 2016
@@ -50,7 +50,7 @@ if (modelname == "DALEC_GSI_BUCKET"){
 	nfluxes = 21	
 } else if (modelname == "DALEC_GSI_DFOL_CWD_FR"){
 	npools = 7
-	npars = 38
+	npars = 39
 	nfluxes = 24
 }
 
