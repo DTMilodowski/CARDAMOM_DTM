@@ -13,7 +13,7 @@ path2mcmcfiles <- paste(path2root,"projects/",project,"/cardamom_output/",run,"/
 path2data <- paste(path2root,"projects/",project,"/data/", sep="")
 path2exe <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/CARDAMOM/trunk/LIBRARY/CARDAMOM_F/executable/"
 
-integer_count_of_sites <- 1#6
+integer_count_of_sites <- 6
 
 startyear <- 2011
 endyear <- 2016
