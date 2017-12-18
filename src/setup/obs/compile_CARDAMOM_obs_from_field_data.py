@@ -1,6 +1,5 @@
 import numpy as np
 import sys
-sys.path.append('/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/CARDAMOM/CARDAMOM_setup_drivers/')
 import met_setup as met
 import MODIS_setup as MODIS
 import field_data_setup as field
@@ -98,7 +97,8 @@ for pp in range(0,len(plot)):
     # litter fluxes reported in Mg/ha/yr
     litter_collection_date, litter_previous_collection_date, litter_flux, litter_std = field.get_litterfall_ts(litter_file,plot[pp])
 
-    # Initially assume average flux rates for litter between collection dates 
+    # Read in litter accumulation days and total accumulated litter in time periods
+    # Imposing cumulative litter flux constraint in CARDAMOM
     N_lit=litter_flux.size
     for tt in range(0,N_lit):
         Litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
