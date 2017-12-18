@@ -1,8 +1,6 @@
 #This set of functions prepares field data from GEM plots ready for assimilation into CARDAMOM
 import numpy as np
 import sys
-sys.path.append('/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/field_data/')
-
 import load_field_data as field
 
 from scipy.interpolate import interp1d
