@@ -61,7 +61,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
     litter = field.read_litterfall_data(litter_file)
     N_sp,N_dates = litter[plot]['mTotal'].shape
     
-    acc_mass = litter[plot]['mTotal']
+    acc_mass = litter[plot]['mTotal']/litter[plot]['TrapSize'] # convert from g(C) to g(C) m-2
     flux = litter[plot]['rTotal']*10.**6/10.**4/365.25 # convert flux from Mg(C)ha-1yr-1 to g(C)m-2d-1
     
     collection_dates = np.max(litter[plot]['CollectionDate'],axis=0)
@@ -86,7 +86,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
 
     litter_fall_ts = np.mean(litter_gapfilled,axis=0)
     litter_fall_std = np.std(litter_gapfilled,axis=0)
-    litter_fall_serr = litter_fall_std/float(N_sp)
+    litter_fall_serr = litter_fall_std/np.sqrt(float(N_sp))
     
     return collection_dates, accumulation_days, litter_fall_ts, litter_fall_std, litter_fall_serr
 
@@ -142,6 +142,8 @@ def get_LAI_ts(LAI_file,plot, pad_ts = True):
 
     LAI_plot_ts = np.mean(LAI_gapfilled,axis=0)
     LAI_plot_std_ts = np.std(LAI_gapfilled,axis=0)
+    LAI_plot_serr_ts = np.std(LAI_gapfilled,axis=0)/np.sqrt(float(N_sp))
+    
     return  LAI[plot]['date'], LAI_plot_ts, LAI_plot_std_ts
 
 def get_subplot_LAI_ts(LAI_file,plot, pad_ts = True):
