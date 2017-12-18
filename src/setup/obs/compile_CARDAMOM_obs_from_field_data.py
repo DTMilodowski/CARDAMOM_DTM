@@ -53,9 +53,10 @@ for pp in range(0,len(plot)):
     root_npp_in = np.zeros(N_t)*np.nan
     root_npp_std_in = np.zeros(N_t)*np.nan
     Csoil_in = np.zeros(N_t)*np.nan
-    Litter_in = np.zeros(N_t)*np.nan
-    Litter_std_in = np.zeros(N_t)*np.nan
-    Litter_accumulation_days_in = np.zeros(N_t)*np.nan
+    litter_in = np.zeros(N_t)*np.nan
+    litter_std_in = np.zeros(N_t)*np.nan
+    litter_serr_in = np.zeros(N_t)*np.nan
+    litter_accumulation_days_in = np.zeros(N_t)*np.nan
     LAI_in = np.zeros(N_t)*np.nan
     LAI_std_in = np.zeros(N_t)*np.nan
     LAI_MH_in = np.zeros(N_t)*np.nan
@@ -64,7 +65,7 @@ for pp in range(0,len(plot)):
     LAI_MH_std_in = np.zeros(N_t)*np.nan
 
     # LAI data
-    LAI_date, LAI, LAI_std = field.get_LAI_ts(LAI_file,plot[pp])
+    LAI_date, LAI, LAI_std, LAI_serr = field.get_LAI_ts(LAI_file,plot[pp])
     N_LAI = LAI_date.size
     for tt in range(0,N_LAI):
         LAI_in[date==LAI_date[tt]] = LAI[tt]
@@ -95,20 +96,22 @@ for pp in range(0,len(plot)):
         root_npp_std_in[indices]= root_npp_std[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
 
     # litter fluxes reported in Mg/ha/yr
-    litter_collection_date, litter_previous_collection_date, litter_flux, litter_std = field.get_litterfall_ts(litter_file,plot[pp])
+    litter_collection_date, accumulation_days, litter_fall, litter_std, litter_serr = field.get_litterfall_ts(litter_file,plot[pp])
 
     # Read in litter accumulation days and total accumulated litter in time periods
     # Imposing cumulative litter flux constraint in CARDAMOM
     N_lit=litter_flux.size
     for tt in range(0,N_lit):
-        Litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
-        Litter_in[date == litter_collection_date[tt]]= litter_flux[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
-        Litter_std_in[date == litter_collection_date[tt]]= litter_std[tt] * (10.**6/10.**4/365.25) # convert Mg/ha/yr to g/m2/d
+        litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
+        litter_in[date == litter_collection_date[tt]]= litter_flux[tt] # litter already being read in in g(C) m-2
+        litter_std_in[date == litter_collection_date[tt]]= litter_std[tt] 
+        litter_serr_in[date == litter_collection_date[tt]]= litter_serr[tt]
         
     # Convert nodata to -9999
-    Litter_in[np.isnan(Litter_in)]=-9999.
-    Litter_std_in[np.isnan(Litter_std_in)]=-9999.
-    Litter_accumulation_days_in[np.isnan(Litter_accumulation_days_in)]=-9999.
+    litter_in[np.isnan(Litter_in)]=-9999.
+    litter_std_in[np.isnan(Litter_std_in)]=-9999.
+    litter_serr_in[np.isnan(Litter_std_in)]=-9999.
+    litter_accumulation_days_in[np.isnan(Litter_accumulation_days_in)]=-9999.
     root_npp_in[np.isnan(root_npp_in)]=-9999.
     root_npp_std_in[np.isnan(root_npp_std_in)]=-9999.
     LAI_MH_in[np.isnan(LAI_MH_in)]=-9999.
@@ -137,8 +140,8 @@ for pp in range(0,len(plot)):
     obs[obs_h=='Cwoo_u',:]=Cwood_unc.copy() # Cwood uncertainty is the only parameter with non-log uncertainty bounds
     obs[obs_h=='Croo',:]=Croot_in.copy()
     obs[obs_h=='Croo_u',:]= 2.# Currently using log uncertainties, assuming value of 2. Croot_std_in.copy()
-    obs[obs_h=='flit',:]=Litter_in.copy()
-    obs[obs_h=='flit_u',:]=Litter_std_in.copy()
+    obs[obs_h=='flit',:]=litter_in.copy()
+    obs[obs_h=='flit_u',:]=litter_serr_in * 2
     obs[obs_h=='flit_acc_days',:]=Litter_accumulation_days_in.copy()# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
     obs[obs_h=='NPProo',:]=root_npp_in.copy()
     obs[obs_h=='NPProo_u',:]=2.# Currently using log uncertainties, assuming value of 2. root_npp_std_in.copy()
