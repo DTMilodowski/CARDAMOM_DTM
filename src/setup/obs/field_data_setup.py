@@ -1,7 +1,7 @@
 #This set of functions prepares field data from GEM plots ready for assimilation into CARDAMOM
 import numpy as np
 import sys
-import load_field_data as field
+import load_GEM_data as field
 
 from scipy.interpolate import interp1d
 
@@ -54,35 +54,44 @@ def get_Croot(roots_file,plot):
 # Get litterfall time series.  If pad_ts set to True (default), then nodata values at the ends of the time series for certain
 # subplots will be padded with the first or last recorded value, so that average litter fluxes are taken across all subplots.
 # This is an attempt to avoid biases in the averages, given that each 1 ha plot comprises only 25 subplots.
+# Litter fluxes are returned as the total litter fall [g(C) m-2] collected within a specified time period [accumulation days]
+# alongside collection dates
 def get_litterfall_ts(litter_file,plot, pad_ts = True):
     
     litter = field.read_litterfall_data(litter_file)
-    N_sp,N_dates = litter[plot]['rTotal'].shape
-
+    N_sp,N_dates = litter[plot]['mTotal'].shape
+    
+    acc_mass = litter[plot]['mTotal']
+    flux = litter[plot]['rTotal']*10.**6/10.**4/365.25 # convert flux from Mg(C)ha-1yr-1 to g(C)m-2d-1
+    
     collection_dates = np.max(litter[plot]['CollectionDate'],axis=0)
     previous_collection_dates = np.max(litter[plot]['PreviousCollectionDate'],axis=0)
 
-    interval = np.asarray(collection_dates-previous_collection_dates,dtype='float64')
-    days = np.cumsum(interval)
+    accumulation_days = np.asarray(collection_dates-previous_collection_dates,dtype='float64')
+    days = np.asarray(collection_dates-collection_dates[0],dtype='float64')
     
     litter_gapfilled = np.zeros((N_sp,N_dates))
     for ss in range(0,N_sp):
         # First check to see if there are gaps - if not, don't need to worry
-        if (np.isnan(litter[plot]['rTotal'][ss,:])).sum()==0:
-            litter_gapfilled[ss,:]=litter[plot]['rTotal'][ss,:].copy()
+        if (np.isnan(litter[plot]['mTotal'][ss,:])).sum()==0:
+            litter_gapfilled[ss,:]=acc_mass.copy()
 
         # We don't want to gapfill at the start or end of the time series
         # as we have no other constraints for the interpolation
         else:
-            litter_gapfilled[ss,:]=gapfill_field_data(litter[plot]['rTotal'][ss,:],days,pad_ts=pad_ts)
+            gapfilled_fluxes=gapfill_field_data(litter[plot]['rTotal'][ss,:],days,pad_ts=pad_ts)
+            litter_gapfilled[ss,:] = accumulation_days*gapfilled_fluxes # convert back to total accumulated C
 
     litter_gapfilled[litter_gapfilled<0]=0
 
     litter_fall_ts = np.mean(litter_gapfilled,axis=0)
     litter_fall_std = np.std(litter_gapfilled,axis=0)
+    litter_fall_serr = litter_fall_std/float(N_sp)
+    
+    return collection_dates, accumulation_days, litter_fall_ts, litter_fall_std, litter_fall_serr
 
-    return collection_dates, previous_collection_dates, litter_fall_ts, litter_fall_std
-
+"""
+this needs updating
 def get_subplot_litterfall_ts(litter_file,plot, pad_ts = True):
     
     litter = field.read_litterfall_data(litter_file)
@@ -108,8 +117,8 @@ def get_subplot_litterfall_ts(litter_file,plot, pad_ts = True):
     litter_gapfilled[litter_gapfilled<0]=0
     litter_fall_ts = litter_gapfilled.copy()
 
-    return collection_dates, previous_collection_dates, litter_fall_ts
-
+    return collection_dates, accumulation_days, litter_fall_ts
+"""
 
 # Get time series of LAI using spline interpolation to fill the gaps
 def get_LAI_ts(LAI_file,plot, pad_ts = True):
