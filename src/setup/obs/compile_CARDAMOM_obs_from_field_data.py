@@ -1,8 +1,7 @@
 import numpy as np
 import sys
 import met_setup as met
-import MODIS_setup as MODIS
-import field_data_setup as field
+import field_data_to_time_series as field
 sys.path.append('/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/construct_drivers/')
 import gapfill_station_metdata as gap
 # First of all, define the relevant input files
