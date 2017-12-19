@@ -61,7 +61,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
     litter = field.read_litterfall_data(litter_file)
     N_sp,N_dates = litter[plot]['mTotal'].shape
     
-    acc_mass = litter[plot]['mTotal']/litter[plot]['TrapSize'] # convert from g(C) to g(C) m-2
+    acc_mass = litter[plot]['mTotal']/litter[plot]['TrapSize'][0] # convert from g(C) to g(C) m-2
     flux = litter[plot]['rTotal']*10.**6/10.**4/365.25 # convert flux from Mg(C)ha-1yr-1 to g(C)m-2d-1
     
     collection_dates = np.max(litter[plot]['CollectionDate'],axis=0)
@@ -74,7 +74,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
     for ss in range(0,N_sp):
         # First check to see if there are gaps - if not, don't need to worry
         if (np.isnan(litter[plot]['mTotal'][ss,:])).sum()==0:
-            litter_gapfilled[ss,:]=acc_mass.copy()
+            litter_gapfilled[ss,:]=acc_mass[ss,:].copy()
 
         # We don't want to gapfill at the start or end of the time series
         # as we have no other constraints for the interpolation
@@ -144,7 +144,7 @@ def get_LAI_ts(LAI_file,plot, pad_ts = True):
     LAI_plot_std_ts = np.std(LAI_gapfilled,axis=0)
     LAI_plot_serr_ts = np.std(LAI_gapfilled,axis=0)/np.sqrt(float(N_sp))
     
-    return  LAI[plot]['date'], LAI_plot_ts, LAI_plot_std_ts
+    return  LAI[plot]['date'], LAI_plot_ts, LAI_plot_std_ts, LAI_plot_serr_ts
 
 def get_subplot_LAI_ts(LAI_file,plot, pad_ts = True):
     LAI = field.load_LAI_time_series(LAI_file)
