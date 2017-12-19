@@ -99,10 +99,10 @@ for pp in range(0,len(plot)):
 
     # Read in litter accumulation days and total accumulated litter in time periods
     # Imposing cumulative litter flux constraint in CARDAMOM
-    N_lit=litter_flux.size
+    N_lit=litter_fall.size
     for tt in range(0,N_lit):
         litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
-        litter_in[date == litter_collection_date[tt]]= litter_flux[tt] # litter already being read in in g(C) m-2
+        litter_in[date == litter_collection_date[tt]]= litter_fall[tt] # litter already being read in in g(C) m-2
         litter_std_in[date == litter_collection_date[tt]]= litter_std[tt] 
         litter_serr_in[date == litter_collection_date[tt]]= litter_serr[tt]
         
