@@ -27,14 +27,14 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '006'
+run = '008'
 filename = 'BALI_GEMplots_daily_2011_2016_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
 NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 mod = Dataset(NetCDF_file)
 
-site = 0
+site = 1
 # Get model output
 model = {}
 # carbon pools
@@ -95,6 +95,7 @@ obs['Reco'] = obs_in[site,:,4]
 obs['Reco_u'] = obs_in[site,:,15]
 obs['flux_fol_lit'] = obs_in[site,:,8]
 obs['flux_fol_lit_u'] = obs_in[site,:,19]/5.
+obs['lit_acc_days'] = obs_in[site,:,28]
 
 # plot Carbon stocks
 pCAR.plot_carbon_pools_ts(model,obs)
