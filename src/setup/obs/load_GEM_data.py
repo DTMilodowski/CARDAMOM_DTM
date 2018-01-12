@@ -298,7 +298,7 @@ def read_litterfall_data(litter_file):
             cDates = np.zeros(N_collections, dtype = 'datetime64[D]')
             pDates = np.zeros(N_collections, dtype = 'datetime64[D]')
             
-            # mass collected by component - note that masses need converting from g per trap to g m-2
+            # mass collected by component - note that masses need converting from g per trap to g (C) m-2
             mLeaves.append(subplot_data['mLeaves']/subplot_data['TrapSize'])
             mTwigs.append(subplot_data['mTwigs']/subplot_data['TrapSize'])
             mFruit.append(subplot_data['mFruit']/subplot_data['TrapSize'])
