@@ -101,16 +101,16 @@ for pp in range(0,len(plot)):
     # Imposing cumulative litter flux constraint in CARDAMOM
     N_lit=litter_fall.size
     for tt in range(0,N_lit):
-        litter_accumulation_days_in[date == litter_collection_date[tt]] = np.sum(np.all((date>=litter_previous_collection_date[tt], date<litter_collection_date[tt]),axis=0))
+        litter_accumulation_days_in[date == litter_collection_date[tt]] = accumulation_days[tt]
         litter_in[date == litter_collection_date[tt]]= litter_fall[tt] # litter already being read in in g(C) m-2
         litter_std_in[date == litter_collection_date[tt]]= litter_std[tt] 
         litter_serr_in[date == litter_collection_date[tt]]= litter_serr[tt]
         
     # Convert nodata to -9999
-    litter_in[np.isnan(Litter_in)]=-9999.
-    litter_std_in[np.isnan(Litter_std_in)]=-9999.
-    litter_serr_in[np.isnan(Litter_std_in)]=-9999.
-    litter_accumulation_days_in[np.isnan(Litter_accumulation_days_in)]=-9999.
+    litter_in[np.isnan(litter_in)]=-9999.
+    litter_std_in[np.isnan(litter_std_in)]=-9999.
+    litter_serr_in[np.isnan(litter_std_in)]=-9999.
+    litter_accumulation_days_in[np.isnan(litter_accumulation_days_in)]=-9999.
     root_npp_in[np.isnan(root_npp_in)]=-9999.
     root_npp_std_in[np.isnan(root_npp_std_in)]=-9999.
     LAI_MH_in[np.isnan(LAI_MH_in)]=-9999.
@@ -141,7 +141,7 @@ for pp in range(0,len(plot)):
     obs[obs_h=='Croo_u',:]= 2.# Currently using log uncertainties, assuming value of 2. Croot_std_in.copy()
     obs[obs_h=='flit',:]=litter_in.copy()
     obs[obs_h=='flit_u',:]=litter_serr_in * 2
-    obs[obs_h=='flit_acc_days',:]=Litter_accumulation_days_in.copy()# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
+    obs[obs_h=='flit_acc_days',:]=litter_accumulation_days_in.copy()# Currently using log uncertainties, assuming value of 2. Litter_std_in.copy()
     obs[obs_h=='NPProo',:]=root_npp_in.copy()
     obs[obs_h=='NPProo_u',:]=2.# Currently using log uncertainties, assuming value of 2. root_npp_std_in.copy()
     obs[obs_h=='LAI',:]=LAI_MH_in.copy()
