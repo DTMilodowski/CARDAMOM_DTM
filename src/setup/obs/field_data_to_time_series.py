@@ -61,15 +61,15 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
     litter = field.read_litterfall_data(litter_file)
     N_sp,N_dates = litter[plot]['mTotal'].shape
     
-    acc_mass = litter[plot]['mTotal']/litter[plot]['TrapSize'][0] # convert from g(C) to g(C) m-2
-    flux = litter[plot]['rTotal']*10.**6/10.**4/365.25 # convert flux from Mg(C)ha-1yr-1 to g(C)m-2d-1
-    
     collection_dates = np.max(litter[plot]['CollectionDate'],axis=0)
     previous_collection_dates = np.max(litter[plot]['PreviousCollectionDate'],axis=0)
 
     accumulation_days = np.asarray(collection_dates-previous_collection_dates,dtype='float64')
     days = np.asarray(collection_dates-collection_dates[0],dtype='float64')
     
+    acc_mass = litter[plot]['mTotal']/2. # convert g m-2 to g(C) m-2
+    flux = acc_mass/accumulation_days # g(C) m-2 d-1
+
     litter_gapfilled = np.zeros((N_sp,N_dates))
     for ss in range(0,N_sp):
         # First check to see if there are gaps - if not, don't need to worry
@@ -79,7 +79,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
         # We don't want to gapfill at the start or end of the time series
         # as we have no other constraints for the interpolation
         else:
-            gapfilled_fluxes=gapfill_field_data(litter[plot]['rTotal'][ss,:],days,pad_ts=pad_ts)
+            gapfilled_fluxes=gapfill_field_data(flux[ss,:],days,pad_ts=pad_ts)
             litter_gapfilled[ss,:] = accumulation_days*gapfilled_fluxes # convert back to total accumulated C
 
     litter_gapfilled[litter_gapfilled<0]=0
