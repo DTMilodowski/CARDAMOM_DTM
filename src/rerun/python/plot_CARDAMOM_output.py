@@ -259,13 +259,13 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     
     ax1g.fill_between(model['time'],model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
     ax1g.plot(model['time'],model['flux_fol_lit'][:,1],'-',color=colour[1])
-    
+    """
     if 'flux_fol_lit' in obs.keys(): # check for observations
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
             ax1g.errorbar(obs['time'],obs['flux_fol_lit'],yerr=obs['flux_fol_lit_u'],marker='.',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1g.plot(obs['time'],obs['flux_fol_lit'],marker='o',c='black',mec='black',mfc='black')
-
+    """
     # Plot g -> cwd fluxes into litter pool
     ax1g = plt.subplot2grid((9,1),(7,0),sharex=ax1a)
     ax1g.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -292,4 +292,20 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
+
+    #---------------------------
+    # Plot second figure that compares the litter trap obserations against observed litter accumulation.
+    fig = plt.figure(4, facecolor='White',figsize=[5,5])
+    n_steps = model['time'].size
+    acc_fol_flux_mod = np.zeros(model['flux_fol_lit'].shape)*np.nan
+
+    for tt in range(0,n_steps):
+        if obs['lit_acc_days'][tt]>0:
+            tt_start = tt-obs['lit_acc_days'][tt]
+            print tt_start,tt, obs['lit_acc_days'][tt], np.sum(model['flux_fol_lit'][tt_start:tt+1,:],axis=0)
+            acc_fol_flux_mod[tt,:] = np.sum(model['flux_fol_lit'][tt_start:tt+1,:],axis=0)
+
+    ax4 = plt.subplot2grid((1,1),(0,0))
+    ax4.errorbar(obs['flux_fol_lit'],acc_fol_flux_mod[:,1],xerr=obs['flux_fol_lit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+    plt.show()
     #plt.show()
