@@ -435,7 +435,7 @@ class CARDAMOM(object):
 
         os.system("ifort -O2  -xhost -ipo -no-ftz  %smath_functions.f90 %soksofar.f90 %s.f90 %s_CROP.f90 %scardamom_structures.f90 %sMHMCMC/MCMC_FUN/MHMCMC_STRUCTURES.f90 %s_PARS.f90 %scardamom_io.f90 %sMHMCMC/MCMC_FUN/MHMCMC.f90 %sMODEL_LIKELIHOOD.f90 %scardamom_main.f90 -o %s/cardamom.exe" % (path2misc,path2misc,path2model,path2model,path2general,path2method,path2model,path2general,path2method,path2likelihood,path2general,path2exe))
 
-        print "\ngfortran -O2 -shared %s.f90 %s_CROP.f90 %s_R_interface.f90 -o %sdalec.so -fPIC\n" % (path2model,path2model,path2model,path2exe)
+        print "\ngfortran -O2 -shared \n%s.f90 %s_CROP.f90 \n%s_R_interface.f90 \n-o %sdalec.so \n-fPIC\n" % (path2model,path2model,path2model,path2exe)
         
         os.system("gfortran -O2 -shared %s.f90 %s_CROP.f90 %s_R_interface.f90 -o %sdalec.so -fPIC" % (path2model,path2model,path2model,path2exe))
         
