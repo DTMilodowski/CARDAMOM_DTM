@@ -582,6 +582,7 @@ class CARDAMOM(object):
         data_bin=path_to_data+"%s_%05i.bin" % (self.project_name,target_point)
         for cc in range(0,n_chains):
             output_prefix = path_to_output+"%s_%05i_%i_" % (self.project_name,target_point,cc+1)
+            print "%s %s %s %s %s %s" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq))
             os.system("%s %s %s %s %s %s" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
 
     #-------------------------------------------------------------------------------------
