@@ -1,0 +1,97 @@
+#pragma once
+
+
+struct EDCDIAGNOSTIC{
+int EDC;
+int DIAG;
+/*allocating space for 100 checks (in case future additions are made, etc.).*/
+int PASSFAIL[100];
+int nedc;
+};
+
+
+int EDC1_FIRES(double const *pars, struct EDCDIAGNOSTIC *EDCD, double meantemp, double meanrad)
+{
+
+/*This function was created on 7 Jan 2014*/
+/*Rules here are specified as in Bloom et al., 2014 paper*/
+/*EDC1 contains all checks that do not require a full DALEC_FIRES (DALEC2) model run*/
+
+
+/*ALL EDCs set as 1 initially*/
+EDCD->nedc=100;
+int n; for (n=0;n<EDCD->nedc;n++){EDCD->PASSFAIL[n]=1;}
+
+
+/*declaring variables and constants for subsequent EDCs*/
+int EDC=1;
+int DIAG=EDCD->DIAG;
+int const edcc=0;
+double const fauto=pars[1];
+double const ffol=(1-fauto)*pars[2];
+double const flab=(1-fauto-ffol)*pars[12];
+double const froot=(1-fauto-ffol-flab)*pars[3];
+double const fwood=1-fauto-ffol-flab-froot;
+/*fraction of GPP som under equilibrium conditions*/
+double const fsom=fwood+(froot+flab+ffol)*pars[0]/(pars[0]+pars[7]);
+
+/*yearly leaf loss fraction*/
+double torfol=1/(pars[4]*365.25);
+
+
+
+
+/*EDC CHECK NO 1*/
+/*OK FOR FIRES!!!*/
+/*TOR_LIT faster than TOR_SOM*/
+if ((EDC==1 || DIAG==1) & (pars[8]>pars[7])){EDC=0;EDCD->PASSFAIL[1-1]=0;}
+
+/*EDC CHECK NO 2*/
+/*OK FOR FIRES!!!*/
+/*Litter2SOM greater than SOM to Atm. rate*/
+if ((EDC==1 || DIAG==1) & (pars[0]<pars[8])){EDC=0;EDCD->PASSFAIL[2-1]=0;}
+
+/*EDC CHECK NO 3*/
+/*OK FOR FIRES!!!*/
+/*TOR_FOL faster than TOR_WOOD */
+if ((EDC==1 || DIAG==1) & (pars[5]>torfol)){EDC=0;EDCD->PASSFAIL[3-1]=0;}
+
+/*EDC CHECK NO 4*/
+/*OK FOR FIRES!!!*/
+/*Root turnover greater than SOM turnover at meantemp*/
+if ((EDC==1 || DIAG==1) & (pars[6]<pars[8]*exp(pars[9]*meantemp))){EDC=0;EDCD->PASSFAIL[4-1]=0;}
+
+/*EDC no 5 is addressed in EDC2_FIRES.c*/
+
+/*EDC CHECK NO 6*/
+/*OK FOR FIRES!!!*/
+/*Bday Fday difference>45 days */
+if ((EDC==1 || DIAG==1) & (fabs(pars[14] - pars[11])<45 | fabs(pars[14]-pars[11])>320.25)){EDC=0;EDCD->PASSFAIL[6-1]=0;}
+
+/*EDC CHECK NO 7*/
+/*OK FOR FIRES!!!*/
+if ((EDC==1 || DIAG==1) & ((ffol+flab)>5*froot | (ffol+flab)*5<froot)){EDC=0;EDCD->PASSFAIL[7-1]=0;}
+
+/*EDC No 8*/
+
+
+
+/*Add any generalisations derivable from EDC2 (post-run checks) here*/
+/*Note: these must be tested to ensure that DALEC2 run is NOT needed */
+
+
+
+
+
+
+
+return EDC;
+
+
+}
+
+
+
+
+
+
