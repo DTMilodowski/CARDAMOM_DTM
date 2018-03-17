@@ -206,7 +206,7 @@ subroutine rdalecngsibucket(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat &
          ! division by zero results in NaN plus obviously I can't have turned
          ! anything over if there was nothing to start out with...
          hak = 0
-         where ( POOLS(1:nodays,5) == 0 )
+         where ( POOLS(1:nodays,5) == 0d0 )
                 hak = 1 ; resid_fol(1:nodays) = 0d0
          end where
          out_var2(i,8) = sum(resid_fol) / dble(nodays)

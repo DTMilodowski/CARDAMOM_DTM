@@ -215,7 +215,7 @@ double precision, parameter :: &
                      min_drythick = 0.001d0,      & ! minimum dry thickness depth (m)
                         min_layer = 0.01d0,       & ! minimum thickness of the second rooting layer (m)
                       soil_roughl = 0.05d0,       & ! soil roughness length (m)
-                   top_soil_depth = 0.3d0,        & ! depth to which we conider the top soil to extend (m)
+                   top_soil_depth = 0.3d0,        & ! depth to which we consider the top soil to extend (m)
                          min_root = 5d0,          & ! minimum root biomass (gBiomass.m-2)
                   min_throughfall = 0.2d0,        & ! minimum fraction of precipitation which
                                                     ! is through fall
@@ -808,7 +808,7 @@ contains
                  ! greater
                  ! than 21 days) or all available steps (if n < 21).
                  m = 0 ; test = 0
-                 do while (test < 21d0)
+                 do while (test < 21)
                     m = m + 1 ; test = nint(sum(deltat((n-m):n)))
                     if (m > (n-1)) test = 21
                  end do
@@ -1271,7 +1271,7 @@ contains
           roots_loss  = POOLS(n+1,3)*met(8,n)
           wood_loss   = POOLS(n+1,4)*met(8,n)
           ! For output / EDC updates
-          if (met(8,n) <= 0.99) then
+          if (met(8,n) <= 0.99d0) then
               FLUXES(n,22) = labile_loss * deltat_1(n)
               FLUXES(n,23) = foliar_loss * deltat_1(n)
               FLUXES(n,24) = roots_loss * deltat_1(n)
@@ -1347,7 +1347,7 @@ contains
               m = 0 ; test = nint(sum(deltat(n:(n+m))))
               ! FC Forest Statistics 2015 lag between harvest and restocking ~ 2 year
               restocking_lag = 365*2
-              do while (test < dble(restocking_lag))
+              do while (test < restocking_lag)
                  m = m + 1 ; test = nint(sum(deltat(n:(n+m))))
                  !  get out clause for hitting the end of the simulation
                  if (m+n >= nodays) test = restocking_lag
@@ -1376,22 +1376,22 @@ contains
               !/*first fluxes*/
               !/*LABILE*/
               CFF(1) = POOLS(n+1,1)*burnt_area*combust_eff(1)
-              NCFF(1) = POOLS(n+1,1)*burnt_area*(1-combust_eff(1))*(dble_one-rfac)
+              NCFF(1) = POOLS(n+1,1)*burnt_area*(dble_one-combust_eff(1))*(dble_one-rfac)
               !/*foliar*/
               CFF(2) = POOLS(n+1,2)*burnt_area*combust_eff(2)
-              NCFF(2) = POOLS(n+1,2)*burnt_area*(1-combust_eff(2))*(dble_one-rfac)
+              NCFF(2) = POOLS(n+1,2)*burnt_area*(dble_one-combust_eff(2))*(dble_one-rfac)
               !/*root*/
               CFF(3) = dble_zero !POOLS(n+1,3)*burnt_area*combust_eff(3)
-              NCFF(3) = dble_zero !POOLS(n+1,3)*burnt_area*(1-combust_eff(3))*(dble_one-rfac)
+              NCFF(3) = dble_zero !POOLS(n+1,3)*burnt_area*(dble_one-combust_eff(3))*(dble_one-rfac)
               !/*wood*/
               CFF(4) = POOLS(n+1,4)*burnt_area*combust_eff(4)
-              NCFF(4) = POOLS(n+1,4)*burnt_area*(1-combust_eff(4))*(dble_one-rfac)
+              NCFF(4) = POOLS(n+1,4)*burnt_area*(dble_one-combust_eff(4))*(dble_one-rfac)
               !/*litter*/
               CFF(5) = POOLS(n+1,5)*burnt_area*combust_eff(5)
-              NCFF(5) = POOLS(n+1,5)*burnt_area*(1-combust_eff(5))*(dble_one-rfac)
+              NCFF(5) = POOLS(n+1,5)*burnt_area*(dble_one-combust_eff(5))*(dble_one-rfac)
               ! CWD; assume same as live wood (should be improved later)
               CFF(7) = POOLS(n+1,7)*burnt_area*combust_eff(4)
-              NCFF(7) = POOLS(n+1,7)*burnt_area*(1-combust_eff(4))*(dble_one-rfac)
+              NCFF(7) = POOLS(n+1,7)*burnt_area*(dble_one-combust_eff(4))*(dble_one-rfac)
               !/*fires as daily averages to comply with units*/
               FLUXES(n,17)=(CFF(1)+CFF(2)+CFF(3)+CFF(4)+CFF(5)) * deltat_1(n)
 !              !/*update net exchangep*/

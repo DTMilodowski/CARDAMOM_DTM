@@ -222,12 +222,12 @@ module model_likelihood_module
     double precision :: torfol,tmp ! yearly leaf loss fraction
 
     ! set initial value
-    EDC1=1
-    DIAG=EDCD%DIAG
+    EDC1 = 1
+    DIAG = EDCD%DIAG
 
     ! set all EDCs to 1 (pass)
-    EDCD%nedc=100
-    EDCD%PASSFAIL(1:EDCD%nedc)=1
+    EDCD%nedc = 100
+    EDCD%PASSFAIL(1:EDCD%nedc) = 1
 
     !
     ! begin checking EDCs

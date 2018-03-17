@@ -1,7 +1,7 @@
 
 
-subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat & 
-                             ,nopars,nomet,nofluxes,nopools,pft,pft_specific & 
+subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat &
+                             ,nopars,nomet,nofluxes,nopools,pft,pft_specific &
                              ,nodays,deltat,nos_iter,exepath,pathlength)
 
   use CARBON_MODEL_MOD, only: CARBON_MODEL, extracted_C, itemp, ivpd, iphoto
@@ -20,16 +20,16 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
       implicit none
       ! declare inputs
       ! crop specific variables
-      character(pathlength),intent(in) :: exepath
       integer, intent(in) :: pathlength
+      character(pathlength),intent(in) :: exepath
       double precision :: stock_seed_labile
       double precision, allocatable, dimension(:) :: DS_shoot, & !
-                                                      DS_root, & ! 
+                                                      DS_root, & !
                                                      fol_frac, & !
                                                     stem_frac, & !
                                                     root_frac, & !
                                                       DS_LRLV, & !
-                                                         LRLV, & ! 
+                                                         LRLV, & !
                                                       DS_LRRT, & !
                                                          LRRT
       ! local variables..
@@ -40,9 +40,9 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
   ! Interface end
 
   ! declare input variables
+  integer, intent(in) :: pathlength
   character(pathlength), intent(in) :: exepath
   integer, intent(in) :: nopars         & ! number of paremeters in vector
-                        ,pathlength     & !
                         ,output_dim     & !
                         ,aNPP_dim       & ! NPP allocation fraction variable dimension
                         ,pft            & ! plant functional type
@@ -80,12 +80,12 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
   ! crop specific variables
   double precision :: stock_seed_labile
   double precision, allocatable, dimension(:)  ::  DS_shoot, & !
-                                                    DS_root, & ! 
+                                                    DS_root, & !
                                                    fol_frac, & !
                                                   stem_frac, & !
                                                   root_frac, & !
                                                     DS_LRLV, & !
-                                                       LRLV, & ! 
+                                                       LRLV, & !
                                                     DS_LRRT, & !
                                                        LRRT
 
@@ -109,22 +109,22 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
   do i = 1, nos_iter
      ! zero initial conditions. NOTE: needs to be here due to module memory
      ! instability.
-     lai = 0d0 ; GPP = 0d0 ; NEE = 0d0 ; POOLS = 0d0 ; FLUXES = 0d0 
+     lai = 0d0 ; GPP = 0d0 ; NEE = 0d0 ; POOLS = 0d0 ; FLUXES = 0d0
 
      ! call the model
      if (pft == 1) then
-         ! crop pft and we want pft specific model        
+         ! crop pft and we want pft specific model
          call CARBON_MODEL_CROP(1,nodays,met,pars(1:nopars,i),deltat,nodays,lat &
                           ,lai,NEE,FLUXES,POOLS,pft,nopars,nomet,nopools,nofluxes &
                           ,GPP,stock_seed_labile,DS_shoot,DS_root,fol_frac &
                           ,stem_frac,root_frac,DS_LRLV,LRLV,DS_LRRT,LRRT)
-     else 
+     else
          call CARBON_MODEL(1,nodays,met,pars(1:nopars,i),deltat,nodays &
                           ,lat,lai,NEE,FLUXES,POOLS &
                           ,nopars,nomet,nopools,nofluxes,GPP)
      endif
 !if (i == 1) then
-!    open(unit=666,file="/home/lsmallma/out.csv", & 
+!    open(unit=666,file="/home/lsmallma/out.csv", &
 !         status='replace',action='readwrite' )
 !write(666,*)"deltat",deltat
 !    write(666,*),"GSI",FLUXES(:,14)(1:365)
@@ -132,11 +132,11 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
 !endif
 
      ! now allocate the output the our 'output' variable
-     out_var(i,1:nodays,1)  = lai 
+     out_var(i,1:nodays,1)  = lai
      out_var(i,1:nodays,2)  = GPP
      out_var(i,1:nodays,3)  = FLUXES(1:nodays,3) ! auto resp
      out_var(i,1:nodays,4)  = FLUXES(1:nodays,13) + FLUXES(1:nodays,14) ! het resp
-     out_var(i,1:nodays,5)  = NEE 
+     out_var(i,1:nodays,5)  = NEE
      out_var(i,1:nodays,6)  = POOLS(1:nodays,4) ! wood
      out_var(i,1:nodays,7)  = POOLS(1:nodays,6) ! som
      out_var(i,1:nodays,8)  = POOLS(1:nodays,1) + POOLS(1:nodays,2) + POOLS(1:nodays,3) & ! bio pools only
@@ -149,14 +149,14 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
      if (pft == 1) then
          out_var(i,1:nodays,13) = FLUXES(1:nodays,17) !POOLS(1:nodays,8)! replace with crop model yield
      else
-         out_var(i,1:nodays,13) = FLUXES(1:nodays,20) ! harvested material 
+         out_var(i,1:nodays,13) = FLUXES(1:nodays,20) ! harvested material
      endif
      if (pft == 1) then
-        out_var(i,1:nodays,14) = 0.0
-        out_var(i,1:nodays,15) = 0.0 ! GSI temp component
-        out_var(i,1:nodays,16) = 0.0 ! GSI photoperiod component
-        out_var(i,1:nodays,17) = 0.0 ! GSI vpd component
-     else 
+        out_var(i,1:nodays,14) = 0d0
+        out_var(i,1:nodays,15) = 0d0 ! GSI temp component
+        out_var(i,1:nodays,16) = 0d0 ! GSI photoperiod component
+        out_var(i,1:nodays,17) = 0d0 ! GSI vpd component
+     else
         out_var(i,1:nodays,14) = FLUXES(1:nodays,18) ! GSI value
         out_var(i,1:nodays,15) = itemp(1:nodays) ! GSI temp component
         out_var(i,1:nodays,16) = iphoto(1:nodays) ! GSI photoperiod component
@@ -168,10 +168,10 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
      !!!
      ! NPP calculation
      !!!
-     ! calculate the actual NPP allocation fractions to foliar, wood and fine root pools 
+     ! calculate the actual NPP allocation fractions to foliar, wood and fine root pools
      ! by comparing the sum alloaction to each pools over the sum NPP.
      fauto = sum(FLUXES(1:nodays,3)) / sum(FLUXES(1:nodays,1))
-     sumNPP = 1 / (sum(FLUXES(1:nodays,1))*(1d0-fauto)) ! GPP * (1-Ra) fraction
+     sumNPP = 1d0 / (sum(FLUXES(1:nodays,1))*(1d0-fauto)) ! GPP * (1-Ra) fraction
 !     out_var2(i,1) = sum(FLUXES(1:nodays,4)+FLUXES(1:nodays,8)) * sumNPP ! foliar
      out_var2(i,1) = sum(FLUXES(1:nodays,5)) * sumNPP ! foliar+labile
      out_var2(i,2) = sum(FLUXES(1:nodays,7)) * sumNPP ! wood
@@ -183,11 +183,11 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
 
      if (pft == 1) then
          ! foliage crop system residence time is due to managment < 1 year
-         out_var2(i,4) = 1/365.25
+         out_var2(i,4) = 1/365.25d0
          ! wood crop system residence time is due to managment < 1 year
-         out_var2(i,5) = 1/365.25
+         out_var2(i,5) = 1/365.25d0
          ! roots crop system residence time is due to managment < 1 year
-         out_var2(i,6) = 1/365.25  
+         out_var2(i,6) = 1/365.25d0
          ! cwd+litter / litter
          resid_fol(1:nodays)   = (FLUXES(1:nodays,13)+FLUXES(1:nodays,15))
          resid_fol(1:nodays)   = resid_fol(1:nodays) &
@@ -195,7 +195,7 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
          ! division by zero results in NaN plus obviously I can't have turned
          ! anything over if there was nothing to start out with...
          hak = 0
-         where ( POOLS(1:nodays,5) == 0 )
+         where ( POOLS(1:nodays,5) == 0d0 )
                 hak = 1 ; resid_fol(1:nodays) = 0d0
          end where
          out_var2(i,8) = sum(resid_fol) / dble(nodays)
@@ -207,7 +207,7 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
          ! division by zero results in NaN plus obviously I can't have turned
          ! anything over if there was nothing to start out with...
          hak = 0
-         where ( POOLS(1:nodays,2) == 0 ) 
+         where ( POOLS(1:nodays,2) == 0d0 )
                 hak = 1 ; resid_fol(1:nodays) = 0d0
          end where
          out_var2(i,4) = sum(resid_fol) /dble(nodays-sum(hak))
@@ -219,7 +219,7 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
          ! division by zero results in NaN plus obviously I can't have turned
          ! anything over if there was nothing to start out with...
          hak = 0
-         where ( POOLS(1:nodays,4) == 0 )
+         where ( POOLS(1:nodays,4) == 0d0 )
                 hak = 1 ; resid_fol(1:nodays) = 0d0
          end where
          out_var2(i,5) = sum(resid_fol) /dble(nodays-sum(hak))
@@ -230,7 +230,7 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
          ! division by zero results in NaN plus obviously I can't have turned
          ! anything over if there was nothing to start out with...
          hak = 0
-         where ( POOLS(1:nodays,3) == 0 )
+         where ( POOLS(1:nodays,3) == 0d0 )
                 hak = 1 ; resid_fol(1:nodays) = 0d0
          end where
          out_var2(i,6) = sum(resid_fol) /dble(nodays-sum(hak))
@@ -241,8 +241,8 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
          out_var2(i,8) = sum(resid_fol) / dble(nodays)
      endif ! crop / default model split
 
-     ! Csom 
-     resid_fol(1:nodays)   = FLUXES(1:nodays,14) 
+     ! Csom
+     resid_fol(1:nodays)   = FLUXES(1:nodays,14)
      resid_fol(1:nodays)   = resid_fol(1:nodays) &
                            / POOLS(1:nodays,6)
      out_var2(i,7) = sum(resid_fol) /dble(nodays)
@@ -250,11 +250,11 @@ subroutine rdalecgsidfolcwdfr(output_dim,aNPP_dim,met,pars,out_var,out_var2,lat 
   end do ! nos_iter loop
 
   ! moving this out of the loop to calculate fractions to years residence times
-  out_var2(1:nos_iter,4) = 1 / (out_var2(1:nos_iter,4)*365.25) ! fol
-  out_var2(1:nos_iter,5) = 1 / (out_var2(1:nos_iter,5)*365.25) ! wood
-  out_var2(1:nos_iter,6) = 1 / (out_var2(1:nos_iter,6)*365.25) ! root 
-  out_var2(1:nos_iter,7) = 1 / (out_var2(1:nos_iter,7)*365.25) ! som
-  out_var2(1:nos_iter,8) = 1 / (out_var2(1:nos_iter,8)*365.25) ! CWD + Litter
+  out_var2(1:nos_iter,4) = 1d0 / (out_var2(1:nos_iter,4)*365.25d0) ! fol
+  out_var2(1:nos_iter,5) = 1d0 / (out_var2(1:nos_iter,5)*365.25d0) ! wood
+  out_var2(1:nos_iter,6) = 1d0 / (out_var2(1:nos_iter,6)*365.25d0) ! root
+  out_var2(1:nos_iter,7) = 1d0 / (out_var2(1:nos_iter,7)*365.25d0) ! som
+  out_var2(1:nos_iter,8) = 1d0 / (out_var2(1:nos_iter,8)*365.25d0) ! CWD + Litter
 
   ! deallocate harvested variable
   deallocate(itemp,ivpd,iphoto)
@@ -278,16 +278,16 @@ end subroutine rdalecgsidfolcwdfr
 
     ! declare inputs
     ! crop specific variables
-    character(pathlength),intent(in) :: exepath
     integer,intent(in) :: pathlength
+    character(pathlength),intent(in) :: exepath
     double precision :: stock_seed_labile
     double precision, allocatable, dimension(:) :: DS_shoot, & !
-                                                    DS_root, & ! 
+                                                    DS_root, & !
                                                    fol_frac, & !
                                                   stem_frac, & !
                                                   root_frac, & !
                                                     DS_LRLV, & !
-                                                       LRLV, & ! 
+                                                       LRLV, & !
                                                     DS_LRRT, & !
                                                        LRRT
 
@@ -350,4 +350,3 @@ end subroutine rdalecgsidfolcwdfr
   !
   !------------------------------------------------------------------
   !
-

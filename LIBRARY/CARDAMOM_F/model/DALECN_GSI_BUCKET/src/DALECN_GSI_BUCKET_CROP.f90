@@ -492,7 +492,7 @@ contains
     ! reset values
     intercepted_rainfall = dble_zero ; canopy_storage = dble_zero
 
-    infi=0d0
+    infi = 0d0
 
     !
     ! Begin looping through each time step
@@ -532,7 +532,6 @@ contains
       seconds_per_step = seconds_per_day * deltat(n)
       days_per_step = deltat(n)
       days_per_step_1 = deltat_1(n)
-
 
       ! calculate the minimum soil & root hydraulic resistance based on total
       ! fine root mass ! *2*2 => *RS*C->Bio
@@ -1040,9 +1039,6 @@ contains
     endif ! emerged or not
 
   end subroutine development_stage
-  !
-  !--------------------------------------------------------------------------------------------------------------------------------!
-  !
   !
   !--------------------------------------------------------------------------------------------------------------------------------!
   !
