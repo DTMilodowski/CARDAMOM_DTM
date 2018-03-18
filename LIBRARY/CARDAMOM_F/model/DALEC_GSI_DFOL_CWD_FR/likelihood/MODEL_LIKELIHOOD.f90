@@ -327,8 +327,8 @@ module model_likelihood_module
                       ,parmax,pars,met,M_LAI,M_NEE,M_GPP,M_POOLS,M_FLUXES &
                       ,meantemp,EDC2)
 
-    use CARBON_MODEL_CROP_MOD, only: resp_rate_temp_coeff,ts_length &
-                                    ,sec_in_day,sec_in_hour
+    use CARBON_MODEL_CROP_MOD, only: resp_rate_temp_coeff, ts_length 
+    use CARBON_MODEL_MOD,      only: seconds_per_hour, seconds_per_day
 
     ! the second of two subroutines for assessing current parameters for passing
     ! realism tests for crop ecosystems

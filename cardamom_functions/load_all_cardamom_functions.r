@@ -1,10 +1,8 @@
 load_r_libraries<-function(){
     # load all needed libraries first
     require(chron)
-    #require(compositions)
     require(fields)
     require(gplots)
-    #require(ncdf)
     require(ncdf4)
     require(parallel)
     require(rgdal)
@@ -25,15 +23,16 @@ load_r_libraries<-function(){
 load_r_libraries()
 
 # get the complete list
-list_o_functions=list.files("./cardamom_functions", full.names=T)
+list_o_functions=list.files("./cardamom_functions/", full.names=T)
+print(list_o_functions)
 # remove this file to avoid repetition
 loser_list=grepl("load_all_cardamom_functions.r",list_o_functions)
 loser_list=which(loser_list)
 list_o_functions=list_o_functions[-loser_list]
 # avoid specific file
-loser_list=grepl("cardamom_functions/landmask20km.rda",list_o_functions)
+loser_list=grepl("landmask20km.rda",list_o_functions)
 loser_list=which(loser_list)
-list_o_functions=list_o_functions[-loser_list]
+if (length(loser_list) > 0) { list_o_functions=list_o_functions[-loser_list] }
 # avoid temp files
 loser_list=grepl("~",list_o_functions)
 loser_list=which(loser_list == FALSE)
@@ -55,6 +54,7 @@ loser_list=grepl(".r",list_o_functions)
 list_o_functions=list_o_functions[loser_list]
 # now go throught the list can call the files
 for (i in seq(1, length(list_o_functions))) {
+    print(paste("...loading R script = ",list_o_functions[i],sep=""))
     source(list_o_functions[i])
 }
 

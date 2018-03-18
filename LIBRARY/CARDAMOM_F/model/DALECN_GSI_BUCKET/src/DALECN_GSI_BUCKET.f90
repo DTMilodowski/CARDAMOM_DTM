@@ -613,27 +613,27 @@ contains
     NUE                       = pars(48)      ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
                                               ! ,unlimited by CO2, light and photoperiod
                                               ! (gC/gN/m2leaf/day)
-    pn_max_temp               = 6.173804d+01  ! Maximum temperature for photosynthesis (oC)
-    pn_opt_temp               = 3.038775d+01  ! Optimum temperature fpr photosynthesis (oC)
-    pn_kurtosis               = 2.018061d-01  ! Kurtosis of photosynthesis temperature response
-    e0                        = 4.835317d+00  ! Quantum yield gC/MJ/m2/day PAR
-    max_lai_lwrad_absorption  = 9.329965d-01  ! Max fraction of LW from sky absorbed by canopy
-    lai_half_lwrad_absorption = 8.730879d-01  ! LAI at which canopy LW absorption = 50 %
-    max_lai_nir_absorption    = 5.525465d-01  ! Max fraction of NIR absorbed by canopy
-    lai_half_nir_absorption   = 1.328415d+00  ! LAI at which canopy NIR absorption = 50 %
-    minlwp                    = -1.998811d+00 ! minimum leaf water potential (MPa)
-    max_lai_par_absorption    = 8.440911d-01  ! Max fraction of PAR absorbed by canopy
-    lai_half_par_absorption   = 2.436328d+00  ! LAI at which canopy PAR absorption = 50 %
-    lai_half_lwrad_to_sky     = 1.168294d+00  ! LAI at which 50 % LW is reflected back to sky
-    iWUE                      = 1.009091d-06  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
-    soil_swrad_absorption     = 1.740539d-01  ! Fraction of SW rad absorbed by soil
-    max_lai_swrad_reflected   = 2.348891d-01  ! Max fraction of SW reflected back to sky
+    pn_max_temp               = 6.982614d+01  ! Maximum temperature for photosynthesis (oC)
+    pn_opt_temp               = 3.798068d+01  ! Optimum temperature fpr photosynthesis (oC)
+    pn_kurtosis               = 1.723531d-01  ! Kurtosis of photosynthesis temperature response
+    e0                        = 4.489652d+00  ! Quantum yield gC/MJ/m2/day PAR
+    max_lai_lwrad_absorption  = 9.282892d-01  ! Max fraction of LW from sky absorbed by canopy
+    lai_half_lwrad_absorption = 5.941333d-01  ! LAI at which canopy LW absorption = 50 %
+    max_lai_nir_absorption    = 8.333743d-01  ! Max fraction of NIR absorbed by canopy
+    lai_half_nir_absorption   = 2.148633d+00  ! LAI at which canopy NIR absorption = 50 %
+    minlwp                    = -1.990154d+00 ! minimum leaf water potential (MPa)
+    max_lai_par_absorption    = 8.737539d-01  ! Max fraction of PAR absorbed by canopy
+    lai_half_par_absorption   = 1.804925d+00  ! LAI at which canopy PAR absorption = 50 %
+    lai_half_lwrad_to_sky     = 2.489314d+00  ! LAI at which 50 % LW is reflected back to sky
+    iWUE                      = 1.722579d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
+    soil_swrad_absorption     = 7.375071d-01  ! Fraction of SW rad absorbed by soil
+    max_lai_swrad_reflected   = 2.796492d-01  ! Max fraction of SW reflected back to sky
     lai_half_swrad_reflected  = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
-    max_lai_lwrad_release     = 2.756365d-01  ! Max fraction of LW emitted from canopy to be released
-    lai_half_lwrad_release    = 7.803313d-01  ! LAI at which LW emitted from canopy to be released at 50 %
-    soilevap_rad_intercept    = 0.0183503d0   ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
+    max_lai_lwrad_release     = 2.481599d-01  ! Max fraction of LW emitted from canopy to be released
+    lai_half_lwrad_release    = 5.020443d-01  ! LAI at which LW emitted from canopy to be released at 50 %
+    soilevap_rad_intercept    = 1.122969d-02  ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
                                               ! to account for non-calculation of energy balance
-    soilevap_rad_coef         = 1.7105695d0   ! Coefficient on linear adjustment to
+    soilevap_rad_coef         = 1.748044d+00  ! Coefficient on linear adjustment to
                                               ! soil evaporation to account for non-calculation of energy balance
     ! load some values
     avN = 10d0**pars(11)  ! foliar N gN/m2

@@ -26,8 +26,9 @@ public :: CARBON_MODEL        &
          ,calculate_Rtot      &
          ,calculate_aerodynamic_conductance &
          ,linear_model_gradient &
-         ,seconds_per_day  &
-         ,seconds_per_step &
+         ,seconds_per_day     &
+         ,seconds_per_hour    &
+         ,seconds_per_step    &
          ,root_biomass        &
          ,root_reach          &
          ,minlwp              &
@@ -43,6 +44,8 @@ public :: CARBON_MODEL        &
          ,layer_thickness     &
          ,min_layer        &
          ,nos_soil_layers  &
+         ,soil_frac_clay   &
+         ,soil_frac_sand   &
          ,meant            &
          ,meant_K          &
          ,stomatal_conductance &
@@ -517,32 +520,36 @@ contains
 !call cpu_time(begin)
 !call cpu_time(finish)
 
-    ! load internal parameters
-                      NUE = 1.854462d+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
-                                          ! ,unlimited by CO2, light and photoperiod
-                                          ! (gC/gN/m2leaf/day)
-              pn_max_temp = 6.552830d+01  ! Maximum temperature for photosynthesis (oC)
-              pn_opt_temp = 3.751907d+01  ! Optimum temperature fpr photosynthesis (oC)
-              pn_kurtosis = 1.651520d-01  ! Kurtosis of photosynthesis temperature response
-                       e0 = 4.653694d+00  ! Quantum yield gC/MJ/m2/day PAR
- max_lai_lwrad_absorption = 9.169026d-01  ! Max fraction of LW from sky absorbed by canopy
-lai_half_lwrad_absorption = 8.813847d-01  ! LAI at which canopy LW absorption = 50 %
-   max_lai_nir_absorption = 8.162541d-01  ! Max fraction of NIR absorbed by canopy
-  lai_half_nir_absorption = 2.421007d+00  ! LAI at which canopy NIR absorption = 50 %
-                   minlwp = -1.990053d+00 ! minimum leaf water potential (MPa)
-   max_lai_par_absorption = 8.422406d-01  ! Max fraction of PAR absorbed by canopy
-  lai_half_par_absorption = 1.809908d+00  ! LAI at which canopy PAR absorption = 50 %
-    lai_half_lwrad_to_sky = 2.410646d+00  ! LAI at which 50 % LW is reflected back to sky
-                     iWUE = 1.702490d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
-    soil_swrad_absorption = 7.902139d-01  ! Fraction of SW rad absorbed by soil
-  max_lai_swrad_reflected = 1.309692d-01  ! Max fraction of SW reflected back to sky
- lai_half_swrad_reflected = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
-    max_lai_lwrad_release = 2.649691d-01  ! Max fraction of LW emitted from canopy to be released
-   lai_half_lwrad_release = 5.672227d-01  ! LAI at which LW emitted from canopy to be released at 50 %
-   soilevap_rad_intercept = 5.007682d-03  ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
-                                          ! to account for non-calculation of energy balance
-        soilevap_rad_coef = 1.678611d+00  ! Coefficient on linear adjustment to
-                                          ! soil evaporation to account for non-calculation of energy balance
+    ! load ACM-GPP-ET parameters
+    NUE                       = 1.850535d+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
+                                              ! ,unlimited by CO2, light and
+                                              ! photoperiod
+                                              ! (gC/gN/m2leaf/day)
+    pn_max_temp               = 6.982614d+01  ! Maximum temperature for photosynthesis (oC)
+    pn_opt_temp               = 3.798068d+01  ! Optimum temperature for photosynthesis (oC)
+    pn_kurtosis               = 1.723531d-01  ! Kurtosis of photosynthesis temperature response
+    e0                        = 4.489652d+00  ! Quantum yield gC/MJ/m2/day PAR
+    max_lai_lwrad_absorption  = 9.282892d-01  ! Max fraction of LW from sky absorbed by canopy
+    lai_half_lwrad_absorption = 5.941333d-01  ! LAI at which canopy LW absorption = 50 %
+    max_lai_nir_absorption    = 8.333743d-01  ! Max fraction of NIR absorbed by canopy
+    lai_half_nir_absorption   = 2.148633d+00  ! LAI at which canopy NIR absorption = 50 %
+    minlwp                    = -1.990154d+00 ! minimum leaf water potential (MPa)
+    max_lai_par_absorption    = 8.737539d-01  ! Max fraction of PAR absorbed by canopy
+    lai_half_par_absorption   = 1.804925d+00  ! LAI at which canopy PAR absorption = 50 %
+    lai_half_lwrad_to_sky     = 2.489314d+00  ! LAI at which 50 % LW is reflected back to sky
+    iWUE                      = 1.722579d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
+    soil_swrad_absorption     = 7.375071d-01  ! Fraction of SW rad absorbed by soil
+    max_lai_swrad_reflected   = 2.796492d-01  ! Max fraction of SW reflected back to sky
+    lai_half_swrad_reflected  = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
+    max_lai_lwrad_release     = 2.481599d-01  ! Max fraction of LW emitted from canopy to be released
+    lai_half_lwrad_release    = 5.020443d-01  ! LAI at which LW emitted from canopy to be released at 50 %
+    soilevap_rad_intercept    = 1.122969d-02  ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
+                                              ! to account for non-calculation
+                                              ! of energy balance
+    soilevap_rad_coef         = 1.748044d+00  ! Coefficient on linear adjustment to
+                                              ! soil evaporation to account for
+                                              ! non-calculation of energy
+                                              ! balance
     ! load some values
     avN = 10d0**pars(11)  ! foliar N gN/m2
 
@@ -1594,6 +1601,10 @@ lai_half_lwrad_absorption = 8.813847d-01  ! LAI at which canopy LW absorption = 
     ratio = dble_zero ; ratio(1) = dble_one
     ! Calculate soil depth to which roots reach
     root_reach = max_depth * root_biomass / (root_k + root_biomass)
+    ! explicitly update the soil profile if there has been rooting depth
+    ! changes
+    layer_thickness(1) = top_soil_depth ; layer_thickness(2) = max(min_layer,root_reach-layer_thickness(1))
+    layer_thickness(3) = max_depth - sum(layer_thickness(1:2))
     ! Calculate the plant hydraulic resistance component. Currently unclear
     ! whether this actually varies with height or whether tall trees have a
     ! xylem architecture which keeps the whole plant conductance (gplant) 1-10 (ish).
@@ -1661,7 +1672,6 @@ lai_half_lwrad_absorption = 8.813847d-01  ! LAI at which canopy LW absorption = 
 
     ! Determine effective resistance (MPa.s-1.m-2.mmol-1)
     Rtot = sum(demand) / sum(water_flux)
-
     ! Finally convert transpiration flux (mmol.m-2.s-1)
     ! into kg.m-2.step-1 for consistency with ET in "calculate_update_soil_water"
     water_flux = water_flux * mmol_to_kg_water * seconds_per_step
