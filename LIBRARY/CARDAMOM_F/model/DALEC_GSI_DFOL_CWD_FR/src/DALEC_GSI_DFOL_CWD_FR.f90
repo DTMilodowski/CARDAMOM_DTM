@@ -930,13 +930,13 @@ contains
       !
 
       ! total labile release
-      FLUXES(n,8)  = POOLS(n,1)*min(dble_one,(dble_one-(dble_one-FLUXES(n,16))**deltat(n))/deltat(n)
+      FLUXES(n,8)  = POOLS(n,1)*min(dble_one,dble_one-(dble_one-FLUXES(n,16))**deltat(n))/deltat(n)
       ! total leaf litter production
-      FLUXES(n,10) = POOLS(n,2)*min(dble_one,(dble_one-(dble_one-FLUXES(n,9))**deltat(n))/deltat(n)
+      FLUXES(n,10) = POOLS(n,2)*min(dble_one,dble_one-(dble_one-FLUXES(n,9))**deltat(n))/deltat(n)
       ! total wood litter production
-      FLUXES(n,11) = POOLS(n,4)*min(dble_one,(dble_one-(dble_one-pars(6))**deltat(n))/deltat(n)
+      FLUXES(n,11) = POOLS(n,4)*min(dble_one,dble_one-(dble_one-pars(6))**deltat(n))/deltat(n)
       ! total root litter production
-      FLUXES(n,12) = POOLS(n,3)*min(dble_one,(dble_one-(dble_one-pars(7))**deltat(n))/deltat(n)
+      FLUXES(n,12) = POOLS(n,3)*min(dble_one,dble_one-(dble_one-pars(7))**deltat(n))/deltat(n)
 
       !
       ! those with temperature AND time dependancies
@@ -945,11 +945,11 @@ contains
       ! respiration heterotrophic litter
       FLUXES(n,13) = POOLS(n,5)*min(dble_one,dble_one-(dble_one-(FLUXES(n,2)*pars(8)))**deltat(n))/deltat(n)
       ! respiration heterotrophic som
-      FLUXES(n,14) = POOLS(n,6)*min(dble_one,(dble_one-(dble_one-(FLUXES(n,2)*pars(9)))**deltat(n))/deltat(n)
+      FLUXES(n,14) = POOLS(n,6)*min(dble_one,dble_one-(dble_one-(FLUXES(n,2)*pars(9)))**deltat(n))/deltat(n)
       ! litter to som
-      FLUXES(n,15) = POOLS(n,5)*min(dble_one,(dble_one-(dble_one-(FLUXES(n,2)*pars(1)))**deltat(n))/deltat(n)
+      FLUXES(n,15) = POOLS(n,5)*min(dble_one,dble_one-(dble_one-(FLUXES(n,2)*pars(1)))**deltat(n))/deltat(n)
       ! CWD to litter
-      FLUXES(n,19) = POOLS(n,7)*min(dble_one,(dble_one-(dble_one-(FLUXES(n,2)*pars(38)))**deltat(n))/deltat(n)
+      FLUXES(n,19) = POOLS(n,7)*min(dble_one,dble_one-(dble_one-(FLUXES(n,2)*pars(38)))**deltat(n))/deltat(n)
 
       ! calculate growth respiration and adjust allocation to pools assuming
       ! 0.21875 of total C allocation towards each pool (i.e. 0.28 .eq. xNPP)
