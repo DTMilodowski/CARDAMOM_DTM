@@ -1096,7 +1096,7 @@ contains
                                   ,FLUXES(:,18),FLUXES(n,9),FLUXES(n,16))
 
       ! Total labile release to foliage
-      FLUXES(n,8) = avail_labile*(dble_one-(dble_one-FLUXES(n,16))**deltat(n))*deltat_1(n)
+      FLUXES(n,8) = avail_labile*min(dble_one,dble_one-(dble_one-FLUXES(n,16))**deltat(n))*deltat_1(n)
       ! Retrict based on available labile stores
       FLUXES(n,8) = min(avail_labile*deltat_1(n),FLUXES(n,8))
       ! Update available labile supply for fine roots and wood
@@ -1137,11 +1137,11 @@ contains
           ! C starvation turnover not occuring so turnovers progress as normal
 
           ! total leaf litter production
-          FLUXES(n,10) = POOLS(n,2)*(dble_one-(dble_one-FLUXES(n,9))**deltat(n))*deltat_1(n)
+          FLUXES(n,10) = POOLS(n,2)*min(dble_one,dble_one-(dble_one-FLUXES(n,9))**deltat(n))*deltat_1(n)
           ! total wood litter production
-          FLUXES(n,11) = POOLS(n,4)*(dble_one-(dble_one-pars(6))**deltat(n))*deltat_1(n)
+          FLUXES(n,11) = POOLS(n,4)*min(dble_one,dble_one-(dble_one-pars(6))**deltat(n))*deltat_1(n)
           ! total root litter production
-          FLUXES(n,12) = POOLS(n,3)*(dble_one-(dble_one-pars(7))**deltat(n))*deltat_1(n)
+          FLUXES(n,12) = POOLS(n,3)*min(dble_one,dble_one-(dble_one-pars(7))**deltat(n))*deltat_1(n)
 
       endif
 
@@ -1162,13 +1162,13 @@ contains
       ! parameter iteration
 !      FLUXES(n,2) = exp(pars(10)*meant)
       ! respiration heterotrophic litter
-      FLUXES(n,13) = POOLS(n,5)*(dble_one-(dble_one-FLUXES(n,2)*pars(8))**deltat(n))*deltat_1(n)
+      FLUXES(n,13) = POOLS(n,5)*min(dble_one,dble_one-(dble_one-FLUXES(n,2)*pars(8))**deltat(n))*deltat_1(n)
       ! respiration heterotrophic som
-      FLUXES(n,14) = POOLS(n,6)*(dble_one-(dble_one-FLUXES(n,2)*pars(9))**deltat(n))*deltat_1(n)
+      FLUXES(n,14) = POOLS(n,6)*min(dble_one,dble_one-(dble_one-FLUXES(n,2)*pars(9))**deltat(n))*deltat_1(n)
       ! litter to som
-      FLUXES(n,15) = POOLS(n,5)*(dble_one-(dble_one-FLUXES(n,2)*pars(1))**deltat(n))*deltat_1(n)
+      FLUXES(n,15) = POOLS(n,5)*min(dble_one,dble_one-(dble_one-FLUXES(n,2)*pars(1))**deltat(n))*deltat_1(n)
       ! CWD to litter
-      FLUXES(n,20) = POOLS(n,7)*(dble_one-(dble_one-FLUXES(n,2)*pars(38))**deltat(n))*deltat_1(n)
+      FLUXES(n,20) = POOLS(n,7)*min(dble_one,dble_one-(dble_one-FLUXES(n,2)*pars(38))**deltat(n))*deltat_1(n)
 
       !!!!!!!!!!
       ! calculate growth respiration and adjust allocation to pools assuming
@@ -2848,7 +2848,7 @@ contains
 
              ! calculate potential C allocation to leaves
              tmp = avail_labile * &
-                   (dble_one-(dble_one-leaf_growth)**deltat(current_step))*deltat_1(current_step)
+                   min(dble_one,dble_one-(dble_one-leaf_growth)**deltat(current_step))*deltat_1(current_step)
              ! C spent on growth
              leaf_cost = tmp * deltat(current_step)
              ! C to new growth
@@ -2891,7 +2891,7 @@ contains
                 leaf_growth = pot_leaf_growth*GSI(current_step)
                 ! calculate potential C allocation to leaves
                 tmp = avail_labile * &
-                      (dble_one-(dble_one-leaf_growth)**deltat(current_step))*deltat_1(current_step)
+                      min(dble_one,dble_one-(dble_one-leaf_growth)**deltat(current_step))*deltat_1(current_step)
                 ! C spent on growth
                 leaf_cost = tmp * deltat(current_step)
                 ! C to new growth
@@ -2927,7 +2927,7 @@ contains
                 ! we are in a decending condition so foliar turnover
                 leaf_fall = pot_leaf_fall * (dble_one-GSI(current_step))
                 ! calculate potential C loss from leaves
-                tmp = foliage * (dble_one-(dble_one-leaf_fall)**deltat(current_step))*deltat_1(current_step)
+                tmp = foliage * min(dble_one,dble_one-(dble_one-leaf_fall)**deltat(current_step))*deltat_1(current_step)
                 ! foliar biomass lost
                 tmp = tmp * deltat(current_step)
                 ! remainder is Rg cost
@@ -3041,7 +3041,7 @@ contains
         ! Temperature limited turnover rate of labile -> roots
         root_growth = lab_to_roots*Croot_labile_release_coef(n)
         ! Estimate potential root allocation over time for potential root allocation
-!        tmp = avail_labile*(dble_one-(dble_one-root_growth)**days_per_step)*days_per_step_1
+!        tmp = avail_labile*min(dble_one,dble_one-(dble_one-root_growth)**days_per_step)*days_per_step_1
 !        ! C spent on growth
 !        root_cost = tmp*days_per_step
 !        ! C to new growth
