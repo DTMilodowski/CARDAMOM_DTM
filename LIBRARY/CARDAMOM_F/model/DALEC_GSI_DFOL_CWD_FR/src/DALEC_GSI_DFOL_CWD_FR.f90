@@ -887,7 +887,7 @@ contains
          tmp = POOLS(n,1)*(dble_one-(dble_one-FLUXES(n,16))**deltat(n))/deltat(n)
          tmp = (POOLS(n,2)+tmp)/pars(17)
          tmp_lai = lai ; lai = tmp
-         tmp = acm_gpp(stomatal_conductance)
+         tmp = max(dble_zero,acm_gpp(stomatal_conductance))
          lai = tmp_lai
          ! determine if increase in LAI leads to an improvement in GPP greater
          ! than
@@ -908,7 +908,7 @@ contains
             tmp = POOLS(n,1)*(dble_one-(dble_one-FLUXES(n,16))**deltat(n))/deltat(n)
             tmp = (POOLS(n,2)+tmp)/pars(17)
             tmp_lai = lai ; lai = tmp
-            tmp = acm_gpp(stomatal_conductance)
+            tmp = max(dble_zero,acm_gpp(stomatal_conductance))
             lai = tmp_lai            ! determine if increase in LAI leads to an improvement in GPP greater
             ! than
             ! critical value, if not then no labile turnover allowed
