@@ -2250,7 +2250,7 @@ contains
   subroutine canopy_interception_and_storage(potential_evaporation)
 
     ! Simple daily time step integration of canopy rainfall interception, runoff
-    ! and rainfall (kg.m-2.s-1). NOTE: it is possible for intercepted rainfall to be
+    ! and rainfall (kgH2O.m-2.s-1). NOTE: it is possible for intercepted rainfall to be
     ! negative if stored water running off into the soil is greater than
     ! rainfall (i.e. when leaves have died between steps)
 
@@ -2269,26 +2269,16 @@ contains
     ! maximum canopy storage (mm); minimum is applied to prevent errors in
     ! drainage calculation. Assume minimum capacity due to wood
     max_storage=max(min_storage,0.1d0*lai) ; max_storage_1 = max_storage**(-dble_one)
-    ! potential intercepted rainfall (kg.m-2.s-1)
+    ! potential intercepted rainfall (kgH2O.m-2.s-1)
     intercepted_rainfall = rainfall * (dble_one - through_fall)
-    ! average rainfall intercepted by canopy (kg.m-2.day-1)
+    ! average rainfall intercepted by canopy (kgH2O.m-2.day-1)
     daily_addition = intercepted_rainfall * seconds_per_day
 
-    ! is the intercepted rainfall greater or less than the potential
-    ! evaporation?
-!    if (potential_evaporation > daily_addition) then
+    tmp = dble_zero ; through_fall = dble_zero ; wetcanopy_evaporation = dble_zero
+    ! if we have more rainfall than storage, canopy water currently stored or
+    ! less potential than we have rain coming in
+    if (daily_addition > max_storage .or. canopy_storage > dble_zero .or. potential_evaporation < daily_addition) then
 
-        ! if the potential evaporation is greater than intercepted rainfall
-        ! ,true in most cases, we simply assume it is all evaporated
-        ! Wet canopy evaporation (kgH2O/m2/day)
-!        potential_evaporation = daily_addition
-
-        ! Note that intercepted rainfall is already calculated an in correct
-        ! units to combine with "rainfall" variable (kgH2O/m2/s)
-
-!    else
-
-        tmp = dble_zero ; through_fall = dble_zero ; wetcanopy_evaporation = dble_zero
         ! intergrate over canopy for each day
         do i = 1, int(days_per_step)
 
@@ -2309,7 +2299,7 @@ contains
            ! now remove from canopy
            canopy_storage = canopy_storage - tmp
 
-           ! in case of due formation do overflow calculation again
+           ! in case of dew formation do overflow calculation again
            ! how much is over and above the max_storage capacity?
            tmp = max(dble_zero, canopy_storage - max_storage)
            ! add this back to the through fall
@@ -2321,7 +2311,7 @@ contains
 
         ! sanity checks
         ! NOTE: addition of 1e-10 is to prevent precision error causing stop
-        if (canopy_storage > (max_storage + 1d-10) .or. canopy_storage < dble_zero) then
+        if (canopy_storage > (max_storage + vsmall) .or. canopy_storage < dble_zero) then
            print*,"Canopy water storage mass balance error!!"
            print*,"through_fall_total",through_fall
            print*,"canopy_storage",canopy_storage,"max_storage",max_storage
@@ -2329,9 +2319,9 @@ contains
            stop
         endif
 
-        ! average fluxes to daily rates
+        ! average evaporative flux to daily rate (kgH2O/m2/day)
         potential_evaporation = wetcanopy_evaporation * days_per_step_1
-        ! correct intercepted rainfall rate to kg.m-2.s-1
+        ! correct intercepted rainfall rate to kgH2O.m-2.s-1
         intercepted_rainfall = intercepted_rainfall - ((through_fall * days_per_step_1) * seconds_per_day_1)
 
         ! sanity check
@@ -2340,7 +2330,26 @@ contains
             print*,"rainfall", rainfall, "through_fall", (through_fall * days_per_step_1 * seconds_per_day_1)
         endif
 
-!    endif ! potential_evaporation > daily_addition
+    else if (daily_addition > dble_zero .and. daily_addition <= max_storage .and. potential_evaporation >= daily_addition) then
+
+        ! there is rain but not more than overfills the canopy and we do not
+        ! current have any water stored on the canopy we will assume that all
+        ! the water will be evaporated under potential evaporation
+
+        ! evaporative flux (kgH2O/m2/day)
+        potential_evaporation = daily_addition
+        ! intercepted rainfall (kgH2O/m2/s)
+        intercepted_rainfall = intercepted_rainfall
+        ! reset canopy storage
+        canopy_storage = dble_zero
+
+    else ! no rain to intercept
+
+        ! set intercepted rain and potential to zero
+        potential_evaporation = dble_zero
+        intercepted_rainfall = dble_zero
+
+    end if ! we have some rainfall
 
   end subroutine canopy_interception_and_storage
   !
