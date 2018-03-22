@@ -951,6 +951,14 @@ contains
       ! CWD to litter
       FLUXES(n,19) = POOLS(n,7)*min(dble_one,dble_one-(dble_one-(FLUXES(n,2)*pars(38)))**deltat(n))/deltat(n)
 
+      ! mass balance check for decomposition of litter as occurs via two
+      ! pathways
+      if ( (FLUXES(n,8) + FLUXES(n,13)) >= POOLS(n,5) ) then
+           tmp = FLUXES(n,8) / (FLUXES(n,8) + FLUXES(n,13))
+           FLUXES(n,8) = tmp * (POOLS(n,5)-vsmall)
+           FLUXES(n,13) = (dble_one - tmp) * (POOLS(n,5)-vsmall)
+      end if 
+
       ! calculate growth respiration and adjust allocation to pools assuming
       ! 0.21875 of total C allocation towards each pool (i.e. 0.28 .eq. xNPP)
       ! foliage
