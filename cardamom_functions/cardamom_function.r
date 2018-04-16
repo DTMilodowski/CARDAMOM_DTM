@@ -6,7 +6,7 @@
 
 cardamom <-function (projname,model,method,stage) {
 
-# load needed functions into R environment
+## load needed functions into R environment
 paths=load_paths()
 
 # define file name for PROJECT file
