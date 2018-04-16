@@ -344,9 +344,9 @@ binary_data<-function(met,OBS,file,EDC,latlon_in,ctessel_pft,modelname,parameter
 	    PARPRIORS[21]=OBS$Cwood_initial ; if (OBS$Cwood_initial != -9999) {PARPRIORUNC[21]=OBS$Cwood_initial_unc} # Cwood prior
 	    #PARPRIORS[39]=150               ; PARPRIORUNC[39]=1.4 # Croot to half max depth (gbio.m-2)
 	    #PARPRIORS[40]=2	      	    ; PARPRIORUNC[40]=1.4 # Max rooting depth (m)
-	    PARPRIORS[41]=1.639		    ; PARPRIORUNC[41]=0.125 # Rm_leaf N**exponent (gC/gN) Reich et al., (2008)
-	    PARPRIORS[43]=1.352		    ; PARPRIORUNC[43]=0.150 # Rm_root N**exponent (gC/gN) Reich et al., (2008)
-	    PARPRIORS[45]=1.344		    ; PARPRIORUNC[45]=0.150 # Rm_wood N**exponent (gC/gN) Reich et al., (2008)
+	    PARPRIORS[41]=1.639		    ; PARPRIORUNC[41]=0.125*2 # Rm_leaf N**exponent (gC/gN) Reich et al., (2008)
+	    PARPRIORS[43]=1.352		    ; PARPRIORUNC[43]=0.150*2 # Rm_root N**exponent (gC/gN) Reich et al., (2008)
+	    PARPRIORS[45]=1.344		    ; PARPRIORUNC[45]=0.150*2 # Rm_wood N**exponent (gC/gN) Reich et al., (2008)
 	}
         PARPRIORS[22]=OBS$Clit_initial          ; if (OBS$Clit_initial != -9999) {PARPRIORUNC[22]=2.0} # Clitter prior
         PARPRIORS[23]=OBS$SOM                   ; if (OBS$SOM != -9999) {PARPRIORUNC[23]=2.0} # Csom prior

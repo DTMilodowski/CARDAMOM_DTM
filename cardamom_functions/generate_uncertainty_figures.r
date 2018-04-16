@@ -27,7 +27,7 @@ generate_uncertainty_figures<-function(PROJECT,n) {
 	# how many plots in total do we have
 	nos_plots=0:12
         if (PROJECT$model$name == "DALEC_GSI_BUCKET") {nos_plots=c(-5,-4,-3,-2,nos_plots,15,22)}
-	if (PROJECT$model$name == "DALECN_GSI_BUCKET") {nos_plots=c(-5,-4,-3,-2,nos_plots,15,22)}
+	if (PROJECT$model$name == "DALECN_GSI_BUCKET") {nos_plots=c(-5,-4,-3,-2,nos_plots,15,21,22)}
 #	if (PROJECT$model$name == "DALEC_GSI_FR_LABILE") {nos_plots=-1:12}
         if (PROJECT$model$name == "DALEC_GSI_DFOL_CWD_FR") {nos_plots=c(nos_plots,15,22)}
         if (PROJECT$model$name == "DALEC_GSI_DBio_FR") {nos_plots=0:16}

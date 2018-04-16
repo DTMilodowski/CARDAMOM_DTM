@@ -326,7 +326,7 @@ if (stage == 3) {
 	if (run_all != "y" & run_all != "n") {run_all=readline("Run all parameter vectors to generate confidence intervals? (y/n)") ; failed=TRUE} else {failed = FALSE}
     }
     if (run_all == "y") {
-	PROJECT$latter_sample_frac=0.75 #0.5 # 0.75 #readline("What (latter) fraction of accepted parameters to use (e.g. 0.5)?")
+	PROJECT$latter_sample_frac = 0.75 #0.5 # 0.75 #readline("What (latter) fraction of accepted parameters to use (e.g. 0.5)?")
 	run_mcmc_results(PROJECT,stage,repair)
     }
    

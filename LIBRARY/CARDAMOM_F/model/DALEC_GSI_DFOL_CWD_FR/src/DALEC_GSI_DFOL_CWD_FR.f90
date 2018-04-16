@@ -953,10 +953,10 @@ contains
 
       ! mass balance check for decomposition of litter as occurs via two
       ! pathways
-      if ( (FLUXES(n,8) + FLUXES(n,13)) >= POOLS(n,5) ) then
-           tmp = FLUXES(n,8) / (FLUXES(n,8) + FLUXES(n,13))
-           FLUXES(n,8) = tmp * (POOLS(n,5)-vsmall)
-           FLUXES(n,13) = (dble_one - tmp) * (POOLS(n,5)-vsmall)
+      if ( (FLUXES(n,13) + FLUXES(n,15))*deltat(n) >= POOLS(n,5) ) then
+           tmp = FLUXES(n,13) / (FLUXES(n,13) + FLUXES(n,15))
+           FLUXES(n,13) = tmp * (POOLS(n,5)/deltat(n))
+           FLUXES(n,15) = (dble_one - tmp) * (POOLS(n,5)/deltat(n))
       end if 
 
       ! calculate growth respiration and adjust allocation to pools assuming

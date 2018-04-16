@@ -45,8 +45,8 @@ module MODEL_PARAMETERS
     ! Nitrogen use efficiency (gC/gN per m2 at optimum temperature)
     ! Derived from Vcmax reported in Wullschleger (1993), Journal of
     ! Experimental Botany, Vol 44, No. 262, pp. 907-920.
-    PI%parmin(1)=03d0 !3d0
-    PI%parmax(1)=60d0 !30d0
+    PI%parmin(1)=03d0 
+    PI%parmax(1)=30d0 
 
     ! max temperature for photosynthesis (oC)
     PI%parmin(2)=40d0

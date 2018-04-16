@@ -946,11 +946,14 @@ uncertainty_figures<-function(which_plot,PROJECT,states_all,drivers,parameters,s
 
 	    # structure needed by function is dim=c(time,iter)
 	    # flip it to get the right shape
-	    DIN_var=t(states_all$rauto/states_all$gpp)
+            DIN_var=states_all$rauto/states_all$gpp
+            DIN_var[which(states_all$gpp == 0)] = NA
+	    DIN_var=t(DIN_var)
+
 	    # calculate meanRa:GPP
-	    info = round(quantile(apply(DIN_var,2,mean),prob=c(0.025,0.5,0.975)),digits=2)
-	    ymax=quantile(as.vector(DIN_var), prob=c(0.999), na.rm=TRUE)
-	    ymin=quantile(as.vector(DIN_var), prob=c(0.001), na.rm=TRUE)
+	    info = round(quantile(apply(DIN_var,2,mean,na.rm=TRUE),prob=c(0.025,0.5,0.975)),digits=2)
+	    ymax=quantile(as.vector(DIN_var), prob=c(0.99), na.rm=TRUE)
+	    ymin=quantile(as.vector(DIN_var), prob=c(0.01), na.rm=TRUE)
 	    xloc=0.15*dim(DIN_var)[1] ; yloc=(1-0.05)*ymax
 
 	    jpeg(file=paste(PROJECT$figpath,"timeseries_RaGPP_actual_",PROJECT$sites[n],"_",PROJECT$name,".jpg",sep=""), width=7200, height=4000, res=300, quality=100)

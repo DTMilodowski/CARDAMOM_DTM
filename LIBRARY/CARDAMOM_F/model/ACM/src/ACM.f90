@@ -427,7 +427,7 @@ contains
       lat = met(16,n) ! latitude (degrees)
       wind_spd = met(17,n) ! wind speed (m/s)
       vpd_pa = met(18,n)  ! Vapour pressure deficit (Pa)
-      Rtot = met(19,n) ! Rtot (MPa.s-1.m-2.mmol-1))
+      Rtot = -9999d0 !met(19,n) ! Rtot (MPa.s-1.m-2.mmol-1))
 
       ! calculate daylength in hours and seconds
       dayl_hours = daylength_hours((doy-(deltat(n)*0.5d0)),lat)
