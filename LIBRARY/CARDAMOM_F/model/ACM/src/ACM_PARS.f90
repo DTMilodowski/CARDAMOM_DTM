@@ -128,7 +128,7 @@ module MODEL_PARAMETERS
     !
 
     ! soil sw radiation absorption (fraction)
-    PI%parmin(15)=0.10d0 !0.50
+    PI%parmin(15)=0.50d0 !0.10d0 !0.50
     PI%parmax(15)=0.99d0
 
     ! max sw radiation returned to sky by canopy (fraction)

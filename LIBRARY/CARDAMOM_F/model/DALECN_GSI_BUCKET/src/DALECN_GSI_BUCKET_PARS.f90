@@ -188,7 +188,7 @@ module MODEL_PARAMETERS
        ! Reich - root N linked respiration intercept
        ! max/min values based on observed ranges from Reich et al (2008)
        ! Figure 1
-       PI%parmin(44)=0.20d0 !0.01 !0.915
+       PI%parmin(44)=0.10d0 !0.01 !0.915
        PI%parmax(44)=1.90d0 !1.25 !1.079
 
        ! Reich - wood N linked respiration exponential coefficient

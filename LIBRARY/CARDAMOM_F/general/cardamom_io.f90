@@ -508,10 +508,10 @@ module cardamom_io
     DATAin%yield = -9999 !int(statdat(8))
     DATAin%age = int(statdat(9))
     nopars_dummy = int(statdat(10)) ! needed for next dev stage
-    soil_frac_sand(1) = statdat(12) ! top soil sand percentage
-    soil_frac_sand(2:nos_soil_layers) = statdat(13) ! bot
-    soil_frac_clay(1) = statdat(14) ! top soil clay percentage
-    soil_frac_clay(2:nos_soil_layers) = statdat(15) ! bot
+    soil_frac_sand(1:2) = statdat(12) ! top soil sand percentage
+    soil_frac_sand(3:nos_soil_layers) = statdat(13) ! bot
+    soil_frac_clay(1:2) = statdat(14) ! top soil clay percentage
+    soil_frac_clay(3:nos_soil_layers) = statdat(15) ! bot
 
     ! call for model specific values
     call cardamom_model_library
