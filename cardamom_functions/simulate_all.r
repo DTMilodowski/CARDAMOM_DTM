@@ -29,7 +29,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  gsitempall=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
 	  gsiphotoall=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
 	  gsivpdall=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
-	  Clabslow=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))	  
+	  Clabslow=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
 	  somfast=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
 	  litroot=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
 	  litwood=array(0,dim=c(dim(pars)[2]*dim(pars)[3],dim(met)[1]))
@@ -46,7 +46,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
       for (n in seq(1,dim(pars)[1])){
 	  pars_in[n,]=pars[n,,]
       }
-      # loop through combinations	
+      # loop through combinations
       if (model_name == "ACM") {
 	  dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
 	  output_dim=5
@@ -56,12 +56,12 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
                                       ,nofluxes=as.integer(PROJECT$model$nofluxes[site]),nopools=as.integer(PROJECT$model$nopools[site])
 	        	              ,pft=as.integer(pft),pft_specific=as.integer(pft_specific),nodays=as.integer(dim(met)[1])
 			              ,deltat=as.double(array(0,dim=c(as.integer(dim(met)[1])))),nos_iter=as.integer(nos_iter)
-				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[4]),dim=c(3)))
-				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[2]),dim=c(3))))
+				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[3],soil_info[4],soil_info[4]),dim=c(4)))
+				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[1],soil_info[2],soil_info[2]),dim=c(4)))
 	  output=tmp$out_var
           output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_BUCKET") {
 	  output_dim=23
           dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
@@ -73,8 +73,8 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
                                       ,nofluxes=as.integer(PROJECT$model$nofluxes[site]),nopools=as.integer(PROJECT$model$nopools[site])
                                       ,pft=as.integer(pft),pft_specific=as.integer(pft_specific),nodays=as.integer(dim(met)[1])
                                       ,deltat=as.double(array(0,dim=c(as.integer(dim(met)[1])))),nos_iter=as.integer(nos_iter)
-				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[4]),dim=c(3)))
-				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[2]),dim=c(3)))
+				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[3],soil_info[4],soil_info[4]),dim=c(4)))
+				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[1],soil_info[2],soil_info[2]),dim=c(4)))
 				      ,exepath=as.character(crop_file_location),pathlength=as.integer(nchar(crop_file_location)))
           output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
           aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
@@ -91,8 +91,8 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
                                       ,nofluxes=as.integer(PROJECT$model$nofluxes[site]),nopools=as.integer(PROJECT$model$nopools[site])
                                       ,pft=as.integer(pft),pft_specific=as.integer(pft_specific),nodays=as.integer(dim(met)[1])
                                       ,deltat=as.double(array(0,dim=c(as.integer(dim(met)[1])))),nos_iter=as.integer(nos_iter)
-				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[4]),dim=c(3)))
-				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[2]),dim=c(3)))
+				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[3],soil_info[4],soil_info[4]),dim=c(4)))
+				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[1],soil_info[2],soil_info[2]),dim=c(4)))
 				      ,exepath=as.character(crop_file_location),pathlength=as.integer(nchar(crop_file_location)))
           output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
           aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
@@ -110,7 +110,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_CDEA_FR") {
 	  dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
 	  if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
@@ -123,9 +123,9 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_FR_LABILE") {
-	  output_dim=18 
+	  output_dim=18
 	  dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
 	  if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
 	  tmp=.Fortran( "rdalecgsifr",output_dim=as.integer(output_dim),aNPP_dim=as.integer(aNPP_dim),met=as.double(t(met)),pars=as.double(pars_in)
@@ -137,9 +137,9 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALECN_GSI_FR") {
-	  output_dim=22 
+	  output_dim=22
 	  dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
 	  if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
 	  tmp=.Fortran( "rdalecngsifr",output_dim=as.integer(output_dim),aNPP_dim=as.integer(aNPP_dim),met=as.double(t(met)),pars=as.double(pars_in)
@@ -151,7 +151,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_FR") {
 	  dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
 	  if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
@@ -164,7 +164,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_DFOL_FR") {
           dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
           if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
@@ -195,7 +195,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
           dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
           rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_DFOL_FROOT_FR") {
-	  output_dim=19 
+	  output_dim=19
           dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
           if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
           tmp=.Fortran( "rdalecgsidfolfrootfr",output_dim=as.integer(output_dim),aNPP_dim=as.integer(aNPP_dim),met=as.double(t(met)),pars=as.double(pars_in)
@@ -262,9 +262,9 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else if (model_name == "DALEC_GSI_DBio_FR") {
-          output_dim=22 
+          output_dim=22
           dyn.load(paste(PROJECT$exepath,"/dalec.so", sep=""))
           if (parameter_type == "pft_specific") {pft_specific = 1} else {pft_specific = 0}
           tmp=.Fortran( "rdalecgsibiofr",output_dim=as.integer(output_dim),aNPP_dim=as.integer(aNPP_dim),met=as.double(t(met)),pars=as.double(pars_in)
@@ -301,7 +301,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  output=tmp$out_var ; output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  aNPP=tmp$out_var2  ; aNPP=array(aNPP, dim=c(nos_iter,aNPP_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))
-          rm(tmp) ; gc() 
+          rm(tmp) ; gc()
       } else {
 	  stop(paste("Model choice (",model_name,") does not have corresponding R interface",sep=""))
       }
@@ -342,7 +342,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	  if (model_name == "DALECN_GSI_DFOL_LABILE_FR" | model_name == "DALECN_GSI_DFOL_LABILE_FROOT_FR") {
 	      labroot=output[,,18] ; labwood=output[,,19] ; litwood=output[,,20]
      	      litN=output[,,21] ; labN=output[,,22] ; DIN=output[,,23]
-	      N_mineralisation=output[,,24] 
+	      N_mineralisation=output[,,24]
 	  }
 	  if (model_name == "DALEC_GSI_DBio_FR") {
 	    somfast=output[,,18]

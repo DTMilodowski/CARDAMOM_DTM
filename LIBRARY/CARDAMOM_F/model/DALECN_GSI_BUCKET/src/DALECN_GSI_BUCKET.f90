@@ -149,7 +149,7 @@ double precision, parameter :: xacc = 1d-4        & ! accuracy parameter for zbr
 
 integer, parameter :: nos_root_layers = 3, nos_soil_layers = nos_root_layers + 1
 double precision, parameter :: pi = 3.1415927d0,  &
-                             pi_1 = pi**(-1d0),   &
+                             pi_1 = pi**(-dble_one),   &
                               pi2 = pi**2,        &
                            two_pi = pi*2d0,       &
                        deg_to_rad = pi/180d0,     &
@@ -197,12 +197,12 @@ double precision, parameter :: &
                       root_radius = 0.00029d0,    & ! root radius (m) Bonen et al 2014 = 0.00029
                                                     ! Williams et al 1996 = 0.0001
                     root_radius_1 = root_radius**(-dble_one), &
-              root_cross_sec_area = 3.141593d-08, & ! root cross sectional area (m2)
-                                                    ! = pi * root_radius * root_radius
+              root_cross_sec_area = pi * root_radius**2, & ! root cross sectional area (m2)
+                                                           ! = pi * root_radius * root_radius
                      root_density = 0.31d6,       & ! root density (g biomass m-3 root)
                                                     ! 0.5e6 Williams et al 1996
                                                     ! 0.31e6 Bonan et al 2014
-          root_mass_length_coef_1 = (root_cross_sec_area * root_density)**(-1d0), &
+          root_mass_length_coef_1 = (root_cross_sec_area * root_density)**(-dble_one), &
                const_sfc_pressure = 101325d0,     & ! (Pa)  Atmospheric surface pressure
                              head = 0.009807d0,   & ! head of pressure (MPa/m)
                            head_1 = 101.968d0       ! inverse head of pressure (m/MPa)
@@ -310,7 +310,7 @@ double precision :: root_reach, root_biomass,soil_depth, &
                 max_supply, & ! maximum water supply (mmolH2O/m2/day)
                      meant, & ! mean air temperature (oC)
                    meant_K, & ! mean air temperature (K)
-          mean_annual_temp, & 
+          mean_annual_temp, &
         canopy_swrad_MJday, & ! canopy_absorbed shortwave radiation (MJ.m-2.day-1)
           canopy_par_MJday, & ! canopy_absorbed PAR radiation (MJ.m-2.day-1)
           soil_swrad_MJday, & ! soil absorbed shortwave radiation (MJ.m-2.day-1)
@@ -834,7 +834,7 @@ contains
            deltat_1 = deltat**(-dble_one)
            ! meant time step temperature
            meant_time = (met(2,1:nodays)+met(3,1:nodays)) * 0.5d0
-           mean_annual_temp = sum((met(3,1:nodays)+met(2,1:nodays))*0.5d0) / dble(nodays) 
+           mean_annual_temp = sum((met(3,1:nodays)+met(2,1:nodays))*0.5d0) / dble(nodays)
            do n = 1, nodays
               ! calculate day length as invarient between iterations
               daylength_hours(n)=daylength_in_hours(met(6,n)-(deltat(n)*0.5d0),lat)
@@ -886,7 +886,7 @@ contains
         ! Used to initialise soils
         FLUXES(1,19) = calculate_update_soil_water(dble_zero,dble_zero,dble_zero) ! assume no evap or rainfall
         ! Store soil water content of the rooting zone (mm)
-        POOLS(1,8) = 1d3*sum(soil_waterfrac(1:nos_root_layers)*layer_thickness(1:nos_root_layers))
+        POOLS(1,8) = 1d3*soil_waterfrac(1)*layer_thickness(1)
 
     else
 
@@ -1228,7 +1228,7 @@ contains
       ! evaporation (kg.m-2.day-1)
       FLUXES(n,19) = FLUXES(n,19) + wetcanopy_evap
       ! store soil water content of the rooting zone (mm)
-      POOLS(n,8) = 1d3*sum(soil_waterfrac(1)*layer_thickness(1))
+      POOLS(n,8) = 1d3*soil_waterfrac(1)*layer_thickness(1)
 
 
       !!!!!!!!!!
@@ -1621,7 +1621,7 @@ contains
                         canopy_radiation, soil_radiation & ! isothermal net radiation (W/m2)
                                         ,water_diffusion & ! Diffusion of water through soil matrix (m.s-1)
                                            ,water_supply & ! Potential water supply to canopy from soil (kgH2O.m-2.day-1)
-                                            ,lambda_soil & 
+                                            ,lambda_soil &
                                               ,soil_temp & ! Soil surface temperature (oC)
                                               ,Jm3kPaK_1 &
                                                   ,esurf & ! see code below
@@ -1675,11 +1675,11 @@ contains
 
     !!!!!!!!!!
     ! Calculate soil evaporative fluxes (kgH2O/m2/day)
-    !!!!!!!!!!    
+    !!!!!!!!!!
 
     ! solve soil surface energy balance for soil temperature (oC) and thus soil
     ! evaporation (below)
-    soil_temp = zbrent('acm_et:soil_energy_balance',soil_energy_balance,meant-50d0,meant+50d0,0.01d0) 
+    soil_temp = zbrent('acm_et:soil_energy_balance',soil_energy_balance,meant-50d0,meant+50d0,0.01d0)
     lambda_soil = 2501000d0-2364d0*soil_temp
     soil_radiation = soil_radiation - 4d0 * emiss_boltz * ( meant+freeze ) ** 3 * ( soil_temp - meant )
     soil_temp = soil_temp + freeze
@@ -1762,7 +1762,7 @@ contains
 
        ! if there has been an increase
        if (depth_change > dble_zero .and. root_reach > sum(layer_thickness(1:2))+min_layer) then
- 
+
           ! determine how much water is within the new volume of soil
           water_change = soil_waterfrac(nos_soil_layers) * depth_change
           ! now assign that new volume of water to the deep rooting layer
@@ -1820,7 +1820,7 @@ contains
         ! soil layer
 
         ! Start by assigning all 50 % of root biomass to the top soil layer
-        root_mass(1) = root_biomass * 0.5d0 
+        root_mass(1) = root_biomass * 0.5d0
         ! Then quantify how much additional root is found in the top soil layer
         ! assuming that the top 25 % depth is found somewhere within the top
         ! layer
@@ -1854,13 +1854,13 @@ contains
         root_mass(2) = root_biomass * 0.5d0 * (layer_thickness(2)/root_depth_50)
         root_mass(3) = root_biomass - sum(root_mass(1:2))
     endif
-    ! now convert root mass into lengths 
+    ! now convert root mass into lengths
     root_length = root_mass * root_mass_length_coef_1
 !    root_length = root_mass / (root_density * root_cross_sec_area)
 
     !!!!!!!!!!!
     ! Calculate hydraulic properties and each rooted layer
-    !!!!!!!!!!!    
+    !!!!!!!!!!!
 
     ! soil conductivity converted from m.s-1 -> m2.s-1.MPa-1 by head
     root_reach_local = min(root_reach,layer_thickness(1))
@@ -1899,7 +1899,7 @@ contains
 
     ! if freezing then assume soil surface is frozen
     if (meant < dble_one) then
-        water_flux_local(1) = dble_zero 
+        water_flux_local(1) = dble_zero
         ratio(1) = dble_zero
         ratio(2:nos_root_layers) = layer_thickness(2:nos_root_layers) / sum(layer_thickness(2:nos_root_layers))
     endif
@@ -2023,7 +2023,7 @@ contains
     ! This will then be reduced based on CO2 limits for diffusion based
     ! photosynthesis
     denom = slope * ((canopy_swrad_MJday * 1d6 * seconds_per_day_1) + canopy_lwrad_Wm2) &
-          + (air_density_kg*cpair*vpd_pa*1d-3*aerodynamic_conductance)
+          + (air_density_kg * cpair * vpd_pa * 1d-3 * aerodynamic_conductance)
     denom = (denom / (lambda * max_supply * mmol_to_kg_water * seconds_per_day_1)) - slope
     denom = denom / psych
     stomatal_conductance = aerodynamic_conductance / denom
@@ -2207,7 +2207,7 @@ contains
         water_retention_pass = i
         ! field capacity is water content at which SWP = -10 kPa
         field_capacity(i) = zbrent('water_retention:water_retention_saxton_eqns', &
-                            water_retention_saxton_eqns , x1 , x2 , xacc )
+                                    water_retention_saxton_eqns , x1 , x2 , xacc )
     enddo
 
   end subroutine calculate_field_capacity
@@ -2220,53 +2220,95 @@ contains
     ! resistance input into ACM. The approach used here is identical to that
     ! found in SPA.
 
-    ! Declare inputs
+    ! declare inputs
     double precision,intent(inout) :: Rtot ! MPa.s-1.m-2.mmol-1
 
-    ! Local variables
+    ! local variables
     integer :: i
-    double precision :: slpa, cumdepth, prev, curr, sum_water_flux, &
-        soilR1,soilR2,transpiration_resistance,root_reach_local
+    double precision :: bonus, cumdepth, prev, curr, sum_water_flux, &
+                        soilR1,soilR2,transpiration_resistance,root_reach_local, &
+                        root_depth_50
     double precision, dimension(nos_root_layers) :: root_mass    &
                                                    ,soilRT_local &
                                                    ,root_length  &
                                                    ,ratio
+    double precision, parameter :: root_depth_frac_50 = 0.25d0 ! fractional soil depth above which 50 %
+                                                               ! of the root mass is assumed to be located
 
     ! reset water flux
     water_flux = dble_zero ; wSWP = dble_zero ; soilRT_local = dble_zero ; soilRT = dble_zero
-    ratio = dble_zero ; ratio(1) = dble_one
-    ! Calculate soil depth to which roots reach
+    ratio = dble_zero ; ratio(1) = dble_one ; root_mass = dble_zero
+    ! calculate soil depth to which roots reach
     root_reach = max_depth * root_biomass / (root_k + root_biomass)
-    ! Calculate the plant hydraulic resistance component. Currently unclear
+    ! calculate the plant hydraulic resistance component. Currently unclear
     ! whether this actually varies with height or whether tall trees have a
     ! xylem architecture which keeps the whole plant conductance (gplant) 1-10 (ish).
 !    transpiration_resistance = (gplant * lai)**(-dble_one)
     transpiration_resistance = canopy_height / (gplant * lai)
 
+    !!!!!!!!!!!
+    ! Calculate root profile
+    !!!!!!!!!!!
+
     ! The original SPA src generates an exponential distribution which aims
     ! to maintain 50 % of root biomass in the top 25 % of the rooting depth.
-    ! In a simple 2 root layer system this can be estimates more simply
+    ! In a simple 3 root layer system this can be estimates more simply
 
-    ! Top 25 % of root profile
-    slpa = (root_reach * 0.25d0) - layer_thickness(1)
-    if (slpa <= dble_zero) then
-        ! > 50 % of root is in top layer
+    ! top 25 % of root profile
+    root_depth_50 = root_reach * root_depth_frac_50
+    if (root_depth_50 <= layer_thickness(1)) then
+        ! Greater than 50 % of the fine root biomass can be found in the top
+        ! soil layer
+
+        ! Start by assigning all 50 % of root biomass to the top soil layer
         root_mass(1) = root_biomass * 0.5d0
-        root_mass(1) = root_mass(1) + ((root_biomass-root_mass(1)) * (abs(slpa)/root_reach))
+        ! Then quantify how much additional root is found in the top soil layer
+        ! assuming that the top 25 % depth is found somewhere within the top
+        ! layer
+        bonus = (root_biomass-root_mass(1)) &
+              * (layer_thickness(1)-root_depth_50) / (root_reach - root_depth_50)
+        root_mass(1) = root_mass(1) + bonus
+        ! partition the remaining root biomass between the seconds and third
+        ! soil layers
+        if (root_reach > sum(layer_thickness(1:2))) then
+            root_mass(2) = (root_biomass - root_mass(1)) &
+                         * (layer_thickness(2)/(root_reach-layer_thickness(1)))
+            root_mass(3) = root_biomass - sum(root_mass(1:2))
+        else
+            root_mass(2) = root_biomass - root_mass(1)
+        endif
+    else if (root_depth_50 > layer_thickness(1) .and. root_depth_50 <= sum(layer_thickness(1:2))) then
+        ! Greater than 50 % of fine root biomass found in the top two soil
+        ! layers. We will divide the root biomass uniformly based on volume,
+        ! plus bonus for the second layer (as done above)
+        root_mass(1) = root_biomass * 0.5d0 * (layer_thickness(1)/root_depth_50)
+        root_mass(2) = root_biomass * 0.5d0 * ((root_depth_50-layer_thickness(1))/root_depth_50)
+        ! determine bonus for the seconds layer
+        bonus = (root_biomass-sum(root_mass(1:2))) &
+              * ((sum(layer_thickness(1:2))-root_depth_50)/(root_reach-root_depth_50))
+        root_mass(2) = root_mass(2) + bonus
+        root_mass(3) = root_biomass - sum(root_mass(1:2))
     else
-        ! < 50 % of root is in bottom layer
-        root_mass(1) = root_biomass * 0.5d0 * (layer_thickness(1)/(abs(slpa)+layer_thickness(1)))
+        ! Greater than 50 % of fine root biomass stock spans across all three
+        ! layers
+        root_mass(1) = root_biomass * 0.5d0 * (layer_thickness(1)/root_depth_50)
+        root_mass(2) = root_biomass * 0.5d0 * (layer_thickness(2)/root_depth_50)
+        root_mass(3) = root_biomass - sum(root_mass(1:2))
     endif
-    root_mass(2) = max(dble_zero,root_biomass - root_mass(1))
+    ! now convert root mass into lengths
     root_length = root_mass * root_mass_length_coef_1
 !    root_length = root_mass / (root_density * root_cross_sec_area)
 
-    ! Soil conductivity converted from m.s-1 -> m2.s-1.MPa-1 by head
+    !!!!!!!!!!!
+    ! Calculate hydraulic properties and each rooted layer
+    !!!!!!!!!!!
+
+    ! soil conductivity converted from m.s-1 -> m2.s-1.MPa-1 by head
     root_reach_local = min(root_reach,layer_thickness(1))
     soilR1=soil_resistance(root_length(1),root_reach_local,soil_conductivity(1)*head_1)
     soilR2=root_resistance(root_mass(1),root_reach_local)
     soilRT_local(1)=soilR1 + soilR2 + transpiration_resistance
-    ! Calculate and accumulate steady state water flux in mmol.m-2.s-1
+    ! calculate and accumulate steady state water flux in mmol.m-2.s-1
     ! NOTE: Depth correction already accounted for in soil resistance
     ! calculations and this is the maximum potential rate of transpiration
     ! assuming saturated soil and leaves at their minimum water potential.
@@ -2275,41 +2317,53 @@ contains
     ! soilWP prior to application of minlwp
     demand = abs(minlwp-SWP(1:nos_root_layers))+head*canopy_height
     water_flux(1) = demand(1)/(transpiration_resistance + soilR1 + soilR2)
-    ! Bottom root layer
-    if (root_mass(2) > dble_zero ) then
-        ! Soil conductivity converted from m.s-1 -> m2.s-1.MPa-1 by head
-        soilR1=soil_resistance(root_length(2),layer_thickness(2),soil_conductivity(2)*head_1)
-        soilR2=root_resistance(root_mass(2),layer_thickness(2))
-        soilRT_local(2)=soilR1 + soilR2 + transpiration_resistance
-        ! Calculate and accumulate steady state water flux in mmol.m-2.s-1
+
+    ! second root layer
+    if (root_mass(2) > dble_zero) then
+        root_reach_local = min(root_reach,layer_thickness(2))
+        soilR1=soil_resistance(root_length(2),root_reach_local,soil_conductivity(2)*head_1)
+        soilR2=root_resistance(root_mass(2),root_reach_local)
+        soilRT_local(2) = soilR1 + soilR2 + transpiration_resistance
         water_flux(2) = demand(2)/(transpiration_resistance + soilR1 + soilR2)
-        ratio = layer_thickness(1:nos_root_layers)/sum(layer_thickness(1:nos_root_layers))
-    endif ! roots present in second layer?
+    endif ! roots present in the seconds layer?
+
+    ! Bottom root layer
+    if (root_mass(3) > dble_zero ) then
+       ! soil conductivity converted from m.s-1 -> m2.s-1.MPa-1 by head
+       soilR1=soil_resistance(root_length(3),layer_thickness(3),soil_conductivity(3)*head_1)
+       soilR2=root_resistance(root_mass(3),layer_thickness(3))
+       soilRT_local(3)=soilR1 + soilR2 + transpiration_resistance
+       ! calculate and accumulate steady state water flux in mmol.m-2.s-1
+       water_flux(3) = demand(3)/(transpiration_resistance + soilR1 + soilR2)
+    endif ! roots present in third layer?
+    ratio = layer_thickness(1:nos_root_layers)/sum(layer_thickness(1:nos_root_layers))
 
     ! if freezing then assume soil surface is frozen
     if (meant < dble_one) then
-        water_flux(1) = dble_zero ; ratio(1) = dble_zero ; ratio(2) = dble_one
+        water_flux(1) = dble_zero
+        ratio(1) = dble_zero
+        ratio(2:nos_root_layers) = layer_thickness(2:nos_root_layers) / sum(layer_thickness(2:nos_root_layers))
     endif
-    ! Calculate sum value
+    ! calculate sum value
     sum_water_flux = sum(water_flux)
 
-    ! Calculate weighted SWP and uptake fraction
+    ! calculate weighted SWP and uptake fraction
     wSWP = sum(SWP(1:nos_root_layers) * water_flux(1:nos_root_layers))
     soilRT = sum(soilRT_local(1:nos_root_layers) * water_flux(1:nos_root_layers))
     uptake_fraction(1:nos_root_layers) = water_flux(1:nos_root_layers) / sum_water_flux
     wSWP = wSWP / sum_water_flux
     soilRT = soilRT / sum_water_flux
 
-    ! Sanity check in case of zero flux
+    ! sanity check in case of zero flux
     if (sum_water_flux == dble_zero) then
         wSWP = -20d0 ; soilRT = sum(soilRT_local)*0.5d0
         uptake_fraction = dble_zero ; uptake_fraction(1) = dble_one
     endif
 
-    ! Determine effective resistance (MPa.s-1.m-2.mmol-1)
+    ! determine effective resistance (MPa.s-1.m-2.mmol-1)
     Rtot = sum(demand) / sum(water_flux)
 
-    ! Finally convert transpiration flux (mmol.m-2.s-1)
+    ! finally convert transpiration flux (mmol.m-2.s-1)
     ! into kg.m-2.step-1 for consistency with ET in "calculate_update_soil_water"
     water_flux = water_flux * mmol_to_kg_water * seconds_per_step
 
@@ -2686,7 +2740,7 @@ contains
     ! parameters
     double precision, parameter :: foliage_drag = 0.2d0, & ! foliage drag coefficient
                                    beta_max = 1d0, beta_min = 0.2d0, &
-                                   min_lai = 1d0, &
+                                   min_lai = 1.5d0, &
                                    most_soil = 1d0 ! Monin-Obukov similarity theory stability correction.
                                                    ! As no sensible heat flux
                                                    ! calculated,
@@ -2768,7 +2822,7 @@ contains
 !                          ustar_Uh_max = 0.3,   & ! Maximum observed ratio of
                                                    ! (friction velocity / canopy top wind speed) (m.s-1)
                           ustar_Uh_max = 1d0, ustar_Uh_min = 0.2d0, &
-                               min_lai = 1d0,   & ! Minimum LAI parameter as height does not vary with growth
+                               min_lai = 1.5d0,   & ! Minimum LAI parameter as height does not vary with growth
                                     Cw = 2d0      ! Characterises roughness sublayer depth (m)
 
     ! assign new value to min_lai to avoid max min calls
@@ -3559,7 +3613,7 @@ contains
 
     ! ground heat flux (W/m2); positive moving up profile, note 0.34 is soil thermal conductivity
     ground_heat =  -0.34d0 * ( soil_temp - mean_annual_temp ) / ( 0.5d0 * layer_thickness(1) )
- 
+
     ! calculate balance residual
     soil_energy_balance = soil_radiation - (sensible + soilevap) + ground_heat
 
