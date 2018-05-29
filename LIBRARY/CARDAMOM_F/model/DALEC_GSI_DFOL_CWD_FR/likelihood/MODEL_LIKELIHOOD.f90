@@ -1800,7 +1800,8 @@ module model_likelihood_module
          dn=DATAin%Ccoarseroot_stockpts(n)
          ! extract coarse root component from wood only
          tmp_var = DATAin%M_POOLS(dn,4)*pars(29)
-         tot_exp=tot_exp+((tmp_var-DATAin%Ccoarseroot_stock(dn))/(DATAin%Ccoarseroot_stock(dn)*DATAin%Ccoarseroot_stock_unc(dn)))**2d0
+         tot_exp=tot_exp+((tmp_var-DATAin%Ccoarseroot_stock(dn)) &
+                         /(DATAin%Ccoarseroot_stock(dn)*DATAin%Ccoarseroot_stock_unc(dn)))**2d0
        end do
        likelihood=likelihood-0.5d0*tot_exp
     endif
