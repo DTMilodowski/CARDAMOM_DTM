@@ -27,77 +27,170 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '009'
+run = '020'
 filename = 'BALI_GEMplots_daily_2011_2016_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
 NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 mod = Dataset(NetCDF_file)
 
-site = 3
-# Get model output
-model = {}
-# carbon pools
-model['Cwoo']=mod.variables['Cwoo'][:,:,site]
-model['Croo']=mod.variables['Croo'][:,:,site]
-model['Clit']=mod.variables['Clit'][:,:,site]
-model['Csom']=mod.variables['Csom'][:,:,site]
-model['Ccwd']=mod.variables['Ccwd'][:,:,site]
-model['Clab']=mod.variables['Clab'][:,:,site]
-model['Cfol']=mod.variables['Cfol'][:,:,site]
-model['Cbio']=mod.variables['Cbio'][:,:,site]
-model['time']=mod.variables['time']
-
-# Litter/foliage related components
-model['lai']=mod.variables['lai'][:,:,site]
-model['flux_fol_lit']=mod.variables['flux_fol_lit'][:,:,site]
-model['flux_root_lit']=mod.variables['flux_root_lit'][:,:,site]
-model['flux_cwd_lit']=mod.variables['flux_cwd_lit'][:,:,site]
-model['flux_wood_cwd']=mod.variables['flux_wood_cwd'][:,:,site]
-
-# fluxes
-model['Reco']=mod.variables['Reco'][:,:,site]
-model['Rauto']=mod.variables['Rauto'][:,:,site]
-model['Rhet']=mod.variables['Rhet'][:,:,site]
-model['Rh_lit']=mod.variables['Rh_lit'][:,:,site]
-model['gpp']=mod.variables['gpp'][:,:,site]
-model['nee']=mod.variables['nee'][:,:,site]
-model['decomp_lit']=mod.variables['decomp_lit'][:,:,site]
-
-# GSI
-model['gsi']=mod.variables['gsi'][:,:,site]
-model['gsi_iphoto']=mod.variables['gsi_iphoto'][:,:,site]
-model['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,site]
-model['gsi_itemp']=mod.variables['gsi_itemp'][:,:,site]
-
 # Get corresponding observations
 obs_in = np.load('%s%s/%s' % (data_dir,run,project_obs))
 obs_in[obs_in==-9999]=np.nan
-obs={}
-obs['time'] = mod.variables['time']
-obs['gpp'] = obs_in[site,:,0]
-obs['gpp_u'] = obs_in[site,:,11]
-obs['nee'] = obs_in[site,:,2]
-obs['nee_u'] = obs_in[site,:,13]
-obs['lai'] = obs_in[site,:,1]
-obs['lai_u'] = obs_in[site,:,12]
-obs['Cwoo'] = obs_in[site,:,6]
-obs['Cwoo_u'] = obs_in[site,:,17]
-obs['Cfol'] = obs_in[site,:,5]
-obs['Cfol_u'] = obs_in[site,:,16]
-obs['Croo'] = obs_in[site,:,7]
-obs['Croo_u'] = obs_in[site,:,18]
-#obs['Clit'] = obs_in[site,:,8]
-#obs['Clit_u'] = obs_in[site,:,19]
-obs['Csom'] = obs_in[site,:,9]
-obs['Csom_u'] = obs_in[site,:,20]
-obs['Reco'] = obs_in[site,:,4]
-obs['Reco_u'] = obs_in[site,:,15]
-obs['flux_fol_lit'] = obs_in[site,:,8]
-obs['flux_fol_lit_u'] = obs_in[site,:,19]
-obs['lit_acc_days'] = obs_in[site,:,28]
 
-# plot Carbon stocks
-pCAR.plot_carbon_pools_ts(model,obs)
-pCAR.plot_litter_components_ts(model,obs)
-plt.show()
+n_sites = 6
+sites = ['MLA01','MLA02','SAF04','SAF05','SAF02','SAF01']
+params = {}
+model = {}
+obs = {}
+for i in range(0,n_sites):
+    model[sites[i]] = {}
+    obs[sites[i]] = {}
+    
+    param_file = '%s%s/rerun/%s/0000%i.csv' % (path2project,project,run,i+1)
+    params[sites[i]] = np.genfromtxt(param_file,skiprows = 1,delimiter=',')[:,1:]
+
+    # Get model output
+    # carbon pools
+    model[sites[i]]['Cwoo']=mod.variables['Cwoo'][:,:,i]
+    model[sites[i]]['Croo']=mod.variables['Croo'][:,:,i]
+    model[sites[i]]['Clit']=mod.variables['Clit'][:,:,i]
+    model[sites[i]]['Csom']=mod.variables['Csom'][:,:,i]
+    model[sites[i]]['Ccwd']=mod.variables['Ccwd'][:,:,i]
+    model[sites[i]]['Clab']=mod.variables['Clab'][:,:,i]
+    model[sites[i]]['Cfol']=mod.variables['Cfol'][:,:,i]
+    model[sites[i]]['Cbio']=mod.variables['Cbio'][:,:,i]
+    model[sites[i]]['time']=mod.variables['time']
+    
+    # Litter/foliage related components
+    model[sites[i]]['lai']=mod.variables['lai'][:,:,i]
+    model[sites[i]]['flux_fol_lit']=mod.variables['flux_fol_lit'][:,:,i]
+    model[sites[i]]['flux_root_lit']=mod.variables['flux_root_lit'][:,:,i]
+    model[sites[i]]['flux_cwd_lit']=mod.variables['flux_cwd_lit'][:,:,i]
+    model[sites[i]]['flux_wood_cwd']=mod.variables['flux_wood_cwd'][:,:,i]
+    
+    # fluxes
+    model[sites[i]]['Reco']=mod.variables['Reco'][:,:,i]
+    model[sites[i]]['Rauto']=mod.variables['Rauto'][:,:,i]
+    model[sites[i]]['Rhet']=mod.variables['Rhet'][:,:,i]
+    model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
+    model[sites[i]]['gpp']=mod.variables['gpp'][:,:,i]
+    model[sites[i]]['nee']=mod.variables['nee'][:,:,i]
+    model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
+    
+    # GSI
+    model[sites[i]]['gsi']=mod.variables['gsi'][:,:,i]
+    model[sites[i]]['gsi_iphoto']=mod.variables['gsi_iphoto'][:,:,i]
+    model[sites[i]]['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,i]
+    model[sites[i]]['gsi_itemp']=mod.variables['gsi_itemp'][:,:,i]
+    
+    obs[sites[i]]['time'] = mod.variables['time']
+    obs[sites[i]]['gpp'] = obs_in[i,:,0]
+    obs[sites[i]]['gpp_u'] = obs_in[i,:,11]
+    obs[sites[i]]['nee'] = obs_in[i,:,2]
+    obs[sites[i]]['nee_u'] = obs_in[i,:,13]
+    obs[sites[i]]['lai'] = obs_in[i,:,1]
+    obs[sites[i]]['lai_u'] = obs_in[i,:,12]
+    obs[sites[i]]['Cwoo'] = obs_in[i,:,6]
+    obs[sites[i]]['Cwoo_u'] = obs_in[i,:,17]
+    obs[sites[i]]['Cfol'] = obs_in[i,:,5]
+    obs[sites[i]]['Cfol_u'] = obs_in[i,:,16]
+    obs[sites[i]]['Croo'] = obs_in[i,:,7]
+    obs[sites[i]]['Croo_u'] = obs_in[i,:,18]
+    #obs[sites[i]]['Clit'] = obs_in[i,:,8]
+    #obs[sites[i]]['Clit_u'] = obs_in[i,:,19]
+    obs[sites[i]]['Csom'] = obs_in[i,:,9]
+    obs[sites[i]]['Csom_u'] = obs_in[i,:,20]
+    obs[sites[i]]['Reco'] = obs_in[i,:,4]
+    obs[sites[i]]['Reco_u'] = obs_in[i,:,15]
+    obs[sites[i]]['flux_fol_lit'] = obs_in[i,:,8]
+    obs[sites[i]]['flux_fol_lit_u'] = obs_in[i,:,19]
+    obs[sites[i]]['lit_acc_days'] = obs_in[i,:,28]
+
+    # plot Carbon stocks
+    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]])
+    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]])
+    plt.show()
+    
+# Summarise the plots with temporal average and lower and upper quartiles
+Cwoo = np.zeros((6,3))
+Croo = np.zeros((6,3))
+Cfol = np.zeros((6,3))
+Csom = np.zeros((6,3))
+Clit = np.zeros((6,3))
+Clab = np.zeros((6,3))
+
+GPP = np.zeros((6,3))
+NPP = np.zeros((6,3))
+NEE = np.zeros((6,3))
+Litterfall = np.zeros((6,3))
+Raut = np.zeros((6,3))
+Rhet = np.zeros((6,3))
+LAI = np.zeros((6,3))
+
+Sites = ["MLA01","MLA02","SAF04","SAF05","SAF02","SAF01"]
+    
+Cwoo[:,0] = np.mean(mod.variables['Cwoo'][:,1,:],axis=0)
+Croo[:,0] = np.mean(mod.variables['Croo'][:,1,:],axis=0)
+Cfol[:,0] = np.mean(mod.variables['Cfol'][:,1,:],axis=0)
+Csom[:,0] = np.mean(mod.variables['Csom'][:,1,:],axis=0)
+Clit[:,0] = np.mean(mod.variables['Clit'][:,1,:],axis=0)
+Clab[:,0] = np.mean(mod.variables['Clab'][:,1,:],axis=0)
+
+GPP[:,0] = np.mean(mod.variables['gpp'][:,0,:],axis=0)
+NPP[:,0] = np.mean(mod.variables['npp'][:,0,:],axis=0)
+NEE[:,0] = np.mean(mod.variables['nee'][:,0,:],axis=0)
+Litterfall[:,0] = np.mean(mod.variables['flux_fol_lit'][:,0,:],axis=0)
+Raut[:,0] = np.mean(mod.variables['Rauto'][:,0,:],axis=0)
+Rhet[:,0] = np.mean(mod.variables['Rhet'][:,0,:],axis=0)
+LAI[:,0] = np.mean(mod.variables['lai'][:,0,:],axis=0)
+
+Cwoo[:,1] = np.mean(mod.variables['Cwoo'][:,-2,:],axis=0)
+Croo[:,1] = np.mean(mod.variables['Croo'][:,-2,:],axis=0)
+Cfol[:,1] = np.mean(mod.variables['Cfol'][:,-2,:],axis=0)
+Csom[:,1] = np.mean(mod.variables['Csom'][:,-2,:],axis=0)
+Clit[:,1] = np.mean(mod.variables['Clit'][:,-2,:],axis=0)
+Clab[:,1] = np.mean(mod.variables['Clab'][:,-2,:],axis=0)
+
+GPP[:,1] = np.mean(mod.variables['gpp'][:,-2,:],axis=0)
+NPP[:,1] = np.mean(mod.variables['npp'][:,-2,:],axis=0)
+NEE[:,1] = np.mean(mod.variables['nee'][:,-2,:],axis=0)
+Litterfall[:,1] = np.mean(mod.variables['flux_fol_lit'][:,-2,:],axis=0)
+Raut[:,1] = np.mean(mod.variables['Rauto'][:,-2,:],axis=0)
+Rhet[:,1] = np.mean(mod.variables['Rhet'][:,-2,:],axis=0)
+LAI[:,1] = np.mean(mod.variables['lai'][:,-2,:],axis=0)
+
+Cwoo[:,2] = np.mean(mod.variables['Cwoo'][:,-1,:],axis=0)
+Croo[:,2] = np.mean(mod.variables['Croo'][:,-1,:],axis=0)
+Cfol[:,2] = np.mean(mod.variables['Cfol'][:,-1,:],axis=0)
+Csom[:,2] = np.mean(mod.variables['Csom'][:,-1,:],axis=0)
+Clit[:,2] = np.mean(mod.variables['Clit'][:,-1,:],axis=0)
+Clab[:,2] = np.mean(mod.variables['Clab'][:,-1,:],axis=0)
+
+GPP[:,2] = np.mean(mod.variables['gpp'][:,-1,:],axis=0)
+NPP[:,2] = np.mean(mod.variables['npp'][:,-1,:],axis=0)
+NEE[:,2] = np.mean(mod.variables['nee'][:,-1,:],axis=0)
+Litterfall[:,2] = np.mean(mod.variables['flux_fol_lit'][:,-1,:],axis=0)
+Raut[:,2] = np.mean(mod.variables['Rauto'][:,-1,:],axis=0)
+Rhet[:,2] = np.mean(mod.variables['Rhet'][:,-1,:],axis=0)
+LAI[:,2] = np.mean(mod.variables['lai'][:,-1,:],axis=0)
+
+# Write report to file
+out = open('BALI_stocks_summary_%s.csv' % run,'w')
+# First set up header
+out.write('Site, Cwoo_50, Cwoo_25, Cwoo_75, Croo_50, Croo_25, Croo_75,  Cfol_50, Cfol_25, Cfol_75, Clab_50, Clab_25, Clab_75, Clit_50, Clit_25, Clit_75, Csom_50, Csom_25, Csom_75\n')
+for i in range(0,6):
+    out.write('%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' % (Sites[i],Cwoo[i,0],Cwoo[i,1],Cwoo[i,2],Croo[i,0],Croo[i,1],Croo[i,2],Cfol[i,0],Cfol[i,1],Cfol[i,2],Clab[i,0],Clab[i,1],Clab[i,2],Clit[i,0],Clit[i,1],Clit[i,2],Csom[i,0],Csom[i,1],Csom[i,2]))
+out.close()  
+
+
+    
+out = open('BALI_fluxes_summary_%s.csv' % run,'w')
+# First set up header
+out.write('Site, GPP_50, GPP_25, GPP_75, NPP_50, NPP_25, NPP_75, NEE_50, NEE_25, NEE_75,  Ra_50, Ra_25, Ra_75, Rh_50, Rh_25, Rh_75, Litterfall_50, Litterfall_25, Litterfall_75, LAI_50, LAI_25, LAI_75\n')
+for i in range(0,6):
+    out.write('%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' % (Sites[i],GPP[i,0],GPP[i,1],GPP[i,2],NPP[i,0],NPP[i,1],NPP[i,2],NEE[i,0],NEE[i,1],NEE[i,2],Raut[i,0],Raut[i,1],Raut[i,2],Rhet[i,0],Rhet[i,1],Rhet[i,2],Litterfall[i,0],Litterfall[i,1],Litterfall[i,2],LAI[i,0],LAI[i,1],LAI[i,2]))
+out.close()  
+
+
+    
