@@ -84,6 +84,9 @@ load_lai_fields_for_extraction<-function(latlon_in,lai_source,years_to_load) {
 
 	} # year loop
 
+        # Sanity check for LAI
+        if (lat_done == FALSE) {stop('No LAI information could be found...')}
+
 	# remove initial value
 	missing_years=missing_years[-1]
 

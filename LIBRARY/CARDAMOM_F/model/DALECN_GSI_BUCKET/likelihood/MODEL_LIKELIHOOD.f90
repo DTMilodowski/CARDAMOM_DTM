@@ -1052,7 +1052,8 @@ module model_likelihood_module
     ! NOTE: excluding labile and water
     if (EDC2 == 1 .or. DIAG == 1) then
         do n = 3, 7 !2, nopools
-           decay_coef=expdecay2(M_POOLS(exp_adjust:(nodays+1),:),n,deltat(exp_adjust:nodays),nopools,(nodays+1-exp_adjust+1))
+           decay_coef=expdecay2(M_POOLS(exp_adjust:(nodays+1),:),n,deltat(exp_adjust:nodays) &
+                               ,nopools,(nodays+1-exp_adjust+1))
            ! next assess the decay coefficient for meetings the EDC criterion
            if (abs(-EQF2/decay_coef) < (365.25d0*dble(no_years_adjust)) .and. decay_coef < 0d0 ) then
 !              EDC2 = 0 ;
@@ -1065,7 +1066,8 @@ module model_likelihood_module
     ! level disturbance
     if ((EDC2 == 1 .or. DIAG == 1) .and. (maxval(met(8,:)) > 0.99d0 .and. disturb_end < (nodays-nint(steps_per_year)-1)) ) then
         do n = 4, 4!2, 7
-           decay_coef=expdecay2(M_POOLS(disturb_end:(nodays+1),:),n,deltat(disturb_end:nodays),nopools,(nodays+1-disturb_end+1))
+           decay_coef=expdecay2(M_POOLS(disturb_end:(nodays+1),:),n,deltat(disturb_end:nodays) &
+                               ,nopools,(nodays+1-disturb_end+1))
            ! next assess the decay coefficient for meetings the EDC criterion
            if (abs(-EQF2/decay_coef) < (365.25d0*dble(no_years_adjust)) .and. decay_coef < 0d0 ) then
 !              EDC2 = 0 ;

@@ -161,8 +161,8 @@ contains
                                ,max_lai_par_absorption,lai_half_par_absorption                      &
                                ,max_lai_swrad_reflected,lai_half_swrad_reflected                    &
                                ,lai_half_lwrad_to_sky,soil_swrad_absorption,max_lai_lwrad_release   &
-                               ,lai_half_lwrad_release,soilevap_rad_intercept,soilevap_rad_coef     &
-                               ,mint,maxt,swrad,co2,doy,rainfall,wind_spd,vpd_pa,lai,days_per_step  &
+                               ,lai_half_lwrad_release,mint,maxt,swrad,co2,doy,rainfall,wind_spd    & 
+                               ,vpd_pa,lai,days_per_step  &
                                ,days_per_step_1,dayl_seconds,dayl_hours,min_layer, minlwp
 
     ! The Data Assimilation Linked Ecosystem Carbon - Combined Deciduous
@@ -289,35 +289,26 @@ contains
     FLUXES(1:nodays,1:nofluxes) = dble_zero ; POOLS(1:nodays,1:nopools) = dble_zero
 
     ! load ACM-GPP-ET parameters
-    NUE                       = 1.850535d+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
-                                              ! ,unlimited by CO2, light and
-                                              ! photoperiod
-                                              ! (gC/gN/m2leaf/day)
-    pn_max_temp               = 6.982614d+01  ! Maximum temperature for photosynthesis (oC)
-    pn_opt_temp               = 3.798068d+01  ! Optimum temperature for photosynthesis (oC)
-    pn_kurtosis               = 1.723531d-01  ! Kurtosis of photosynthesis temperature response
-    e0                        = 4.489652d+00  ! Quantum yield gC/MJ/m2/day PAR
-    max_lai_lwrad_absorption  = 9.282892d-01  ! Max fraction of LW from sky absorbed by canopy
-    lai_half_lwrad_absorption = 5.941333d-01  ! LAI at which canopy LW absorption = 50 %
-    max_lai_nir_absorption    = 8.333743d-01  ! Max fraction of NIR absorbed by canopy
-    lai_half_nir_absorption   = 2.148633d+00  ! LAI at which canopy NIR absorption = 50 %
-    minlwp                    = -1.990154d+00 ! minimum leaf water potential (MPa)
-    max_lai_par_absorption    = 8.737539d-01  ! Max fraction of PAR absorbed by canopy
-    lai_half_par_absorption   = 1.804925d+00  ! LAI at which canopy PAR absorption = 50 %
-    lai_half_lwrad_to_sky     = 2.489314d+00  ! LAI at which 50 % LW is reflected back to sky
-    iWUE                      = 1.722579d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
-    soil_swrad_absorption     = 7.375071d-01  ! Fraction of SW rad absorbed by soil
-    max_lai_swrad_reflected   = 2.796492d-01  ! Max fraction of SW reflected back to sky
+    NUE                       = 1.635430e+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
+                                              ! ,unlimited by CO2, light and photoperiod (gC/gN/m2leaf/day)
+    pn_max_temp               = 5.931833e+01  ! Maximum temperature for photosynthesis (oC)
+    pn_opt_temp               = 3.276343e+01  ! Optimum temperature for photosynthesis (oC)
+    pn_kurtosis               = 1.854926e-01  ! Kurtosis of photosynthesis temperature response
+    e0                        = 4.390066e+00  ! Quantum yield gC/MJ/m2/day PAR
+    max_lai_lwrad_absorption  = 9.815629e-01  ! Max fraction of LW from sky absorbed by canopy
+    lai_half_lwrad_absorption = 5.012767e-01  ! LAI at which canopy LW absorption = 50 %
+    max_lai_nir_absorption    = 7.058557e-01  ! Max fraction of NIR absorbed by canopy
+    lai_half_nir_absorption   = 1.707789e+00  ! LAI at which canopy NIR absorption = 50 %
+    minlwp                    = -1.994232e+00 ! minimum leaf water potential (MPa)
+    max_lai_par_absorption    = 8.981069e-01  ! Max fraction of PAR absorbed by canopy
+    lai_half_par_absorption   = 2.173575e-02  ! LAI at which canopy PAR absorption = 50 %
+    lai_half_lwrad_to_sky     = 6.811579e-01  ! LAI at which 50 % LW is reflected back to sky
+    iWUE                      = 2.173575e-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
+    soil_swrad_absorption     = 9.015340e-01  ! Fraction of SW rad absorbed by soil
+    max_lai_swrad_reflected   = 5.217833e-02  ! Max fraction of SW reflected back to sky
     lai_half_swrad_reflected  = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
-    max_lai_lwrad_release     = 2.481599d-01  ! Max fraction of LW emitted from canopy to be released
-    lai_half_lwrad_release    = 5.020443d-01  ! LAI at which LW emitted from canopy to be released at 50 %
-    soilevap_rad_intercept    = 1.122969d-02  ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
-                                              ! to account for non-calculation
-                                              ! of energy balance
-    soilevap_rad_coef         = 1.748044d+00  ! Coefficient on linear adjustment to
-                                              ! soil evaporation to account for
-                                              ! non-calculation of energy
-                                              ! balance                                          
+    max_lai_lwrad_release     = 2.390430e-01  ! Max fraction of LW emitted from canopy to be released
+    lai_half_lwrad_release    = 2.474232e+00  ! LAI at which LW emitted from canopy to be released at 50 %
 
     ! length of time step in hours..
     ts_length = ((sum(deltat)/dble(nodays)) * sec_in_day) / sec_in_hour

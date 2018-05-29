@@ -46,22 +46,22 @@ module MODEL_PARAMETERS
     ! Derived from Vcmax reported in Wullschleger (1993), Journal of
     ! Experimental Botany, Vol 44, No. 262, pp. 907-920.
     PI%parmin(1)=03d0 
-    PI%parmax(1)=30d0 
+    PI%parmax(1)=40d0 
 
     ! max temperature for photosynthesis (oC)
-    PI%parmin(2)=40d0
+    PI%parmin(2)=45d0
     PI%parmax(2)=70d0
     ! optimum temperature for photosynthesis (oC)
     PI%parmin(3)=20d0
     PI%parmax(3)=40d0
     ! kurtosis of photosynthesis temperature response
-    PI%parmin(4)=0.05d0
-    PI%parmax(4)=0.50d0
+    PI%parmin(4)=0.10d0
+    PI%parmax(4)=0.30d0
 
     ! light limited photosynthesis
 
     ! maximum canopy quantum yield (gC/MJ)
-    PI%parmin(5)=0.05d0 !7.19298-(0.9*7.19298)
+    PI%parmin(5)=1d0  !7.19298-(0.9*7.19298)
     PI%parmax(5)=7d0  !7.19298+(0.9*7.19298)
 
     !
@@ -101,7 +101,7 @@ module MODEL_PARAMETERS
     !
 
     ! maximum absorbed
-    PI%parmin(11)=0.50d0
+    PI%parmin(11)=0.60d0
     PI%parmax(11)=0.90d0
     ! LAI at which radiation absorption is at half saturation
     PI%parmin(12)=0.5d0
@@ -111,16 +111,16 @@ module MODEL_PARAMETERS
     ! Longwave reflectance back to sky
     !
 
-    ! lai adjustment for longwave returned to sky by canopy
+    ! lai at which longwave returned to sky by canopy is half saturation
     PI%parmin(13)=0.5d0
-    PI%parmax(13)=2.5d0
+    PI%parmax(13)=1.0d0
 
     !
     ! GPP / transpiration optimisation
     !
 
     ! iWUE (gC/m2leaf/day/mmolH2Ogs)
-    PI%parmin(14)=1d-8
+    PI%parmin(14)=1d-3
     PI%parmax(14)=0.1d0
 
     !
@@ -128,7 +128,7 @@ module MODEL_PARAMETERS
     !
 
     ! soil sw radiation absorption (fraction)
-    PI%parmin(15)=0.50d0 !0.10d0 !0.50
+    PI%parmin(15)=0.90d0!0.50d0 !0.10d0 !0.50
     PI%parmax(15)=0.99d0
 
     ! max sw radiation returned to sky by canopy (fraction)
@@ -142,14 +142,6 @@ module MODEL_PARAMETERS
     ! lai adjustment for long wave release from canopy (1:3)
     PI%parmin(18)=0.5d0
     PI%parmax(18)=2.5d0
-
-    ! intercept for linear correction on soil evaporation (kgH2O/m2/day)
-    PI%parmin(19)=0.001d0
-    PI%parmax(19)=1d0
-
-    ! coefficient for linear correction on soil evaporation
-    PI%parmin(20)=0.001d0
-    PI%parmax(20)=2d0
 
   end subroutine pars_info
   !

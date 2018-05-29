@@ -814,12 +814,14 @@ module model_likelihood_module
        ! year period to allow for the most severe non-steady state response
        ! Croot
        in_out_root = sum(M_FLUXES(1:disturb_begin,6)) / sum(M_FLUXES(1:disturb_begin,12)+M_FLUXES(1:disturb_begin,23))
-       in_out_root_disturb = sum(M_FLUXES(disturb_end:nodays,6)) / sum(M_FLUXES(disturb_end:nodays,12)+M_FLUXES(disturb_end:nodays,23))
+       in_out_root_disturb = sum(M_FLUXES(disturb_end:nodays,6)) & 
+                           / sum(M_FLUXES(disturb_end:nodays,12)+M_FLUXES(disturb_end:nodays,23))
 !       in_out_root = in_out_root + (sum(M_FLUXES(disturb_end:nodays,6)) / sum(M_FLUXES(disturb_end:nodays,12)))
 !       in_out_root = in_out_root * 0.5
        ! Cwood
        in_out_wood = sum(M_FLUXES(1:disturb_begin,7)) / sum(M_FLUXES(1:disturb_begin,11)+M_FLUXES(1:disturb_begin,24))
-       in_out_wood_disturb = sum(M_FLUXES(disturb_end:nodays,7)) / sum(M_FLUXES(disturb_end:nodays,11)+M_FLUXES(disturb_end:nodays,24))
+       in_out_wood_disturb = sum(M_FLUXES(disturb_end:nodays,7)) &
+                           / sum(M_FLUXES(disturb_end:nodays,11)+M_FLUXES(disturb_end:nodays,24))
 !       in_out_wood = in_out_wood + (sum(M_FLUXES(disturb_end:nodays,7)) / sum(M_FLUXES(disturb_end:nodays,11)))
 !       in_out_wood = in_out_wood * 0.5
        ! Clitter
@@ -935,7 +937,8 @@ module model_likelihood_module
     ! Part of the GSI test, we will assess EDC(3) here
     ! average turnover of foliage should not be less than wood
     ! neither should the average leaf life span be greater than 8 years
-    if ((EDC2 == 1 .or. DIAG == 1) .and. (torfol < pars(6) .or. (1d0/(torfol*365.25d0)) > 8d0 .or. (1/(torfol*365.25)) < 0.15d0) ) then
+    if ((EDC2 == 1 .or. DIAG == 1) .and. &
+        (torfol < pars(6) .or. (1d0/(torfol*365.25d0)) > 8d0 .or. (1/(torfol*365.25)) < 0.15d0) ) then
          EDC2 = 0 ; EDCD%PASSFAIL(22) = 0
     endif
 

@@ -185,6 +185,9 @@ module model_likelihood_module
   !
   subroutine EDC1_GSI(PARS, npars, meantemp, meanrad, EDC1)
 
+    use CARBON_MODEL_MOD, only: sw_par_fraction, &
+                                opt_max_scaling
+
     ! subroutine assessed the current parameter sets for passing ecological and
     ! steady state contraints (modified from Bloom et al., 2014).
 
@@ -199,21 +202,22 @@ module model_likelihood_module
 
     ! declare local variables
     integer :: n, DIAG, lai
-    double precision :: fauto & ! Fractions of GPP to autotrophic respiration
+    double precision :: tmp &
+             ,fauto & ! Fractions of GPP to autotrophic respiration
              ,ffol  & ! Fraction of GPP to foliage
-             ,flab  & ! Fraction of GPP to la`bile pool
+             ,flab  & ! Fraction of GPP to labile pool
              ,froot & ! Fraction of GPP to root
              ,fwood & ! Fraction of GPP to wood
              ,fsom    ! fraction of GPP som under eqilibrium conditions
 
     ! set initial value
-    EDC1=1
-    DIAG=EDCD%DIAG
+    EDC1 = 1
+    DIAG = EDCD%DIAG
 
 
     ! set all EDCs to 1 (pass)
-    EDCD%nedc=100
-    EDCD%PASSFAIL(1:EDCD%nedc)=1
+    EDCD%nedc = 100
+    EDCD%PASSFAIL(1:EDCD%nedc) = 1
 
     !
     ! begin checking EDCs
@@ -227,6 +231,25 @@ module model_likelihood_module
        endif
     enddo
 
+    ! maximum temperature for photosythesis cannot be larger than optimum
+    if ((EDC1 == 1 .or. DIAG == 1) .and. pars(3) > pars(2)) then
+        EDC1 = 0 ; EDCD%PASSFAIL(2) = 0
+    endif
+
+    ! The total canopy absorption plus reflectance back to sky cannot be greater
+    ! than 1 as this breaks energy balance. Note that here we assume 0.5 =
+    ! par:nir ratio
+    if ((EDC1 == 1 .or. DIAG == 1) .and. &
+        pars(16) + (pars(8)*(1d0-sw_par_fraction) + pars(11)*sw_par_fraction) > 1d0 ) then
+        EDC1 = 0 ; EDCD%PASSFAIL(3) = 0
+    endif
+
+    ! assume that photosynthesis limitation at 0C should be between 10 % and 20 %
+    ! of potential. Fatchi et al (2013), New Phytologist, https://doi.org/10.1111/nph.12614 
+    tmp = opt_max_scaling(pars(2),pars(3),pars(4),0d0)
+    if ((EDC1 == 1 .or. DIAG == 1) .and. (tmp < 0.10d0 .or. tmp > 0.20d0)) then
+       EDC1 = 0 ; EDCD%PASSFAIL(4) = 0
+    endif
 
   end subroutine EDC1_GSI
   !

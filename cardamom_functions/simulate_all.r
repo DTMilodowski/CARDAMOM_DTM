@@ -57,7 +57,7 @@ simulate_all<- function (site,PROJECT,model_name,met,pars,lat,pft,parameter_type
 	        	              ,pft=as.integer(pft),pft_specific=as.integer(pft_specific),nodays=as.integer(dim(met)[1])
 			              ,deltat=as.double(array(0,dim=c(as.integer(dim(met)[1])))),nos_iter=as.integer(nos_iter)
 				      ,soil_frac_clay=as.double(array(c(soil_info[3],soil_info[3],soil_info[4],soil_info[4]),dim=c(4)))
-				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[1],soil_info[2],soil_info[2]),dim=c(4)))
+				      ,soil_frac_sand=as.double(array(c(soil_info[1],soil_info[1],soil_info[2],soil_info[2]),dim=c(4))) )
 	  output=tmp$out_var
           output=array(output, dim=c(nos_iter,(dim(met)[1]),output_dim))
 	  dyn.unload(paste(PROJECT$exepath,"/dalec.so", sep=""))

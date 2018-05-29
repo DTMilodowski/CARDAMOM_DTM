@@ -207,7 +207,7 @@ module MODEL_PARAMETERS
 
        ! baseline NUE (gC/gN/m2/day-1)
        PI%parmin(48)= 3d0 ! 11.0
-       PI%parmax(48)=30d0 ! 12.0
+       PI%parmax(48)=40d0 ! 12.0
 
 !       ! CN_wood coefficient for increase due to C_wood (deltalCN per gC.m-2)
 !       ! NOTE: values in log scale

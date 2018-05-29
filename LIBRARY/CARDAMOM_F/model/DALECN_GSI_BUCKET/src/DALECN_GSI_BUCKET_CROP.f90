@@ -165,10 +165,9 @@ contains
                                ,max_lai_par_absorption,lai_half_par_absorption                      &
                                ,max_lai_swrad_reflected,lai_half_swrad_reflected                    &
                                ,lai_half_lwrad_to_sky,soil_swrad_absorption,max_lai_lwrad_release   &
-                               ,lai_half_lwrad_release,soilevap_rad_intercept,soilevap_rad_coef     &
-                               ,mint,maxt,swrad,co2,doy,rainfall,wind_spd    &
+                               ,lai_half_lwrad_release,mint,maxt,swrad,co2,doy,rainfall,wind_spd    &
                                ,vpd_pa,lai,days_per_step,days_per_step_1,dayl_seconds,dayl_hours    &
-                               ,canopy_storage,intercepted_rainfall,min_layer
+                               ,canopy_storage,intercepted_rainfall,min_layer,mid_soil_depth
 
     ! DALEC crop model modified from Sus et al., (2010)
 
@@ -303,33 +302,27 @@ contains
     Rtot = dble_one ! totaly hydraulic resistance ! p12 from ACM recal (updated)
 
     ! load ACM-GPP-ET parameters
-    NUE                       = 1.850535d+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
+    NUE                       = 1.635430e+01  ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
                                               ! ,unlimited by CO2, light and photoperiod (gC/gN/m2leaf/day)
-    pn_max_temp               = 6.982614d+01  ! Maximum temperature for photosynthesis (oC)
-    pn_opt_temp               = 3.798068d+01  ! Optimum temperature for photosynthesis (oC)
-    pn_kurtosis               = 1.723531d-01  ! Kurtosis of photosynthesis temperature response
-    e0                        = 4.489652d+00  ! Quantum yield gC/MJ/m2/day PAR
-    max_lai_lwrad_absorption  = 9.282892d-01  ! Max fraction of LW from sky absorbed by canopy
-    lai_half_lwrad_absorption = 5.941333d-01  ! LAI at which canopy LW absorption = 50 %
-    max_lai_nir_absorption    = 8.333743d-01  ! Max fraction of NIR absorbed by canopy
-    lai_half_nir_absorption   = 2.148633d+00  ! LAI at which canopy NIR absorption = 50 %
-    minlwp                    = -1.990154d+00 ! minimum leaf water potential (MPa)
-    max_lai_par_absorption    = 8.737539d-01  ! Max fraction of PAR absorbed by canopy
-    lai_half_par_absorption   = 1.804925d+00  ! LAI at which canopy PAR absorption = 50 %
-    lai_half_lwrad_to_sky     = 2.489314d+00  ! LAI at which 50 % LW is reflected back to sky
-    iWUE                      = 1.722579d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
-    soil_swrad_absorption     = 7.375071d-01  ! Fraction of SW rad absorbed by soil
-    max_lai_swrad_reflected   = 2.796492d-01  ! Max fraction of SW reflected back to sky
+    pn_max_temp               = 5.931833e+01  ! Maximum temperature for photosynthesis (oC)
+    pn_opt_temp               = 3.276343e+01  ! Optimum temperature for photosynthesis (oC)
+    pn_kurtosis               = 1.854926e-01  ! Kurtosis of photosynthesis temperature response
+    e0                        = 4.390066e+00  ! Quantum yield gC/MJ/m2/day PAR
+    max_lai_lwrad_absorption  = 9.815629e-01  ! Max fraction of LW from sky absorbed by canopy
+    lai_half_lwrad_absorption = 5.012767e-01  ! LAI at which canopy LW absorption = 50 %
+    max_lai_nir_absorption    = 7.058557e-01  ! Max fraction of NIR absorbed by canopy
+    lai_half_nir_absorption   = 1.707789e+00  ! LAI at which canopy NIR absorption = 50 %
+    minlwp                    = -1.994232e+00 ! minimum leaf water potential (MPa)
+    max_lai_par_absorption    = 8.981069e-01  ! Max fraction of PAR absorbed by canopy
+    lai_half_par_absorption   = 2.173575e-02  ! LAI at which canopy PAR absorption = 50 %
+    lai_half_lwrad_to_sky     = 6.811579e-01  ! LAI at which 50 % LW is reflected back to sky
+    iWUE                      = 2.173575e-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
+    soil_swrad_absorption     = 9.015340e-01  ! Fraction of SW rad absorbed by soil
+    max_lai_swrad_reflected   = 5.217833e-02  ! Max fraction of SW reflected back to sky
     lai_half_swrad_reflected  = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
-    max_lai_lwrad_release     = 2.481599d-01  ! Max fraction of LW emitted from canopy to be released
-    lai_half_lwrad_release    = 5.020443d-01  ! LAI at which LW emitted from canopy to be released at 50 %
-    soilevap_rad_intercept    = 1.122969d-02  ! Intercept (kgH2O/m2/day) on linear adjustment to soil evaporation
-                                              ! to account for non-calculation
-                                              ! of energy balance
-    soilevap_rad_coef         = 1.748044d+00  ! Coefficient on linear adjustment to
-                                              ! soil evaporation to account for
-                                              ! non-calculation of energy
-                                              ! balance
+    max_lai_lwrad_release     = 2.390430e-01  ! Max fraction of LW emitted from canopy to be released
+    lai_half_lwrad_release    = 2.474232e+00  ! LAI at which LW emitted from canopy to be released at 50 %
+
     ! plus ones being calibrated
     root_k = pars(36) ; max_depth = pars(37)
 
@@ -470,18 +463,17 @@ contains
         ! initialise root reach based on initial conditions
         root_biomass = max(min_root,POOLS(1,3)*2d0)
         root_reach = max_depth * root_biomass / (root_k + root_biomass)
-        ! determine initial soil layer thickness
-        layer_thickness(1) = top_soil_depth ; layer_thickness(2)=max(min_layer,root_reach-layer_thickness(1))
-        layer_thickness(3) = max_depth - sum(layer_thickness(1:2))
+        ! Determine initial soil layer thickness
+        layer_thickness(1) = top_soil_depth ; layer_thickness(2) = mid_soil_depth
+        layer_thickness(3) = max(min_layer,root_reach-sum(layer_thickness(1:2)))
+        layer_thickness(4) = max_depth - sum(layer_thickness(1:3))
         previous_depth = max(top_soil_depth,root_reach)
-        soil_depth = dble_zero ; previous_depth = dble_zero
-        ! needed to initialise soils
         ! needed to initialise soils
         call calculate_Rtot(Rtot)
         ! used to initialise soils
         ET = calculate_update_soil_water(dble_zero,dble_zero,dble_zero) ! assume no evap or rainfall
         ! store soil water content of the rooting zone (mm)
-        POOLS(1,8) = 1d3*sum(soil_waterfrac(1:nos_root_layers)*layer_thickness(1:nos_root_layers))
+        POOLS(1,8) = 1d3*soil_waterfrac(1)*layer_thickness(1)
 
     else
 
@@ -537,14 +529,12 @@ contains
       ! calculate the minimum soil & root hydraulic resistance based on total
       ! fine root mass ! *2*2 => *RS*C->Bio
       root_biomass = max(min_root,POOLS(n,3)*2d0)
-      deltaWP = min(dble_zero,minlwp-wSWP)
       ! estimate drythick for the current step
       drythick = max(min_drythick, top_soil_depth * min(dble_one,dble_one - (soil_waterfrac(1) / porosity(1))))
       call calculate_Rtot(Rtot)
-
-      ! pass Rtot to output variable and update deltaWP between minlwp and
+      ! Pass wSWP to output variable and update deltaWP between minlwp and
       ! current weighted soil WP
-      wSWP_time(n) = wSWP
+      wSWP_time(n) = wSWP ; deltaWP = min(dble_zero,minlwp-wSWP)
 
       ! calculate aerodynamic resistance (1/conductance) using consistent
       ! approach with SPA
@@ -580,8 +570,8 @@ contains
       ! pass to local variable for soil mass balance
       ET = FLUXES(n,19)
 
-      ! store soil water content of the rooting zone (mm)
-      POOLS(n,8) = 1d3*sum(soil_waterfrac(1:nos_root_layers)*layer_thickness(1:nos_root_layers))
+      ! store soil water content of surface (mm)
+      POOLS(n,8) = 1d3*soil_waterfrac(1)*layer_thickness(1)
 
       ! daily average of allocation to storage organ (needed to determine max.
       ! storage organ growth rate)

@@ -145,22 +145,26 @@ parallel_cluster_processing<-function(c,analysis_info
 
 	    if (nn == 1) {
 		# define the local variables needed for output
-		states_array_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$pixel_vars+analysis_info$nos_extra))
-		states_array_unc=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$pixel_vars+analysis_info$nos_extra))
-		gsi_control_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
-		gsi_control_unc=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
-		final_stocks_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools+1))
-		final_stocks_uncertainty=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools+1))
-		stock_change_rate_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools))
-		stock_change_rate_uncertainty=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools))
-		pixel_management_array=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
+		states_array_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$pixel_vars+analysis_info$nos_extra))
+		states_array_unc = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$pixel_vars+analysis_info$nos_extra))
+		gsi_control_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
+		gsi_control_unc = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
+		final_stocks_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools+1))
+		final_stocks_uncertainty = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools+1))
+		stock_change_rate_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools))
+		stock_change_rate_uncertainty = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,analysis_info$no_pools))
+		pixel_management_array = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
+		cumulative_management_array = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
 		# cluster / timeseries related
-		states_mean_timeseries=array(0, dim=c(analysis_info$max_pars,pixel_dims[2],analysis_info$pixel_vars))
-		states_sum_timeseries=array(0, dim=c(analysis_info$max_pars,pixel_dims[2],analysis_info$pixel_vars))
-		biomass_change_sum_timeseries=array(0, dim=c(analysis_info$max_pars,pixel_dims[2],length(analysis_info$biomass_change_names)))
-		biomass_change_mean_timeseries=array(0, dim=c(analysis_info$max_pars,pixel_dims[2],length(analysis_info$biomass_change_names)))
+		states_mean_timeseries = array(0, dim=c(analysis_info$max_pars,pixel_dims[2],analysis_info$pixel_vars))
+		states_sum_timeseries = array(0, dim=c(analysis_info$max_pars,pixel_dims[2],analysis_info$pixel_vars))
+		biomass_change_sum_timeseries = array(0, dim=c(analysis_info$max_pars,pixel_dims[2],length(analysis_info$biomass_change_names)))
+		biomass_change_mean_timeseries = array(0, dim=c(analysis_info$max_pars,pixel_dims[2],length(analysis_info$biomass_change_names)))
 	    }
-	    if (max(drivers$met[,8]) > 0) {pixel_management_array[slot_i,slot_j]=ceiling(max(which(drivers$met[,8] > 0))/analysis_info$steps_per_year)}
+	    if (max(drivers$met[,8]) > 0) {
+                pixel_management_array[slot_i,slot_j] = ceiling(max(which(drivers$met[,8] > 0))/analysis_info$steps_per_year)
+                cumulative_management_array[slot_i,slot_j] = sum(drivers$met[which(drivers$met[,8] > 0),8])
+            }
 	    # calculate the final stock medians and uncertainty
 	    bob=quantile(states_all$bio[,pixel_dims[2]], prob=c(0.975,0.5,0.025))
 	    final_stocks_median[slot_i,slot_j,1]=bob[2] ; final_stocks_uncertainty[slot_i,slot_j,1]=abs(bob[1]-bob[3])
@@ -351,7 +355,8 @@ parallel_cluster_processing<-function(c,analysis_info
              states_mean_timeseries = states_mean_timeseries,biomass_change_mean_timeseries = biomass_change_mean_timeseries,
              biomass_change_sum_timeseries = biomass_change_sum_timeseries,gsi_control_median = gsi_control_median,gsi_control_unc = gsi_control_unc,
              final_stocks_median = final_stocks_median,final_stocks_uncertainty = final_stocks_uncertainty,
-             pixel_management_array = pixel_management_array,stock_change_rate_median = stock_change_rate_median,stock_change_rate_uncertainty = stock_change_rate_uncertainty)
+             pixel_management_array = pixel_management_array,cumulative_management_array=cumulative_management_array,
+             stock_change_rate_median = stock_change_rate_median,stock_change_rate_uncertainty = stock_change_rate_uncertainty)
 	# back top the user
 	return(output)
 
@@ -481,20 +486,21 @@ generate_stocks_and_fluxes_maps<-function(PROJECT) {
 		max_pars = 200 ; no_pools = 7
 		pixel_dims = c(max_pars,length(timestep_days)) ; pixel_vars = length(in_file_names)
 		# spatial / not cluster related values
-		states_array_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,pixel_vars+nos_extra))
-		states_array_unc=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,pixel_vars+nos_extra))
-		gsi_control_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
-		gsi_control_unc=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
-		final_stocks_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools+1))
-		final_stocks_uncertainty=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools+1))
-		stock_change_rate_median=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools))
-		stock_change_rate_uncertainty=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools))
-		pixel_management_array=array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
+		states_array_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,pixel_vars+nos_extra))
+		states_array_unc = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,pixel_vars+nos_extra))
+		gsi_control_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
+		gsi_control_unc = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,3))
+		final_stocks_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools+1))
+		final_stocks_uncertainty = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools+1))
+		stock_change_rate_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools))
+		stock_change_rate_uncertainty = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,no_pools))
+		pixel_management_array = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
+                cumulative_management_array = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim))
 		# cluster / timeseries related
-		states_mean_timeseries=array(0, dim=c(max_pars,pixel_dims[2],pixel_vars,nos_uk_clusters))
-		states_sum_timeseries=array(0, dim=c(max_pars,pixel_dims[2],pixel_vars,nos_uk_clusters))
-		biomass_change_sum_timeseries=array(0, dim=c(max_pars,pixel_dims[2],length(biomass_change_names),nos_uk_clusters))
-		biomass_change_mean_timeseries=array(0, dim=c(max_pars,pixel_dims[2],length(biomass_change_names),nos_uk_clusters))
+		states_mean_timeseries = array(0, dim=c(max_pars,pixel_dims[2],pixel_vars,nos_uk_clusters))
+		states_sum_timeseries = array(0, dim=c(max_pars,pixel_dims[2],pixel_vars,nos_uk_clusters))
+		biomass_change_sum_timeseries = array(0, dim=c(max_pars,pixel_dims[2],length(biomass_change_names),nos_uk_clusters))
+		biomass_change_mean_timeseries = array(0, dim=c(max_pars,pixel_dims[2],length(biomass_change_names),nos_uk_clusters))
 	    }
 
 	    for (c in seq(1,nos_uk_clusters)) {print(paste("Cluster ",c," has ",length(which(site_cluster == c))," sites",sep=""))}
@@ -550,6 +556,7 @@ generate_stocks_and_fluxes_maps<-function(PROJECT) {
 			stock_change_rate_uncertainty[slot_i,slot_j,]=out_list[[c]]$stock_change_rate_uncertainty[slot_i,slot_j,]
 			# driver / observations outputs
 			pixel_management_array[slot_i,slot_j]=out_list[[c]]$pixel_management_array[slot_i,slot_j]
+                        cumulative_management_array[slot_i,slot_j]=out_list[[c]]$cumulative_management_array[slot_i,slot_j]
 		    } # loop through all sites not collecting their information
 		} # looping clusters
 		rm(out_list) ; gc() ; gc()
@@ -599,6 +606,7 @@ generate_stocks_and_fluxes_maps<-function(PROJECT) {
 			stock_change_rate_uncertainty[slot_i,slot_j,]=out_list[[c]]$stock_change_rate_uncertainty[slot_i,slot_j,]
 			# driver / observations outputs
 			pixel_management_array[slot_i,slot_j]=out_list[[c]]$pixel_management_array[slot_i,slot_j]
+                        cumulative_management_array[slot_i,slot_j]=out_list[[c]]$cumulative_management_array[slot_i,slot_j]
 		    } # loop through all sites not collecting their information
 		} # looping clusters
 		rm(out_list) ; gc() ; gc()
@@ -1241,7 +1249,8 @@ generate_stocks_and_fluxes_maps<-function(PROJECT) {
 	save(landmask,area,states_array_median,states_array_unc,states_sum_timeseries,states_mean_timeseries,
 	     biomass_change_mean_timeseries,biomass_change_sum_timeseries,gsi_control_median,gsi_control_unc,
 	     biomass_change_names,biomass_change_names_mean,biomass_change_names_sum,final_stocks_median,
-	     final_stocks_uncertainty,pixel_management_array,stock_change_rate_median,stock_change_rate_uncertainty,
+	     final_stocks_uncertainty,pixel_management_array,cumulative_management_array,
+             stock_change_rate_median,stock_change_rate_uncertainty,
              mean_rooting_depth,sites_processed,par_names,max_pars,file=outfile)#, compress="gzip")
 
 	# tidy before leaving

@@ -11,11 +11,11 @@ read_site_specific_obs <- function(variable,infile) {
     if (length(which(names(input) == variable)) > 0) {
 	# read from the table the desired informatin
 	output=input[,variable]
-#if (variable == "Evap") {
-#    tmp1=input[,"soilevap"]
-#    tmp2=input[,"wetevap"]
-#output = output - tmp1 - tmp2
-#}
+if (variable == "Evap") {
+    tmp1=input[,"soilevap"]
+    tmp2=input[,"wetevap"]
+output = output - tmp1 - tmp2
+}
     } else {
 	# if not then return missing value variable
 	output=-9999

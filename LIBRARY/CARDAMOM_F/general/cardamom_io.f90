@@ -48,7 +48,7 @@ module cardamom_io
         ! ID = 0 - ACM/ACM-ET
         ! DALEC_CDEA - 6 pools
         DATAin%nopools = 2
-        DATAin%nopars = 20
+        DATAin%nopars = 18
         DATAin%nofluxes = 3
     else if (DATAin%ID == 1) then
         ! ID = 1 - DALEC_CDEA

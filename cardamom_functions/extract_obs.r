@@ -108,7 +108,7 @@ extract_obs<-function(latlon_wanted,lai_all,Csom_all,forest_all,Cwood_all,sand_c
 #	if (modelname == "ACM") {infile=paste(path_to_site_obs,site_name,"_timeseries_obs_iWUE_trunk_nowater.csv",sep="")}
 	if (modelname == "ACM") {infile=paste(path_to_site_obs,site_name,"_timeseries_obs_iWUE_trunk_nowater_copy.csv",sep="")}
 	GPP = read_site_specific_obs("GPP",infile)
-	GPP_unc = pmax(0.20,GPP * 0.20) #rep(1,length.out=length(GPP))
+	GPP_unc = rep(mean(GPP*0.5),times=length(GPP)) #pmax(0.20,GPP * 0.20) #rep(1,length.out=length(GPP))
     } else {
 	# assume no data available
 	GPP = -9999
@@ -125,10 +125,12 @@ extract_obs<-function(latlon_wanted,lai_all,Csom_all,forest_all,Cwood_all,sand_c
 #	if (modelname == "ACM") {infile=paste(path_to_site_obs,site_name,"_timeseries_obs_iWUE_trunk_nowater.csv",sep="")}
 	if (modelname == "ACM") {infile=paste(path_to_site_obs,site_name,"_timeseries_obs_iWUE_trunk_nowater_copy.csv",sep="")}
 	Evap = read_site_specific_obs("Evap",infile)
-	Evap_unc = pmax(0.2,Evap * 0.20) #rep(1,length.out=length(Evap))
-	# borrow woody increment for soil evaporation in ACM_ET recalibration
-	woodinc = read_site_specific_obs("soilevap",infile)
-	woodinc_unc = pmax(0.2,woodinc * 0.20) #rep(1,length.out=length(woodinc))
+	Evap_unc = rep(mean(Evap*0.5),times=length(Evap)) #pmax(0.2,Evap * 0.20) #rep(1,length.out=length(Evap))
+        if (modelname == "ACM") { 
+            # borrow woody increment for soil evaporation in ACM_ET recalibration
+            woodinc = read_site_specific_obs("soilevap",infile)
+            woodinc_unc = rep(mean(woodinc*0.5),times=length(woodinc)) #pmax(0.2,woodinc * 0.20) #rep(1,length.out=length(woodinc))
+        }
     } else {
 	# assume no data available
 	Evap = -9999
