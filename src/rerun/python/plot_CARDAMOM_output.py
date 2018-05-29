@@ -10,6 +10,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
+from scipy import stats
+
 # Set up some basiic parameters for the plots
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['arial']
@@ -30,7 +32,7 @@ colour = ['#46E900','#1A2BCE','#E0007F']
 # Also takes optional arguments for start and end timestep. initially these will
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
-def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
+def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     fig = plt.figure(1, facecolor='White',figsize=[8,14])
 
     # Plot a -> Cwood
@@ -143,6 +145,8 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
+    if len(figname>0):
+        plt.savefig(figname)
     #plt.show()
     return 0
 
@@ -159,6 +163,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 # carbon fluxes
 # - lai : leaf area index
 # - gpp : Gross Primary Production
+# - npp : Net Primary Production
 # - nee : Net ecosystem exchange
 # - Rauto : autotrophic respiration
 # - Rhet : heterotrophic respiration
@@ -186,7 +191,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False):
 # Also takes optional arguments for start and end timestep. initially these will
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
-def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
+def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     fig = plt.figure(3, facecolor='White',figsize=[8,14])
 
     # Plot a -> LAI
@@ -292,9 +297,12 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
+    if len(figname>0):
+        plt.savefig(figname)
 
-    #---------------------------
-    # Plot second figure that compares the litter trap obserations against observed litter accumulation.
+#---------------------------
+# Plot second figure that compares the litter trap obserations against observed litter accumulation.
+def plot_litter_trap_comparison(model,obs,start_tstep=False,end_tstep=False,figname=''):
     fig = plt.figure(4, facecolor='White',figsize=[5,5])
     n_steps = model['time'].size
     acc_fol_flux_mod = np.zeros(model['flux_fol_lit'].shape)*np.nan
@@ -302,10 +310,35 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False):
     for tt in range(0,n_steps):
         if obs['lit_acc_days'][tt]>0:
             tt_start = tt-obs['lit_acc_days'][tt]
-            print tt_start,tt, obs['lit_acc_days'][tt], np.sum(model['flux_fol_lit'][tt_start:tt+1,:],axis=0)
+            #print tt_start,tt, obs['lit_acc_days'][tt], np.sum(model['flux_fol_lit'][tt_start:tt+1,:],axis=0)
             acc_fol_flux_mod[tt,:] = np.sum(model['flux_fol_lit'][tt_start:tt+1,:],axis=0)
 
     ax4 = plt.subplot2grid((1,1),(0,0))
-    ax4.errorbar(obs['flux_fol_lit'],acc_fol_flux_mod[:,1],xerr=obs['flux_fol_lit_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
-    plt.show()
-    #plt.show()
+    ax4.errorbar(obs['flux_fol_lit']/obs['lit_acc_days'],acc_fol_flux_mod[:,1]/obs['lit_acc_days'],xerr=obs['flux_fol_lit_u']/obs['lit_acc_days'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+    ax4.set_ylabel('modelled litter influx / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax4.set_xlabel('observed litter influx / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+
+    mask = np.isfinite(obs['flux_fol_lit'])
+    m, c, r, p, err = stats.linregress(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask],acc_fol_flux_mod[:,1][mask]/obs['lit_acc_days'][mask])
+    pstr=''
+    if p<0.001:
+        p1str='***'
+    elif p<0.01:
+        pstr='** '
+    elif p<0.05:
+        pstr='*  '
+    elif p<0.1:
+        pstr='$^.$  '
+    else:
+        pstr='   '
+
+    stats_str = 'R$^2$=' + '%.3f%s' % (r**2, pstr)
+    ax4.annotate(stats_str, xy=(0.95,0.05), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='right', verticalalignment='bottom', fontsize=rcParams['font.size'])
+
+    fit_x = np.array([np.min(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask]), np.max(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask])])
+    fit_y = m*fit_x+c
+    ax4.plot(fit_x,fit_y,'-k')
+    print p
+
+    if len(figname>0):
+        plt.savefig(figname)
