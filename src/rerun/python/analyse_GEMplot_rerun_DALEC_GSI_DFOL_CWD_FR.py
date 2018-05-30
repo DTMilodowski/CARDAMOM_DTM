@@ -75,6 +75,7 @@ for i in range(0,n_sites):
     model[sites[i]]['Rhet']=mod.variables['Rhet'][:,:,i]
     model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
     model[sites[i]]['gpp']=mod.variables['gpp'][:,:,i]
+    model[sites[i]]['npp']=mod.variables['npp'][:,:,i]
     model[sites[i]]['nee']=mod.variables['nee'][:,:,i]
     model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
     
@@ -108,8 +109,10 @@ for i in range(0,n_sites):
     obs[sites[i]]['lit_acc_days'] = obs_in[i,:,28]
 
     # plot Carbon stocks
-    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]])
-    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]])
+    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]],figname='carbon_pools_ts_%s.png' % sites[i])
+    pCAR.plot_carbon_fluxes_ts(model[sites[i]],obs[sites[i]],figname='carbon_fluxes_ts_%s.png' % sites[i])
+    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s.png' % sites[i])
+    pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s.png' % sites[i])
     plt.show()
     
 # Summarise the plots with temporal average and lower and upper quartiles
