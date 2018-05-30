@@ -73,7 +73,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
     ax1c.plot(model['time'],model['Croo'][:,1],'-',color=colour[0])
     
     if 'Croo' in obs.keys(): # check for observations
-        if 'Cwro_u' in obs.keys(): # check for uncertainty bounds
+        if 'Croo_u' in obs.keys(): # check for uncertainty bounds
             ax1c.errorbar(obs['time'],obs['Croo'],yerr=obs['Croo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
             ax1c.plot(obs['time'],obs['Croo'],marker='o',c='black',mec='black',mfc='black')
@@ -161,15 +161,72 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
 # - the obserations where available
 # Note that these dictionaries should have uniform naming structures for the
 # carbon fluxes
-# - lai : leaf area index
 # - gpp : Gross Primary Production
 # - npp : Net Primary Production
 # - nee : Net ecosystem exchange
-# - Rauto : autotrophic respiration
-# - Rhet : heterotrophic respiration
 # Also takes optional arguments for start and end timestep. initially these will
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
+def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
+    fig = plt.figure(1, facecolor='White',figsize=[8,6])
+
+    # Plot a -> Cwood
+    ax1a = plt.subplot2grid((3,1),(0,0))
+    ax1a.annotate('a - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1a.set_ylabel('GPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    
+    ax1a.fill_between(model['time'],model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.2)
+    ax1a.plot(model['time'],model['gpp'][:,1],'-',color=colour[0])
+
+    if 'gpp' in obs.keys(): # check for observations
+        if 'gpp_u' in obs.keys(): # check for uncertainty bounds
+            ax1a.errorbar(obs['time'],obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+        else:
+            ax1a.plot(obs['time'],obs['gpp'],marker='o',c='black',mec='black',mfc='black')
+
+    
+    # Plot b -> NPP
+    ax1b = plt.subplot2grid((7,1),(1,0),sharex=ax1a)
+    ax1b.annotate('b - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1b.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    
+    ax1b.fill_between(model['time'],model['npp'][:,3],model['npp'][:,4],color=colour[0],alpha=0.2)
+    ax1b.plot(model['time'],model['npp'][:,1],'-',color=colour[0])
+    
+    if 'npp' in obs.keys(): # check for observations
+        if 'npp_u' in obs.keys(): # check for uncertainty bounds
+            ax1b.errorbar(obs['time'],obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+        else:
+            ax1b.plot(obs['time'],obs['npp'],marker='o',c='black',mec='black',mfc='black')
+    
+    # Plot c -> NEE
+    ax1c = plt.subplot2grid((7,1),(2,0),sharex=ax1a)
+    ax1c.annotate('c - Net Ecosystem Exchange', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1c.set_ylabel('NEE / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    
+    ax1c.fill_between(model['time'],model['nee'][:,3],model['nee'][:,4],color=colour[0],alpha=0.2)
+    ax1c.plot(model['time'],model['nee'][:,1],'-',color=colour[0])
+    
+    if 'nee' in obs.keys(): # check for observations
+        if 'nee_u' in obs.keys(): # check for uncertainty bounds
+            ax1c.errorbar(obs['time'],obs['nee'],yerr=obs['nee_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+        else:
+            ax1c.plot(obs['time'],obs['nee'],marker='o',c='black',mec='black',mfc='black')
+    
+    # set xlimits if desired
+    if start_tstep!=False:
+        ax1a.set_xlim(xmin=start_tstep)
+    if end_tstep!=False:
+        ax1a.set_xlim(xmax=end_tstep)
+    else:
+        ax1a.set_xlim(xmax=model['time'].size)
+
+    plt.tight_layout()
+    if len(figname>0):
+        plt.savefig(figname)
+    #plt.show()
+    return 0
+
 
 #----------------------
 # plot_litter_components_ts
