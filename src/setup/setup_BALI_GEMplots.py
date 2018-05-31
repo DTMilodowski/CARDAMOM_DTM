@@ -12,7 +12,7 @@ sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/
 import load_data as data
 
 # Project data file (to load in if already generated
-run = '010'
+run = '022'
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
 if run not in os.listdir(data_dir):
     os.mkdir(data_dir + run)
@@ -27,14 +27,14 @@ met_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_d
 par_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_GEM_plot_params_"+run+".csv"
 
 # first load in coordinates and other data
-obs_dir = '/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/CARDAMOM_DTM/src/setup/obs/'
+obs_dir = '/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/projects/BALI_GEMplots_daily/data/'+run+'/'
 obs_data = {}
 
 plot, latitude, longitude = data.load_plot_coordinates(coordinate_file)
 met_data = data.load_met_data(met_file)
 par_data = data.load_par_data(par_file)
 for i in range(0,len(plot)):
-    obs_file = obs_dir+"CARDAMOM_obs_"+plot[i]+".csv"
+    obs_file = obs_dir+"CARDAMOM_obs_"+plot[i]+"_"+run+".csv"
     obs_data[plot[i]] = data.load_obs_data(obs_file)
 
 # start date ### read from data file
@@ -115,8 +115,8 @@ if project_par_npydata not in os.listdir(data_dir+run):
         parprior_unc[pp,8] = par_data['t_S_u'][ii]
         parprior[pp,9] = par_data['theta'][ii]     # Parameter in exponential term of temperature
         parprior_unc[pp,9] = par_data['theta_u'][ii]
-        parprior[pp,10] = par_data['C_eff'][ii]    # Canopy efficiency parameter (part of ACM) 
-        parprior_unc[pp,10] = par_data['C_eff_u'][ii]
+        parprior[pp,10] = par_data['log10_Narea'][ii]    # Nitrogen concentration per unit area in log10(g m-2) 
+        parprior_unc[pp,10] = par_data['log10_Narea_u'][ii]
         parprior[pp,11] = par_data['B_day'][ii]    # max labile turnover(GSI) ! date of Clab release (CDEA)
         parprior_unc[pp,11] = par_data['B_day_u'][ii]
         parprior[pp,12] = par_data['f_l'][ii]      # Fraction allocated to Clab
@@ -165,6 +165,10 @@ if project_par_npydata not in os.listdir(data_dir+run):
         parprior[pp,37] = par_data['Ccwd_i'][ii]    # initial C stock for CWD
         parprior_unc[pp,37] = par_data['Ccwd_i_u'][ii]
 
+        otherprior[pp,0] = par_data['log10_CNratio'][ii] # log10 CN ratio
+        otherprior_unc[pp,0] = par_data['log10_CNratio_u'][ii]
+
+        
     np.save(data_dir+run+'/' + project_par_npydata,[parprior,parprior_unc])
    
 else:
@@ -174,6 +178,21 @@ else:
 #-----------------------------------------------------------------------------
 # Now deal with the observations 
 obs = np.zeros((nosites,sim_length,34))-9999.  # check number of observations and their uncertainties
+LAI_init = {}
+LAI_init['Belian'] = 8.8
+LAI_init['Seraya'] = 8.2
+LAI_init['E'] = 5.1
+LAI_init['LF'] = 6.3
+LAI_init['B North'] = 4.0
+LAI_init['B South'] = 3.0
+LAI_init_u = {}
+LAI_init_u['Belian'] = 2.
+LAI_init_u['Seraya'] = 2.
+LAI_init_u['E'] = 2
+LAI_init_u['LF'] = 2.5
+LAI_init_u['B North'] = 2.
+LAI_init_u['B South'] = 2.
+
 
 if project_obs_npydata not in os.listdir(data_dir+run):
     
@@ -190,8 +209,10 @@ if project_obs_npydata not in os.listdir(data_dir+run):
         obs[pp,:,8] = obs_data[plot[pp]]['flit']        # Note hack here - changed Clit intake to flit for easy inclusion into likelihood function
         obs[pp,:,9] = obs_data[plot[pp]]['Csom']        # Csom
         obs[pp,:,10] = obs_data[plot[pp]]['Cagb']       # Cagb
-        obs[pp,:,22] = obs_data[plot[pp]]['Cstem']      # Cstem
-        obs[pp,:,24] = obs_data[plot[pp]]['Cbranch']    # Cbranch
+        #obs[pp,:,22] = obs_data[plot[pp]]['Cstem']      # Cstem 
+        #obs[pp,:,22] = obs_data[plot[pp]]['GPProo']      # Cstem # HACK this now holds root production
+        #obs[pp,:,24] = obs_data[plot[pp]]['Cbranch']    # Cbranch
+        #obs[pp,:,24] = obs_data[plot[pp]]['GPProo_acc_days']    # Cbranch # HACK this now holds accumulation days for root cores
         obs[pp,:,26] = obs_data[plot[pp]]['Ccroo']      # Ccoarseroot
         #obs[pp,:,28] = obs_data[plot[pp]]['Cfol_max']  # maximum Cfol
         obs[pp,:,28] = obs_data[plot[pp]]['flit_acc_days'] # Note hack here - changed Cfol_max to flit_acc_days for easy inclusion into likelihood function
@@ -206,17 +227,30 @@ if project_obs_npydata not in os.listdir(data_dir+run):
         obs[pp,:,16] = obs_data[plot[pp]]['Cfol_u']     # Cfol
         obs[pp,:,17] = obs_data[plot[pp]]['Cwoo_u']     # Cwood
         obs[pp,:,18] = obs_data[plot[pp]]['Croo_u']     # Croot
-        #obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']     # Clit
-        obs[pp,:,19] = obs_data[plot[pp]]['flit_u']      # Note hack here - changed Clit intake to flit for easy inclusion into likelihood function
+        #obs[pp,:,19] = obs_data[plot[pp]]['Clit_u']    # Clit
+        obs[pp,:,19] = obs_data[plot[pp]]['flit_u']     # Note hack here - changed Clit intake to flit for easy inclusion into likelihood function
         obs[pp,:,20] = obs_data[plot[pp]]['Csom_u']     # Csom
         obs[pp,:,21] = obs_data[plot[pp]]['Cagb_u']     # Cagb
-        obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']    # Cstem
+        #obs[pp,:,23] = obs_data[plot[pp]]['Cstem_u']   # Cstem
+        #obs[pp,:,23] = obs_data[plot[pp]]['GPProo_u']   # Cstem
         obs[pp,:,25] = obs_data[plot[pp]]['Cbranch_u']  # Cbranch
         obs[pp,:,27] = obs_data[plot[pp]]['Ccroo_u']    # Ccoarseroot
         obs[pp,:,29] = obs_data[plot[pp]]['Cfol_max_u'] # maximum Cfol - note this does not get used
         obs[pp,:,31] = obs_data[plot[pp]]['Evap_u']     # Evapotranspiration
         obs[pp,:,33] = obs_data[plot[pp]]['flit_u']     # Litter flux
-                
+         
+        # initial conditions for BALI plot LAI based on LiDAR estimates
+        if plot[pp] in LAI_init.keys():
+          obs[pp,0,1] = LAI_init[plot[pp]]
+          obs[pp,0,12] = LAI_init_u[plot[pp]]
+
+        # add uncertainty (2*SErr) from underlying LiDAR surveys
+        if plot[pp] in ['Belian','Seraya','E','B North','B South']:
+            mask = obs[pp,:,12]>=0
+            obs[pp,mask,12] += 2*0.4      
+        elif plot[pp] in ['LF']:
+            mask = obs[pp,:,12]>=0
+            obs[pp,mask,12] += 2*0.5
     np.save(data_dir+run+'/' + project_obs_npydata,obs)
 
 else:
@@ -225,3 +259,4 @@ else:
 
 prj=CAR.CARDAMOM(project_name="BALI_GEMplots_daily")
 prj.setup(latitude,longitude,met,obs,parprior,parprior_unc,otherprior,otherprior_unc)
+prj.run_CARDAMOM_local(accepted_params=25000000,n_chains=4)
