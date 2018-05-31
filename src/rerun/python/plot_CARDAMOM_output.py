@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib import rcParams
 from scipy import stats
 
-# Set up some basiic parameters for the plots
+# Set up some basic parameters for the plots
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['arial']
 rcParams['font.size'] = 8
@@ -145,7 +145,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
-    if len(figname>0):
+    if len(figname)>0:
         plt.savefig(figname)
     #plt.show()
     return 0
@@ -168,7 +168,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
 def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
-    fig = plt.figure(1, facecolor='White',figsize=[8,6])
+    fig = plt.figure(2, facecolor='White',figsize=[8,6])
 
     # Plot a -> Cwood
     ax1a = plt.subplot2grid((3,1),(0,0))
@@ -186,7 +186,7 @@ def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''
 
     
     # Plot b -> NPP
-    ax1b = plt.subplot2grid((7,1),(1,0),sharex=ax1a)
+    ax1b = plt.subplot2grid((3,1),(1,0),sharex=ax1a)
     ax1b.annotate('b - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1b.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
@@ -200,7 +200,7 @@ def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''
             ax1b.plot(obs['time'],obs['npp'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot c -> NEE
-    ax1c = plt.subplot2grid((7,1),(2,0),sharex=ax1a)
+    ax1c = plt.subplot2grid((3,1),(2,0),sharex=ax1a)
     ax1c.annotate('c - Net Ecosystem Exchange', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1c.set_ylabel('NEE / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
@@ -222,7 +222,7 @@ def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
-    if len(figname>0):
+    if len(figname)>0:
         plt.savefig(figname)
     #plt.show()
     return 0
@@ -354,7 +354,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
         ax1a.set_xlim(xmax=model['time'].size)
 
     plt.tight_layout()
-    if len(figname>0):
+    if len(figname)>0:
         plt.savefig(figname)
 
 #---------------------------
@@ -394,8 +394,91 @@ def plot_litter_trap_comparison(model,obs,start_tstep=False,end_tstep=False,fign
 
     fit_x = np.array([np.min(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask]), np.max(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask])])
     fit_y = m*fit_x+c
-    ax4.plot(fit_x,fit_y,'-k')
-    print p
+    ax4.plot(fit_x,fit_y,':k')
+    plt.tight_layout()
 
-    if len(figname>0):
+    if len(figname)>0:
         plt.savefig(figname)
+
+
+
+#================================================
+# plot_parameters
+#------------------------------------------------
+# a function to plot histograms of the accepted parameters
+# inputs:
+# - a parameter array
+# - figname (optional)
+def plot_parameters(params,figname=''):
+    fig = plt.figure(5, facecolor='White',figsize=[18,9])
+
+    par_list = ['Decomposition rate',
+                'Fraction GPP respired',
+                'GSI sensitivity growth',
+                'Root allocation',
+                'GSI max leaf turnover',
+                'TOR wood / d$^{-1}$',
+                'TPR roots / d$^{-1}$',
+                'TOR litter / d$^{-1}$',
+                'TOR SOM / d$^{-1}$',
+                'Q10',
+                'foliar N / gN m${-2}$',
+                'GSI max labile turnover',
+                'Labile allocation',
+                'GSI min temp / $^o$C',
+                'GSI max temp / $^o$C',
+                'GSI min photoperiod / s',
+                'LMA / gC m$^{-2}$',
+                'Clab$_i$',
+                'Cfol$_i$',
+                'Croot$_i$',
+                'Cwood$_i$',
+                'Clit$_i$',
+                'Csom$_i$',
+                'GSI max photoperiod / s',
+                'GSI min VPD / Pa',
+                'GSI max VPD / Pa',
+                'crit. GPP for LAI',
+                'frac Cwood branch',
+                'frac Cwood c. root',
+                'replant Clab',
+                'replant Cfol',
+                'replant Croot',
+                'replant Cwood at age 1',
+                'GSI sensitivity senescence',
+                'GSI - have I just left growing state',
+                'GSI$_i$.',
+                'Ccwd$_i$',
+                'TOR CWD / d$^{-1}$',
+                'min TOR fol / d$^{-1}$',
+                'likelihood']
+    
+    n_par = params.shape[0]
+    rows = 5
+    cols = 8
+    par = 0
+    for rr in range(0,rows):
+        for cc in range(0,cols):
+            if par >= n_par:
+                break
+            else:
+                axpp = plt.subplot2grid((rows,cols),(rr,cc))
+                if par == 11:
+                    axpp.hist(10**params[par], bins = 20, normed=True, fc='#46E900', ec='#46E900')
+                elif np.all((par >= 29, par<33)):
+                    axpp.hist(10**params[par], bins = 20, normed=True, fc='0.5', ec='0.5')
+                elif par==n_par-1:
+                    axpp.hist(params[par], bins = 20, normed=True, fc=colour[2], ec=colour[2])
+                    
+                else:
+                    axpp.hist(params[par], bins = 20, normed=True, fc='#46E900', ec='#46E900')
+                axpp.annotate(par_list[par], xy=(0.5,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='center', verticalalignment='top', fontsize=rcParams['font.size'])
+                axpp.xaxis.set_major_locator(plt.MaxNLocator(3))
+                axpp.yaxis.set_major_locator(plt.NullLocator())
+            par += 1
+                
+    plt.tight_layout()
+    if len(figname)>0:
+        plt.savefig(figname)
+            
+    #plt.show()
