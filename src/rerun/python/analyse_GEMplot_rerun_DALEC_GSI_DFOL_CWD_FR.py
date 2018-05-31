@@ -27,7 +27,7 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '020'
+run = '021'
 filename = 'BALI_GEMplots_daily_2011_2016_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
@@ -75,7 +75,7 @@ for i in range(0,n_sites):
     model[sites[i]]['Rhet']=mod.variables['Rhet'][:,:,i]
     model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
     model[sites[i]]['gpp']=mod.variables['gpp'][:,:,i]
-    model[sites[i]]['npp']=mod.variables['npp'][:,:,i]
+    model[sites[i]]['npp']=-mod.variables['npp'][:,:,i]
     model[sites[i]]['nee']=mod.variables['nee'][:,:,i]
     model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
     
@@ -109,11 +109,12 @@ for i in range(0,n_sites):
     obs[sites[i]]['lit_acc_days'] = obs_in[i,:,28]
 
     # plot Carbon stocks
-    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]],figname='carbon_pools_ts_%s.png' % sites[i])
-    pCAR.plot_carbon_fluxes_ts(model[sites[i]],obs[sites[i]],figname='carbon_fluxes_ts_%s.png' % sites[i])
-    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s.png' % sites[i])
-    pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s.png' % sites[i])
-    plt.show()
+    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]],figname='carbon_pools_ts_%s_%s.png' % (run, sites[i]))
+    pCAR.plot_carbon_fluxes_ts(model[sites[i]],obs[sites[i]],figname='carbon_fluxes_ts_%s_%s.png' % (run,sites[i]))
+    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s_%s.png' % (run,sites[i]))
+    pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s_%s.png' % (run,sites[i]))
+    pCAR.plot_parameters(params[sites[i]],figname='parameters_%s_%s.png' % (run,sites[i]))
+    plt.close('all')
     
 # Summarise the plots with temporal average and lower and upper quartiles
 Cwoo = np.zeros((6,3))
@@ -192,7 +193,7 @@ out = open('BALI_fluxes_summary_%s.csv' % run,'w')
 # First set up header
 out.write('Site, GPP_50, GPP_25, GPP_75, NPP_50, NPP_25, NPP_75, NEE_50, NEE_25, NEE_75,  Ra_50, Ra_25, Ra_75, Rh_50, Rh_25, Rh_75, Litterfall_50, Litterfall_25, Litterfall_75, LAI_50, LAI_25, LAI_75\n')
 for i in range(0,6):
-    out.write('%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' % (Sites[i],GPP[i,0],GPP[i,1],GPP[i,2],NPP[i,0],NPP[i,1],NPP[i,2],NEE[i,0],NEE[i,1],NEE[i,2],Raut[i,0],Raut[i,1],Raut[i,2],Rhet[i,0],Rhet[i,1],Rhet[i,2],Litterfall[i,0],Litterfall[i,1],Litterfall[i,2],LAI[i,0],LAI[i,1],LAI[i,2]))
+    out.write('%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' % (Sites[i],GPP[i,0],GPP[i,1],GPP[i,2],NPP[i,0],NPP[i,1],NPP[i,2],NEE[i,0],NEE[i,1],NEE[i,2],Raut[i,0],Raut[i,1],Raut[i,2],Rhet[i,0],Rhet[i,1],Rhet[i,2],Litterfall[i,0],Litterfall[i,1],Litterfall[i,2],LAI[i,0],LAI[i,1],LAI[i,2]))
 out.close()  
 
 
