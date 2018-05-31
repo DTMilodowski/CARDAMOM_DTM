@@ -1147,7 +1147,7 @@ module model_likelihood_module
         EDC2 = 0 ; EDCD%PASSFAIL(37) = 0
     endif
 
-    if ((EDC2 == 1 .or. DIAG == 1) .and. rNPP < 0.05d0) then
+    if ((EDC2 == 1 .or. DIAG == 1) .and. (rNPP < 0.05d0 .or. wNPP > 0.85d0)) then
         EDC2 = 0 ; EDCD%PASSFAIL(38) = 0
     endif
 
