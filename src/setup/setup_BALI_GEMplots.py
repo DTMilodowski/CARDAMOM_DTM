@@ -12,7 +12,7 @@ sys.path.append('/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/
 import load_data as data
 
 # Project data file (to load in if already generated
-run = '022'
+run = '024'
 data_dir = "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/npydata/"
 if run not in os.listdir(data_dir):
     os.mkdir(data_dir + run)
@@ -22,7 +22,8 @@ project_obs_npydata = "BALI_GEMplots_daily_obs.npy"
 
 # File list containing drivers, observations and plot coordinates
 coordinate_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_plot_coordinates.csv"
-met_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_data/BALI_metstation_daily_v1.csv"
+#met_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_data/BALI_metstation_daily_v1.csv"
+met_file = "/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_gapfilled_metstation_daily_v2_20110101_20171231.csv"
 # note that plot parameters may change each run, so use specified parameter file
 par_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_GEM_plot_params_"+run+".csv"
 
