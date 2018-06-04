@@ -4,22 +4,22 @@ from scipy import stats
 
 def read_ICP_census_data(census_file):
     
-    datatype = {'names': ('ForestType', 'Plot', 'Subplot', 'CensusDate1', 'Observers1', 'TagNumber1', 'D_POM1', 'H_POM1', 'Height1', 'RAINFOR_flag1', 'Alive_flag1', 'C_stem1','C_coarse_root1', 'Comment1', 'CommentData1', 'CensusDate2', 'Observers2', 'TagNumber2', 'D_POM2', 'H_POM2', 'Height2', 'RAINFOR_flag2', 'Alive_flag2', 'C_stem2','C_coarse_root2', 'Comment2', 'CommentData2', 'CensusDate3', 'Observers3', 'TagNumber3', 'D_POM3', 'H_POM3', 'Height3', 'RAINFOR_flag3', 'Alive_flag3', 'C_stem3','C_coarse_root3', 'Comment3', 'CommentData3', 'SubplotX', 'SubplotY', 'SpeciesID', 'WoodDensity','Source','Quality'),'formats': ('S16','S16','i8','S10','S64','f8','f16','f16','f16','S8','i8','f32','f32','S16','S64','S10','S64','f8','f16','f16','f16','S8','i8','f32','f32','S16','S64','S10','S64','f8','f16','f16','f16','S8','i8','f32','f32','S16','S64','i8','i8','S32','f16','S100','S32')}
+    datatype = {'names': ('ForestType', 'Plot', 'Subplot', 'CensusDate1', 'Observers1', 'TagNumber1', 'D_POM1', 'H_POM1', 'Height1', 'RAINFOR_flag1', 'Alive_flag1', 'C_stem1','C_coarse_root1', 'Comment1', 'CommentData1', 'CensusDate2', 'Observers2', 'TagNumber2', 'D_POM2', 'H_POM2', 'Height2', 'RAINFOR_flag2', 'Alive_flag2', 'C_stem2','C_coarse_root2', 'Comment2', 'CommentData2', 'CensusDate3', 'Observers3', 'TagNumber3', 'D_POM3', 'H_POM3', 'Height3', 'RAINFOR_flag3', 'Alive_flag3', 'C_stem3','C_coarse_root3', 'Comment3', 'CommentData3','TagNumber4', 'CensusDate4', 'Observers4', 'D_POM4', 'H_POM4', 'Height4', 'RAINFOR_flag4', 'Alive_flag4', 'C_stem4','C_coarse_root4', 'Comment4', 'CommentData4',  'SubplotX', 'SubplotY', 'CrownProjArea','PlotX_m','PlotY_m', 'Elevation_m', 'SpeciesID', 'WoodDensity','Source','Quality'),'formats': ('S16','S16','i8','S10','S128','f8','f16','f16','f16','S8','i8','f32','f32','S128','S128','S10','S64','f8','f16','f16','f16','S8','i8','f32','f32','S16','S128','S10','S128','f8','f16','f16','f16','S8','i8','f32','f32','S128','S128','f8','S10','S128','f16','f16','f16','S8','i8','f32','f32','S128','S128','i8','i8','f16','f16','f16','f16','S32','f16','S128','S128')}
     census_data = np.genfromtxt(census_file, skiprows = 1, delimiter = ',',dtype=datatype)
     
     nrows = census_data['Plot'].size
     BALI_plot = []
     Subplot = np.zeros(nrows)
-    CensusDates = np.zeros((nrows,3),dtype = 'datetime64[D]')
+    CensusDates = np.zeros((nrows,4),dtype = 'datetime64[D]')
     TreeTag = np.zeros(nrows)
     AltTag = np.zeros(nrows)
-    DPOM = np.zeros((nrows,3))
-    HPOM = np.zeros((nrows,3))
-    Height = np.zeros((nrows,3))
-    C_stem = np.zeros((nrows,3))
-    C_coarse_root = np.zeros((nrows,3))
+    DPOM = np.zeros((nrows,4))
+    HPOM = np.zeros((nrows,4))
+    Height = np.zeros((nrows,4))
+    C_stem = np.zeros((nrows,4))
+    C_coarse_root = np.zeros((nrows,4))
     RAINFOR_flag = []
-    Alive_flag = np.ones((nrows,3)) # assume alive unless specified
+    Alive_flag = np.ones((nrows,4)) # assume alive unless specified
     Species = []
     SubplotCoords = np.ones((nrows,2))
     WoodDensity = np.zeros(nrows)
@@ -74,7 +74,7 @@ def read_ICP_census_data(census_file):
             Alive_flag[i,0] = np.nan
 
         # Subsequent censuses
-        for j in range(1,3):
+        for j in range(1,4):
             if prior_census==0: # New recruits
                 if np.isfinite(census_data['TagNumber'+str(j+1)][i]):
                     prior_census = 1
@@ -172,19 +172,19 @@ def collate_plot_level_census_data(census_file):
         #Set up arrays to save
         subplot_ids = np.unique(Subplot)
         n_subplots = subplot_ids.size
-        dates = np.zeros((n_subplots,3),dtype = 'datetime64[D]')
-        CanHt = np.zeros((n_subplots,3))
-        Cstem = np.zeros((n_subplots,3))
-        Croot = np.zeros((n_subplots,3))
-        BasalArea = np.zeros((n_subplots,3))
+        dates = np.zeros((n_subplots,4),dtype = 'datetime64[D]')
+        CanHt = np.zeros((n_subplots,4))
+        Cstem = np.zeros((n_subplots,4))
+        Croot = np.zeros((n_subplots,4))
+        BasalArea = np.zeros((n_subplots,4))
         # note that for growth, mortality and recruitment, first year of census will be nan values because no there are no previous surveys!
-        Growth = np.zeros((n_subplots,3))*np.nan
-        Mortality = np.zeros((n_subplots,3))*np.nan
-        Recruitment = np.zeros((n_subplots,3))*np.nan
+        Growth = np.zeros((n_subplots,4))*np.nan
+        Mortality = np.zeros((n_subplots,4))*np.nan
+        Recruitment = np.zeros((n_subplots,4))*np.nan
 
         for s in range(0,n_subplots):
             subplot_indices = plot_indices * Subplot==subplot_ids[s]
-            for y in range(0,3):
+            for y in range(0,4):
                 datetemp = CensusDates[subplot_indices,y]
                 dates[s,y]= np.max(datetemp)
 
@@ -214,7 +214,7 @@ def collate_plot_level_census_data(census_file):
         
         # need to do catch for where there are no trees in subplot that has been surveyed!
         for s in range(0,n_subplots):
-            for y in range(0,3):
+            for y in range(0,4):
                 if dates[s,y]==np.datetime64('1970-01-01','D'):
                     if np.max(dates[:,y])>np.datetime64('1970-01-01','D'):
                         dates[s,y]=np.max(dates[:,y])
@@ -224,7 +224,7 @@ def collate_plot_level_census_data(census_file):
         for s in range(0,n_subplots):
             subplot_indices = plot_indices * Subplot==subplot_ids[s]
             Cwood_temp = C_stem[subplot_indices]+C_coarse_root[subplot_indices]            
-            for y in range(1,3):
+            for y in range(1,4):
                 """
                 growth_indices = np.all((np.isfinite(Cwood_temp[:,y-1]),np.isfinite(Cwood_temp[:,y])),axis=0)
                 recruit_indices = np.all((np.isfinite(Cwood_temp[:,y]),~np.isfinite(Cwood_temp[:,y-1])),axis=0)
@@ -293,6 +293,9 @@ def read_litterfall_data(litter_file):
 
         for j in range(0,N_sub):
             subplot_data = plot_data[plot_data['Trap']==j+1]
+            #mask = np.all((np.isfinite(subplot_data['mLeaves']),np.isfinite(subplot_data['mTwigs']),np.isfinite(subplot_data['mFruit']),np.isfinite(subplot_data['mFlowers']),np.isfinite(subplot_data['mSeeds']),np.isfinite(subplot_data['mMisc']),np.isfinite(subplot_data['AccumulationDays'])),axis=0)
+            
+            #subplot_data = subplot_data[mask]
             N_collections = subplot_data.size
             
             cDates = np.zeros(N_collections, dtype = 'datetime64[D]')

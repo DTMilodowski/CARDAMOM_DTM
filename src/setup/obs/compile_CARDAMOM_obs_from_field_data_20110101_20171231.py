@@ -23,9 +23,10 @@ met_file = '/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts
 #    -Litter data
 #    -LiDAR data (for LAI)
 census_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_TreeCensus.csv'
-roots_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_FineRoots_Stock_NPP_RawData.csv'
-litter_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_Litterfall_RawData_clean.csv'
-LAI_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_LAI_fromHemisphericalPhotos_TimeSeries.csv'
+roots_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_FineRoots_Stock_NPP_RawData_2011_2017.csv'
+litter_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_Litterfall_RawData_2011_2016.csv'
+LAI_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_LAI_fromHemisphericalPhotos_TimeSeries_2013_2016.csv'
+soil_resp.file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_TotalSoilRespiration_RawData_2011_2016.csv'
 
 #---------------------------------------------------------------------------------------------------------------
 # Now get some basic parameters for the run
@@ -34,7 +35,7 @@ output_dir = '/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/BALI_GEMp
 os.system('mkdir %s%s'  % (output_dir,run))
 
 start_date= '01/01/2011'
-end_date= '31/12/2015'
+end_date= '31/12/2017'
 plot = ['Belian','LF','B North','B South', 'E', 'Seraya']
 LAI_MH = [8.8,6.3,4.0,3.0,5.1,8.2,7.8,7.8]
 LAI_rad = [10.3,6.8,5.4,4.2,6.6,9.9,9.1,9.5]
@@ -91,6 +92,7 @@ for pp in range(0,len(plot)):
 
     # Cwood reported in kg (for 1ha plot)
     census_date, Cwood = field.get_Cwood_ts(census_file,plot[pp])
+    print Cwood/10.
     N_c = Cwood.size
     for dd in range(0,N_c):
         Cwood_in[date == census_date[dd]] = Cwood[dd] *1000./10.**4. # convert kg/ha to g/m^2
