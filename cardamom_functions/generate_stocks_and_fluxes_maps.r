@@ -483,7 +483,7 @@ generate_stocks_and_fluxes_maps<-function(PROJECT) {
 	    # create array we will be filling here if we have not already
 	    if (exists("states_array_median") == FALSE) {
 		# dimension info
-		max_pars = 200 ; no_pools = 7
+		max_pars = 500 ; no_pools = 7
 		pixel_dims = c(max_pars,length(timestep_days)) ; pixel_vars = length(in_file_names)
 		# spatial / not cluster related values
 		states_array_median = array(NA, dim=c(PROJECT$long_dim,PROJECT$lat_dim,pixel_vars+nos_extra))

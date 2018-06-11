@@ -614,24 +614,24 @@ contains
     NUE                       = pars(48)      ! Photosynthetic nitrogen use efficiency at optimum temperature (oC)
                                               ! ,unlimited by CO2, light and photoperiod
                                               ! (gC/gN/m2leaf/day)
-    pn_max_temp               = 5.931833e+01  ! Maximum temperature for photosynthesis (oC)
-    pn_opt_temp               = 3.276343e+01  ! Optimum temperature for photosynthesis (oC)
-    pn_kurtosis               = 1.854926e-01  ! Kurtosis of photosynthesis temperature response
-    e0                        = 4.390066e+00  ! Quantum yield gC/MJ/m2/day PAR
-    max_lai_lwrad_absorption  = 9.815629e-01  ! Max fraction of LW from sky absorbed by canopy
-    lai_half_lwrad_absorption = 5.012767e-01  ! LAI at which canopy LW absorption = 50 %
-    max_lai_nir_absorption    = 7.058557e-01  ! Max fraction of NIR absorbed by canopy
-    lai_half_nir_absorption   = 1.707789e+00  ! LAI at which canopy NIR absorption = 50 %
-    minlwp                    = -1.994232e+00 ! minimum leaf water potential (MPa)
-    max_lai_par_absorption    = 8.981069e-01  ! Max fraction of PAR absorbed by canopy
-    lai_half_par_absorption   = 2.173575e-02  ! LAI at which canopy PAR absorption = 50 %
-    lai_half_lwrad_to_sky     = 6.811579e-01  ! LAI at which 50 % LW is reflected back to sky
-    iWUE                      = 2.173575e-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
-    soil_swrad_absorption     = 9.015340e-01  ! Fraction of SW rad absorbed by soil
-    max_lai_swrad_reflected   = 5.217833e-02  ! Max fraction of SW reflected back to sky
+    pn_max_temp               = 6.379949d+01  ! Maximum temperature for photosynthesis (oC)
+    pn_opt_temp               = 3.252756d+01  ! Optimum temperature for photosynthesis (oC)
+    pn_kurtosis               = 2.022903d-01  ! Kurtosis of photosynthesis temperature response
+    e0                        = 4.417090d+00  ! Quantum yield gC/MJ/m2/day PAR
+    max_lai_lwrad_absorption  = 9.884262d-01  ! Max fraction of LW from sky absorbed by canopy
+    lai_half_lwrad_absorption = 5.011258d-01  ! LAI at which canopy LW absorption = 50 %
+    max_lai_nir_absorption    = 5.003559d-01  ! Max fraction of NIR absorbed by canopy
+    lai_half_nir_absorption   = 9.306770d-01  ! LAI at which canopy NIR absorption = 50 %
+    minlwp                    =-1.990173d+00 ! minimum leaf water potential (MPa)
+    max_lai_par_absorption    = 8.999280d-01  ! Max fraction of PAR absorbed by canopy
+    lai_half_par_absorption   = 2.468247d+00  ! LAI at which canopy PAR absorption = 50 %
+    lai_half_lwrad_to_sky     = 9.831857d-01  ! LAI at which 50 % LW is reflected back to sky
+    iWUE                      = 2.122109d-02  ! Intrinsic water use efficiency (gC/m2leaf/day/mmolH2Ogs)
+    soil_swrad_absorption     = 9.001833d-01  ! Fraction of SW rad absorbed by soil
+    max_lai_swrad_reflected   = 7.928568d-02  ! Max fraction of SW reflected back to sky
     lai_half_swrad_reflected  = (lai_half_nir_absorption+lai_half_par_absorption) * 0.5d0
-    max_lai_lwrad_release     = 2.390430e-01  ! Max fraction of LW emitted from canopy to be released
-    lai_half_lwrad_release    = 2.474232e+00  ! LAI at which LW emitted from canopy to be released at 50 %
+    max_lai_lwrad_release     = 2.345856d-01  ! Max fraction of LW emitted from canopy to be released
+    lai_half_lwrad_release    = 2.498255d+00  ! LAI at which LW emitted from canopy to be released at 50 %
 
     ! load some values
     avN = 10d0**pars(11)  ! foliar N gN/m2
@@ -1283,85 +1283,91 @@ contains
               labile_frac_res = dble_zero
           endif
 
-          ! Loss of carbon from each pools
-          labile_loss = POOLS(n+1,1)*met(8,n)
-          foliar_loss = POOLS(n+1,2)*met(8,n)
-          ! roots are not removed under grazing
-          if (harvest_management /= 5) then 
-             roots_loss = POOLS(n+1,3)*met(8,n)
-          else
-             roots_loss = dble_zero 
-          endif
-          wood_loss   = POOLS(n+1,4)*met(8,n)
-          ! estimate labile loss explicitly from the loss of their storage
-          ! tissues
-          labile_loss = POOLS(n+1,1) * ((roots_loss+wood_loss) / (POOLS(n+1,3)+POOLS(n+1,4)))
-          ! For output / EDC updates
-          if (met(8,n) <= 0.99d0) then
-              FLUXES(n,22) = labile_loss * deltat_1(n)
-              FLUXES(n,23) = foliar_loss * deltat_1(n)
-              FLUXES(n,24) = roots_loss * deltat_1(n)
-              FLUXES(n,25) = wood_loss * deltat_1(n)
-          endif
-          ! Transfer fraction of harvest waste to litter or som pools
-          ! easy pools first
-          labile_residue = POOLS(n+1,1)*met(8,n)*labile_frac_res
-          foliar_residue = POOLS(n+1,2)*met(8,n)*foliage_frac_res(harvest_management)
-          roots_residue  = POOLS(n+1,3)*met(8,n)*roots_frac_res(harvest_management)
-          ! Explicit calculation of the residues from each fraction
-          coarse_root_residue  = Crootcr*met(8,n)*rootcr_frac_res(harvest_management)
-          branch_residue = Cbranch*met(8,n)*branch_frac_res(harvest_management)
-          stem_residue = Cstem*met(8,n)*stem_frac_res(harvest_management)
-          ! Now finally calculate the final wood residue
-          wood_residue = stem_residue + branch_residue + coarse_root_residue
-          ! Mechanical loss of Csom due to coarse root extraction
-          soil_loss_with_roots = Crootcr*met(8,n)*(dble_one-rootcr_frac_res(harvest_management)) &
+          ! you can't remove any biomass if there is none left...
+          if (C_total > vsmall) then
+
+              ! Loss of carbon from each pools
+              labile_loss = POOLS(n+1,1)*met(8,n)
+              foliar_loss = POOLS(n+1,2)*met(8,n)
+              ! roots are not removed under grazing
+              if (harvest_management /= 5) then 
+                 roots_loss = POOLS(n+1,3)*met(8,n)
+              else
+                 roots_loss = dble_zero 
+              endif
+              wood_loss   = POOLS(n+1,4)*met(8,n)
+              ! estimate labile loss explicitly from the loss of their storage
+              ! tissues
+              labile_loss = POOLS(n+1,1) * ((roots_loss+wood_loss) / (POOLS(n+1,3)+POOLS(n+1,4)))
+
+              ! For output / EDC updates
+              if (met(8,n) <= 0.99d0) then
+                  FLUXES(n,22) = labile_loss * deltat_1(n)
+                  FLUXES(n,23) = foliar_loss * deltat_1(n)
+                  FLUXES(n,24) = roots_loss * deltat_1(n)
+                  FLUXES(n,25) = wood_loss * deltat_1(n)
+              endif
+              ! Transfer fraction of harvest waste to litter or som pools
+              ! easy pools first
+              labile_residue = POOLS(n+1,1)*met(8,n)*labile_frac_res
+              foliar_residue = POOLS(n+1,2)*met(8,n)*foliage_frac_res(harvest_management)
+              roots_residue  = POOLS(n+1,3)*met(8,n)*roots_frac_res(harvest_management)
+              ! Explicit calculation of the residues from each fraction
+              coarse_root_residue  = Crootcr*met(8,n)*rootcr_frac_res(harvest_management)
+              branch_residue = Cbranch*met(8,n)*branch_frac_res(harvest_management)
+              stem_residue = Cstem*met(8,n)*stem_frac_res(harvest_management)
+              ! Now finally calculate the final wood residue
+              wood_residue = stem_residue + branch_residue + coarse_root_residue
+              ! Mechanical loss of Csom due to coarse root extraction
+              soil_loss_with_roots = Crootcr*met(8,n)*(dble_one-rootcr_frac_res(harvest_management)) &
                               * soil_loss_frac(harvest_management)
 
-          ! Update living pools directly
-          POOLS(n+1,1) = max(dble_zero,POOLS(n+1,1)-labile_loss)
-          POOLS(n+1,2) = max(dble_zero,POOLS(n+1,2)-foliar_loss)
-          POOLS(n+1,3) = max(dble_zero,POOLS(n+1,3)-roots_loss)
-          POOLS(n+1,4) = max(dble_zero,POOLS(n+1,4)-wood_loss)
+              ! Update living pools directly
+               POOLS(n+1,1) = max(dble_zero,POOLS(n+1,1)-labile_loss)
+               POOLS(n+1,2) = max(dble_zero,POOLS(n+1,2)-foliar_loss)
+               POOLS(n+1,3) = max(dble_zero,POOLS(n+1,3)-roots_loss)
+               POOLS(n+1,4) = max(dble_zero,POOLS(n+1,4)-wood_loss)
 
-          ! Set burn related values
-          FLUXES(n,17) = dble_zero
-          CFF = dble_zero ; NCFF = dble_zero
-          CFF_res = dble_zero ; NCFF_res = dble_zero
+              ! Set burn related values
+              FLUXES(n,17) = dble_zero
+              CFF = dble_zero ; NCFF = dble_zero
+              CFF_res = dble_zero ; NCFF_res = dble_zero
 
-          ! Update all pools this time
-          POOLS(n+1,1) = max(dble_zero, POOLS(n+1,1) - CFF(1) - NCFF(1) )
-          POOLS(n+1,2) = max(dble_zero, POOLS(n+1,2) - CFF(2) - NCFF(2) )
-          POOLS(n+1,3) = max(dble_zero, POOLS(n+1,3) - CFF(3) - NCFF(3) )
-          POOLS(n+1,4) = max(dble_zero, POOLS(n+1,4) - CFF(4) - NCFF(4) )
-          POOLS(n+1,5) = max(dble_zero, POOLS(n+1,5) + (labile_residue+foliar_residue+roots_residue) &
-                                              + (NCFF(1)+NCFF(2)+NCFF(3))-CFF(5)-NCFF(5) )
-          POOLS(n+1,6) = max(dble_zero, POOLS(n+1,6) - soil_loss_with_roots + (NCFF(4)+NCFF(5)+NCFF(7)))
-          POOLS(n+1,7) = max(dble_zero, POOLS(n+1,7) + wood_residue - CFF(7) - NCFF(7) )
-          ! Some variable needed for the EDCs
-          ! reallocation fluxes for the residues
-          disturbance_residue_to_litter(n) = (labile_residue+foliar_residue+roots_residue) &
-                                           + (NCFF(1)+NCFF(2)+NCFF(3))
-          disturbance_loss_from_litter(n)  = CFF(5)+NCFF(5)
-          disturbance_residue_to_cwd(n)    = wood_residue
-          disturbance_loss_from_cwd(n)     = CFF(7) - NCFF(7)
-          disturbance_residue_to_som(n)    = NCFF(4)+NCFF(5)+NCFF(7)
-          disturbance_loss_from_som(n)     = soil_loss_with_roots
-          ! Convert all to rates to be consistent with the FLUXES in EDCs
-          disturbance_residue_to_litter(n) = disturbance_residue_to_litter(n) * deltat_1(n)
-          disturbance_loss_from_litter(n)  = disturbance_loss_from_litter(n) * deltat_1(n)
-          disturbance_residue_to_cwd(n)    = disturbance_residue_to_cwd(n) * deltat_1(n)
-          disturbance_loss_from_cwd(n)     = disturbance_loss_from_cwd(n) * deltat_1(n)
-          disturbance_residue_to_som(n)    = disturbance_residue_to_som(n) * deltat_1(n)
-          disturbance_loss_from_som(n)     = disturbance_loss_from_som(n) * deltat_1(n)
-          ! This is intended for use with the R interface for subsequent post
-          ! processing
-          FLUXES(n,21) =  (wood_loss-(wood_residue+CFF_res(4)+NCFF_res(4))) &
-                           + (labile_loss-(labile_residue+CFF_res(1)+NCFF_res(1))) &
-                           + (foliar_loss-(foliar_residue+CFF_res(2)+NCFF_res(2))) &
-                           + (roots_loss-(roots_residue+CFF_res(3)+NCFF_res(3)))
-          ! Convert to daily rate
-          FLUXES(n,21) = FLUXES(n,21) * deltat_1(n)
+              ! Update all pools this time
+              POOLS(n+1,1) = max(dble_zero, POOLS(n+1,1) - CFF(1) - NCFF(1) )
+              POOLS(n+1,2) = max(dble_zero, POOLS(n+1,2) - CFF(2) - NCFF(2) )
+              POOLS(n+1,3) = max(dble_zero, POOLS(n+1,3) - CFF(3) - NCFF(3) )
+              POOLS(n+1,4) = max(dble_zero, POOLS(n+1,4) - CFF(4) - NCFF(4) )
+              POOLS(n+1,5) = max(dble_zero, POOLS(n+1,5) + (labile_residue+foliar_residue+roots_residue) &
+                                                  + (NCFF(1)+NCFF(2)+NCFF(3))-CFF(5)-NCFF(5) )
+              POOLS(n+1,6) = max(dble_zero, POOLS(n+1,6) - soil_loss_with_roots + (NCFF(4)+NCFF(5)+NCFF(7)))
+              POOLS(n+1,7) = max(dble_zero, POOLS(n+1,7) + wood_residue - CFF(7) - NCFF(7) )
+              ! Some variable needed for the EDCs
+              ! reallocation fluxes for the residues
+              disturbance_residue_to_litter(n) = (labile_residue+foliar_residue+roots_residue) &
+                                               + (NCFF(1)+NCFF(2)+NCFF(3))
+              disturbance_loss_from_litter(n)  = CFF(5)+NCFF(5)
+              disturbance_residue_to_cwd(n)    = wood_residue
+              disturbance_loss_from_cwd(n)     = CFF(7) - NCFF(7)
+              disturbance_residue_to_som(n)    = NCFF(4)+NCFF(5)+NCFF(7)
+              disturbance_loss_from_som(n)     = soil_loss_with_roots
+              ! Convert all to rates to be consistent with the FLUXES in EDCs
+              disturbance_residue_to_litter(n) = disturbance_residue_to_litter(n) * deltat_1(n)
+              disturbance_loss_from_litter(n)  = disturbance_loss_from_litter(n) * deltat_1(n)
+              disturbance_residue_to_cwd(n)    = disturbance_residue_to_cwd(n) * deltat_1(n)
+              disturbance_loss_from_cwd(n)     = disturbance_loss_from_cwd(n) * deltat_1(n)
+              disturbance_residue_to_som(n)    = disturbance_residue_to_som(n) * deltat_1(n)
+              disturbance_loss_from_som(n)     = disturbance_loss_from_som(n) * deltat_1(n)
+              ! This is intended for use with the R interface for subsequent post
+              ! processing
+              FLUXES(n,21) =  (wood_loss-(wood_residue+CFF_res(4)+NCFF_res(4))) &
+                               + (labile_loss-(labile_residue+CFF_res(1)+NCFF_res(1))) &
+                               + (foliar_loss-(foliar_residue+CFF_res(2)+NCFF_res(2))) &
+                               + (roots_loss-(roots_residue+CFF_res(3)+NCFF_res(3)))
+              ! Convert to daily rate
+              FLUXES(n,21) = FLUXES(n,21) * deltat_1(n)
+
+          end if ! C_total > vsmall
 
           ! Total carbon loss from the system
           C_total = (labile_residue+foliar_residue+roots_residue+wood_residue+sum(NCFF)) &
@@ -1459,6 +1465,7 @@ contains
       !!!!!!!!!!
 
       if (minval(POOLS(n+1,1:nopools)) /= minval(POOLS(n+1,1:nopools)) .or. &
+          minval(POOLS(n,1:nopools)) /= minval(POOLS(n,1:nopools)) .or. &
           minval(POOLS(n+1,1:nopools)) < dble_zero) then
           ! if there is a problem search for a more specific problem
           do nxp = 1, nopools
@@ -1469,6 +1476,7 @@ contains
                 print*,"FLUXES",FLUXES(n,:)
                 print*,"POOLS+1",POOLS(n+1,:)
                 print*,"wSWP",wSWP,"stomatal_conductance",stomatal_conductance
+                print*,"WetCan_evap",wetcanopy_evap,"transpiration",transpiration,"soilevap",soilevap
                 print*,"waterfrac",soil_waterfrac
                 print*,"Rm_loss",Rm_deficit_leaf_loss,Rm_deficit_root_loss,Rm_deficit_wood_loss
                 stop
@@ -1488,6 +1496,7 @@ contains
                 print*,"FLUXES",FLUXES(n,:)
                 print*,"POOLS+1",POOLS(n+1,:)
                 print*,"wSWP",wSWP,"stomatal_conductance",stomatal_conductance
+                print*,"WetCan_evap",wetcanopy_evap,"transpiration",transpiration,"soilevap",soilevap
                 print*,"waterfrac",soil_waterfrac
                 print*,"Rm_loss",Rm_deficit_leaf_loss,Rm_deficit_root_loss,Rm_deficit_wood_loss
                 stop
@@ -3420,7 +3429,6 @@ contains
    ! can not evaporate from soil more than is available (m -> mm)
    avail_flux = soil_waterfrac(1:nos_root_layers) * layer_thickness(1:nos_root_layers) * 1d3
    where (evaporation_losses > avail_flux) evaporation_losses = avail_flux * 0.999d0
-
    ! this will update the ET estimate outside of the function
    ! unit / time correction also occurs outside of this function
    calculate_update_soil_water = sum(evaporation_losses)
@@ -3447,6 +3455,7 @@ contains
    soil_waterfrac(1:nos_soil_layers) = ((soil_waterfrac(1:nos_soil_layers)*layer_thickness(1:nos_soil_layers)) &
                                         + watergain(1:nos_soil_layers) - waterloss(1:nos_soil_layers)) &
                                      / layer_thickness(1:nos_soil_layers)
+
    ! reset soil water flux variables
    waterloss = dble_zero ; watergain = dble_zero
 
@@ -3465,6 +3474,7 @@ contains
    soil_waterfrac(1:nos_soil_layers) = ((soil_waterfrac(1:nos_soil_layers)*layer_thickness(1:nos_soil_layers)) &
                                         + watergain(1:nos_soil_layers) - waterloss(1:nos_soil_layers)) &
                                      / layer_thickness(1:nos_soil_layers)
+
    ! reset soil water flux variables
    waterloss = dble_zero ; watergain = dble_zero
 
@@ -3522,6 +3532,7 @@ contains
 
    end if ! root reach beyond top layer
 
+if (sum(soil_waterfrac) /= sum(soil_waterfrac)) stop
    ! in all cases keep track of the previous rooted depth
    previous_depth = root_reach
 

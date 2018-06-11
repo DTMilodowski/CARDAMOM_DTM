@@ -1,5 +1,5 @@
 
-# function deals with the extraction of relevant forest clearance and growth inforamtion for UK forestry only!
+# function deals with the extraction of relevant forest clearance and growth information for UK forestry only!
 
 extract_forestry_information<-function(timestep_days,spatial_type,resolution,grid_type,latlon_in,forest_all,start_year,end_year,ctessel_pft_in) {
 
@@ -49,7 +49,7 @@ extract_forestry_information<-function(timestep_days,spatial_type,resolution,gri
         # now determine if the site has any actual information
         if (max(forest_all$loss_fraction[i1,j1,],na.rm=TRUE) > 0) {
 	    # we will not insert the deforestation event into the correct location
-    	    doy_out=0
+    	    doy_out = 0
 	    for (i in seq(1, length(years_to_do))) {
 	        # is current year a leap or not
     	        nos_days = 365
@@ -66,12 +66,13 @@ extract_forestry_information<-function(timestep_days,spatial_type,resolution,gri
 		    }
 	        }
 	        # count up days needed
-	        doy_out=append(doy_out,1:nos_days)
+	        doy_out = append(doy_out,1:nos_days)
 	    }
-	    doy_out=doy_out[-1]
+	    doy_out = doy_out[-1]
 
 	    # declare output variable
-	    deforestation=array(0, dim=length(doy_out))
+	    #deforestation = array(0, dim=length(doy_out))
+            deforestation = rep(0, times=length(doy_out))
 ## Assumption used in UK forestry
 #	    # find locations of beginnings of year
 #	    start_of_years=which(doy_out == 120)
@@ -81,24 +82,26 @@ extract_forestry_information<-function(timestep_days,spatial_type,resolution,gri
 #	         deforestation[start_of_years[which(as.numeric(years_to_do) == forest_all$year_of_loss[aa])]] = forest_all$loss_fraction[i1,j1,aa]
 #            }
 ## normal assumption
-	    start_of_years=which(doy_out == 1)
+	    start_of_years = which(doy_out == 1)
 	    # which year is the one in which deforestation occurs?
 	    # then find the appropriate beginning of a year and make deforestation
             for (aa in seq(1,length(forest_all$year_of_loss))) {
 		 start_point = start_of_years[which(as.numeric(years_to_do) == forest_all$year_of_loss[aa])]
-		 end_point = start_point + 365
-	         deforestation[start_point:end_point] = (forest_all$loss_fraction[i1,j1,aa]) / 365
+		 end_point = start_point + 364
+	         deforestation[start_point:end_point] = (forest_all$loss_fraction[i1,j1,aa]) / 364
             }
 
-	    if (length(timestep_days) == 1 & timestep_days[1] == 1) {
+#	    if (length(timestep_days) == 1 & timestep_days[1] == 1) {
 	        # well actually we do nothing
-	    } else {
+
+#	    } else {
 	        # generally this now deals with time steps which are not daily.
 	        # However if not monthly special case
 	        if (length(timestep_days) == 1) {
 		    run_day_selector=seq(1,length(deforestation),timestep_days)
 		    timestep_days=rep(timestep_days, length.out=length(deforestation))
 	        }
+
 	        print("...calculating weekly / monthly averages for deforestation info")
 	        # determine the actual daily positions
 	        run_day_selector=cumsum(timestep_days)
@@ -115,12 +118,12 @@ extract_forestry_information<-function(timestep_days,spatial_type,resolution,gri
 	       deforestation=deforestation_agg
  	       # clean up
 	        rm(deforestation_agg) ; gc()
-	    } # monthly aggregation etc
+#	    } # monthly aggregation etc
 
         } else {
 
 	    # else we will go with no deforestation at all
-	    deforestation=0
+	    deforestation = 0
 
         } # missing data condition
 

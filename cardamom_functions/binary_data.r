@@ -101,20 +101,20 @@ binary_data<-function(met,OBS,file,EDC,latlon_in,ctessel_pft,modelname,parameter
     MET[,12] = met$vpd_lagged
     MET[,13] = OBS$forest_management
     if (modelname == "ACM") {
-      	MET[,14] = met$avgN
-	      MET[,15] = met$lai
-	      MET[,16] = met$lat
-	      MET[,17] = met$wind_spd
-      	MET[,18] = met$vpd
-      	MET[,19] = met$Rtot
-	      MET[,20] = met$top_sand
-      	MET[,21] = met$bot_sand
-      	MET[,22] = met$top_clay
-	      MET[,23] = met$bot_clay
+        MET[,14] = met$avgN
+        MET[,15] = met$lai
+        MET[,16] = met$lat
+        MET[,17] = met$wind_spd
+        MET[,18] = met$vpd
+        MET[,19] = met$Rtot
+        MET[,20] = met$top_sand
+        MET[,21] = met$bot_sand
+        MET[,22] = met$top_clay
+        MET[,23] = met$bot_clay
     } else {
-	      MET[,14] = met$avgTemp
-	      MET[,15] = met$wind_spd
-	      MET[,16] = met$vpd
+        MET[,14] = met$avgTemp
+        MET[,15] = met$wind_spd
+        MET[,16] = met$vpd
     }
 
     # TEMPLATE FOR ALL DALEC MCMC DATA files

@@ -153,10 +153,14 @@ generate_parameter_maps<-function(PROJECT) {
 		par_array_tmp=array(par_array_tmp,dim=c((length(par_array_tmp)/dim(par_array_median_normalised)[3]),dim(par_array_median_normalised)[3]))
 
 		tmp = 0
-		for (i in seq(1,100)) {
-		    tmp=append(tmp,preferenceRange(negDistMat(par_array_tmp[sample(1:dim(par_array_tmp)[1],0.05*dim(par_array_tmp)[1], replace=FALSE),],r=2))[1])
-		} ; preference_input=max(mean(tmp[-1]),median(tmp[-1]))
-		uk_clusters=apclusterL(negDistMat(r=2),par_array_tmp,frac=0.1,sweeps=10, p=preference_input,maxits=1000, convits=100)
+                # Looping to find preference_input, the preferenceRange() returns 2 values, the first of which minises the number of clusters, 
+                # while the seconds would return as many clusters as there are observations. 
+                # It is the responsibility of the user to ensure the most appropriate use of these information to result in an appropriate number of clusters for error propagation
+#		for (i in seq(1,100)) {
+#		    tmp=append(tmp,preferenceRange(negDistMat(par_array_tmp[sample(1:dim(par_array_tmp)[1],0.05*dim(par_array_tmp)[1], replace=FALSE),],r=2))[1])
+#		} ; preference_input=max(mean(tmp[-1]),median(tmp[-1]))
+#		uk_clusters=apclusterL(negDistMat(r=2),par_array_tmp,frac=0.1,sweeps=10, p=preference_input,maxits=1000, convits=100)
+                uk_clusters=apclusterL(negDistMat(r=2),par_array_tmp,frac=0.1,sweeps=10, q=0.5,maxits=1000, convits=100)
 		nos_uk_clusters=length(uk_clusters@clusters) ; uk_clusters_exemplars=uk_clusters@exemplars
 
 		uk_cluster_pft=array(NA,dim=c(dim(par_array_median_normalised)[1:2]))

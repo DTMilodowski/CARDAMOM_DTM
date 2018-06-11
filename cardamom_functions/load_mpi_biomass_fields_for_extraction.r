@@ -127,8 +127,8 @@ load_mpi_biomass_fields_for_extraction<-function(latlon_in,Cwood_source,Cwood_in
 	gc(reset=TRUE,verbose=FALSE)
 
 	# now remove the ones that are actual missing data
-	biomass[which(as.vector(biomass) == -9999)]=NA
-	biomass_uncertainty[which(as.vector(biomass_uncertainty) == -9999)]=NA
+	biomass[which(as.vector(biomass) == -9999)] = NA
+	biomass_uncertainty[which(as.vector(biomass_uncertainty) == -9999)] = NA
 	# filter around target area
 	max_lat=max(latlon_in[,1])+1.0 ; max_long=max(latlon_in[,2])+1.0
 	min_lat=min(latlon_in[,1])-1.0 ; min_long=min(latlon_in[,2])-1.0
