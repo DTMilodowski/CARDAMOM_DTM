@@ -13,7 +13,12 @@ def get_Cwood_ts(census_file,plot):
     plot_biomass[collection_date<np.datetime64('2000-01-01','D')]=np.nan
     return collection_date[np.isfinite(plot_biomass)], plot_biomass[np.isfinite(plot_biomass)]
 
-# Get time series of fine root NPP
+# Get time series of fine root NPP. If pad_ts set to True (default), then nodata values at the ends of the time series for
+# certain subplots will be padded with the first or last recorded value, so that average litter fluxes are taken across all
+# cores. This is an attempt to avoid biases in the averages, given that each 1 ha plot contains only 16 cores.
+# Fine root NPP fluxes are returned as the average NPP [g(C) m-2 d-1] collected within a specified time period [accumulation
+# days] alongside collection dates. This should be used as a single constraint - i.e. the total NPP over the collection period
+# is compared as a single data point.
 def get_root_NPP_ts(roots_file,plot,pad_ts=True):
     rootStocks,rootNPP = field.read_soil_stocks_and_npp(roots_file)
     N_cores,N_dates = rootNPP[plot]['AccumulationDays'].shape
@@ -21,7 +26,8 @@ def get_root_NPP_ts(roots_file,plot,pad_ts=True):
     previous_collection_dates = np.max(rootNPP[plot]['PreviousCollectionDate'],axis=0)
 
     interval = np.asarray(collection_dates-previous_collection_dates,dtype='float64')
-    days = np.cumsum(interval)
+    days = np.asarray(collection_dates-collection_dates[0],dtype='float64')
+    #days = np.cumsum(interval)
 
     rootNPP_gapfilled = np.zeros((N_cores,N_dates))
     for ss in range(0,N_cores):
@@ -36,18 +42,20 @@ def get_root_NPP_ts(roots_file,plot,pad_ts=True):
 
     rootNPP_gapfilled[rootNPP_gapfilled<0]=0
 
-    rootNPP_ts = np.mean(rootNPP_gapfilled,axis=0)
-    rootNPP_std = np.std(rootNPP_gapfilled,axis=0)
-    return collection_dates, previous_collection_dates, rootNPP_ts, rootNPP_std
+    rootNPP_ts = np.mean(rootNPP_gapfilled,axis=0) * (10.**6/10.**4/365.25) # convert from Mg/ha/yr to g/m2/d
+    rootNPP_std = np.std(rootNPP_gapfilled,axis=0,ddof=1)
+    rootNPP_serr = rootNPP_std/np.sqrt(float(N_cores))
+    return collection_dates, interval, rootNPP_ts, rootNPP_std, rootNPP_serr
 
 # Note that later root stocks surveys are pretty irregular - suggest only using the first survey as these are comprehensive.
+# Conversion is made from units of Mg/ha to g/m-2
 def get_Croot(roots_file,plot):
 
     rootStocks,rootNPP = field.read_soil_stocks_and_npp(roots_file)
     N_core,N_dates = rootStocks[plot]['FineRootStocks'].shape
 
-    Croot_plot = np.mean(rootStocks[plot]['FineRootStocks'][:,0])
-    Croot_std = np.std(rootStocks[plot]['FineRootStocks'][:,0])
+    Croot_plot = np.mean(rootStocks[plot]['FineRootStocks'][:,0])*10**6/10.**4
+    Croot_std = np.std(rootStocks[plot]['FineRootStocks'][:,0],ddof=1)
     collection_date = rootStocks[plot]['CollectionDate'][0]
     return collection_date, Croot_plot, Croot_std
 
@@ -85,7 +93,7 @@ def get_litterfall_ts(litter_file,plot, pad_ts = True):
     litter_gapfilled[litter_gapfilled<0]=0
 
     litter_fall_ts = np.mean(litter_gapfilled,axis=0)
-    litter_fall_std = np.std(litter_gapfilled,axis=0)
+    litter_fall_std = np.std(litter_gapfilled,ddof=1,axis=0)
     litter_fall_serr = litter_fall_std/np.sqrt(float(N_sp))
     
     return collection_dates, accumulation_days, litter_fall_ts, litter_fall_std, litter_fall_serr
@@ -141,7 +149,7 @@ def get_LAI_ts(LAI_file,plot, pad_ts = True):
             LAI_gapfilled[ss,:]=gapfill_field_data(LAI[plot]['LAI'][ss,:],days,pad_ts=pad_ts)
 
     LAI_plot_ts = np.mean(LAI_gapfilled,axis=0)
-    LAI_plot_std_ts = np.std(LAI_gapfilled,axis=0)
+    LAI_plot_std_ts = np.std(LAI_gapfilled,axis=0,ddof=1)
     LAI_plot_serr_ts = np.std(LAI_gapfilled,axis=0)/np.sqrt(float(N_sp))
     
     return  LAI[plot]['date'], LAI_plot_ts, LAI_plot_std_ts, LAI_plot_serr_ts
@@ -168,7 +176,7 @@ def get_subplot_LAI_ts(LAI_file,plot, pad_ts = True):
     LAI_plot_ts = LAI_gapfilled.copy()
     return  LAI[plot]['date'], LAI_plot_ts
 
-
+#---------------------------------------------------------------------------------------------------------------
 # A generic gapfilling script. array is a 1D array with input data to be gapfilled
 def gapfill_field_data(array,tsteps,pad_ts=True):
 

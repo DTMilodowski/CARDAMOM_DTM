@@ -395,6 +395,9 @@ def plot_litter_trap_comparison(model,obs,start_tstep=False,end_tstep=False,fign
     fit_x = np.array([np.min(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask]), np.max(obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask])])
     fit_y = m*fit_x+c
     ax4.plot(fit_x,fit_y,':k')
+    ax4.axis('equal')
+    ax4.set_xlim(0,6)
+    ax4.set_ylim(0,6)
     plt.tight_layout()
 
     if len(figname)>0:

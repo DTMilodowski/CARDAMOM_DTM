@@ -259,5 +259,5 @@ else:
     obs = np.load(data_dir+run+'/'+project_obs_npydata)
 
 prj=CAR.CARDAMOM(project_name="BALI_GEMplots_daily")
-prj.setup(latitude,longitude,met,obs,parprior,parprior_unc,otherprior,otherprior_unc)
-prj.run_CARDAMOM_local(accepted_params=25000000,n_chains=4)
+prj.setup(latitude,longitude,met,obs,parprior,parprior_unc,otherprior,otherprior_unc,runid=int(run))
+prj.run_CARDAMOM_local(accepted_params=25000000,n_chains=4,runid=int(run))

@@ -6,12 +6,12 @@
 modelname <- "DALEC_GSI_DFOL_CWD_FR"
 
 project <- "BALI_GEMplots_daily"
-run <- "007"
-site <- c("MLA01","MLA02","SAF04","SAF03","SAF02","SAF01")
+run <- "025"
+site <- c("MLA01","MLA02","SAF04","SAF05","SAF02","SAF01")
 lat <- c(4.747, 4.437, 4.765, 4.690, 4.744, 4.729)
 lon <- c(116.951, 116.951, 117.702, 117.586, 117.618, 117.618)
 startyear <- 2011
-endyear <- 2016
+endyear <- 2017
 
 path2root <- "/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/"
 path2files <- paste(path2root,"projects/",project,"/rerun/",run,"/", sep="")
@@ -37,6 +37,7 @@ ntsteps = length(lai[1,])
 # compute statistics, for each timestep
 lai_out=array(0., c(nsites,nstats,ntsteps)) 
 gpp_out=array(0., c(nsites,nstats,ntsteps))
+npp_out=array(0., c(nsites,nstats,ntsteps))
 nee_out=array(0., c(nsites,nstats,ntsteps))
 Reco_out=array(0., c(nsites,nstats,ntsteps))
 Rauto_out=array(0., c(nsites,nstats,ntsteps))
@@ -86,6 +87,12 @@ for(ss in 1:nsites) {
 	gpp_out[ss,4,i] <- quantile(states_all$gpp[,i], 0.25)
 	gpp_out[ss,5,i] <- quantile(states_all$gpp[,i], 0.75)
         
+	npp_out[ss,1,i] <- mean(states_all$gpp[,i]-states_all$rauto[,i]) 	
+	npp_out[ss,2,i] <- median(states_all$gpp[,i]-states_all$rauto[,i])
+	npp_out[ss,3,i] <- sd(states_all$gpp[,i]-states_all$rauto[,i])
+	npp_out[ss,4,i] <- quantile(states_all$gpp[,i]-states_all$rauto[,i], 0.25)
+	npp_out[ss,5,i] <- quantile(states_all$gpp[,i]-states_all$rauto[,i], 0.75)
+
 	nee_out[ss,1,i] <- mean(states_all$nee[,i]) 	
 	nee_out[ss,2,i] <- median(states_all$nee[,i])
 	nee_out[ss,3,i] <- sd(states_all$nee[,i])
@@ -232,10 +239,11 @@ stats <- ncdim_def("stats","dimenisonless (1-5)",1:nstats)
 
 var_lai <- ncvar_def("lai", "m2m-2", list(sitedim,stats,timedim), longname="Leaf Area Index (LAI)")
 var_gpp <- ncvar_def("gpp", "gC m-2day-1", list(sitedim,stats,timedim), longname="Gross Primary Productivity (GPP)")
-var_nee <- ncvar_def("nee", "gC m-2day-1", list(sitedim,stats,timedim), longname="Net Ecosystem Exchange (NEE) ")
+var_npp <- ncvar_def("npp", "gC m-2day-1", list(sitedim,stats,timedim), longname="Net Primary Productivity (aNPP)")
+var_nee <- ncvar_def("nee", "gC m-2day-1", list(sitedim,stats,timedim), longname="Net Ecosystem Exchange (NEE)")
 var_Reco <- ncvar_def("Reco", "gC m-2day-1", list(sitedim,stats,timedim), longname="Ecosystem respiration (Reco)")
-var_Rauto <- ncvar_def("Rauto", "gC m-2day-1", list(sitedim,stats,timedim), longname="Autotrophic respiration (Rauto) ")
-var_Rhet <- ncvar_def("Rhet", "gC m-2day-1", list(sitedim,stats,timedim), longname="Heterotrophic respiration (Rhet) ")
+var_Rauto <- ncvar_def("Rauto", "gC m-2day-1", list(sitedim,stats,timedim), longname="Autotrophic respiration (Rauto)")
+var_Rhet <- ncvar_def("Rhet", "gC m-2day-1", list(sitedim,stats,timedim), longname="Heterotrophic respiration (Rhet)")
 var_Cwoo <- ncvar_def("Cwoo", "gC m-2", list(sitedim,stats,timedim), longname="Wood carbon stock (Cwoo)")
 var_Clit <- ncvar_def("Clit", "gC m-2", list(sitedim,stats,timedim), longname="Litter carbon stock (Clit)")
 var_Clab <- ncvar_def("Clab", "gC m-2", list(sitedim,stats,timedim), longname="Labile carbon stock (Clab)")
@@ -256,13 +264,13 @@ var_Rh_lit <- ncvar_def("Rh_lit", "gC m-2day-1", list(sitedim,stats,timedim), lo
 var_decomp_lit <- ncvar_def("decomp_lit", "gC m-2day-1", list(sitedim,stats,timedim), longname="decomposition flux from litter")
 var_lat <- ncvar_def("latitude", "degrees_north", list(sitedim), longname="latitude of site")
 var_lon <- ncvar_def("longitude", "decimal_east", list(sitedim), longname="longitude of site")
-var_site <- ncvar_def("GEM_code", "text", list(sitedim), longname="GEM code for plot")
 
-ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_nee,var_Reco,var_Rauto,var_Rhet,var_Cwoo,var_Clab,var_Cfol,var_Croo,var_Clit,var_Ccwd,var_Csom,var_Cbio,var_gsi,var_gsi_itemp,var_gsi_iphoto,var_gsi_ivpd,var_flux_fol_lit,var_flux_wood_cwd,var_flux_root_lit,var_flux_cwd_lit,var_Rh_lit,var_decomp_lit,var_lat,var_lon,var_site))
+ncnew <- nc_create(f_out, list(var_lai,var_gpp,var_npp,var_nee,var_Reco,var_Rauto,var_Rhet,var_Cwoo,var_Clab,var_Cfol,var_Croo,var_Clit,var_Ccwd,var_Csom,var_Cbio,var_gsi,var_gsi_itemp,var_gsi_iphoto,var_gsi_ivpd,var_flux_fol_lit,var_flux_wood_cwd,var_flux_root_lit,var_flux_cwd_lit,var_Rh_lit,var_decomp_lit,var_lat,var_lon))
 
 print("Writing data to file")
 ncvar_put(ncnew,var_lai,lai_out)
 ncvar_put(ncnew,var_gpp,gpp_out)
+ncvar_put(ncnew,var_npp,npp_out)
 ncvar_put(ncnew,var_nee,nee_out)
 ncvar_put(ncnew,var_Reco,Reco_out)
 ncvar_put(ncnew,var_Rauto,Rauto_out)
@@ -287,7 +295,6 @@ ncvar_put(ncnew,var_Rh_lit,Rhet_lit_out)
 ncvar_put(ncnew,var_decomp_lit,decomp_lit_out)
 ncvar_put(ncnew,var_lat,lat)
 ncvar_put(ncnew,var_lon,lon)
-ncvar_put(ncnew,var_site,site)
 
 print(paste("The file has", ncnew$ndim,"dimension(s): sites, time, stats"))
 

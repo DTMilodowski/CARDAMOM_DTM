@@ -15,32 +15,32 @@ import load_data as data
 # First of all, define the relevant input files
 # MET DATA
 #    -ERA Interim
-ERA_file = '/home/dmilodow/DataStore_DTM/BALI/MetDataProcessing/ERAinterim/BALI_Met/BALI_ERA_Interim_Met.txt'
+ERA_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_ERA_Interim_Met_20110101_20171231.txt'
 #    -TRMM
-TRMM_file = '/home/dmilodow/DataStore_DTM/BALI/MetDataProcessing/TRMM/g4.areaAvgTimeSeries.TRMM_3B42_007_precipitation.20110101-20160429.117E_4N_117E_4N.csv'
+TRMM_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_ERAinterim_TRMM_daily_v2_20110101_20171231.csv'
 
 # Gapfilled met data
-met_file = '/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_daily_v1.csv'
+met_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_gapfilled_metstation_daily_v2_20110101_20171231.csv'
 
 # FIELD DATA
 #    -Plot census data
 #    -Fine roots data
 #    -Litter data
 #    -LiDAR data (for LAI)
-census_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/SAFE_CarbonPlots_TreeCensus.csv'
-roots_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/SAFE_CarbonPlots_FineRoots_Stock_NPP_RawData.csv'
-litter_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/SAFE_CarbonPlots_Litterfall_RawData_clean.csv'
+census_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_TreeCensus.csv'
+roots_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_FineRoots_Stock_NPP_RawData_2011_2017.csv'
+litter_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_Litterfall_RawData_2011_2016.csv'
 #LAI_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/SAFE_CarbonPlots_LAI_fromHemisphericalPhotos_TimeSeries.csv'
 coordinate_file = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/parameter_files/BALI_plot_coordinates.csv"
 plot_coord, latitude, longitude = data.load_plot_coordinates(coordinate_file)
 #---------------------------------------------------------------------------------------------------------------
 # Now get some basic parameters for the run
-run = '023'
+run = '025'
 output_dir = '/home/dmilodow/DataStore_DTM/BALI/CARDAMOM_BALI/projects/BALI_GEMplots_daily/data/'
 os.system('mkdir %s%s'  % (output_dir,run))
 
-start_date= '01/11/2011'
-end_date= '31/12/2015'
+start_date= '01/01/2011'
+end_date= '31/12/2017'
 plot = ['Belian','LF','B North','B South', 'E', 'Seraya']
 """
 LAI_MH = [8.8,6.3,4.0,3.0,5.1,8.2,7.8,7.8]
@@ -59,7 +59,7 @@ end = np.datetime64(y+'-'+m+'-'+d,'D')
 date = np.arange(start,end+np.timedelta64(1,'D'), dtype = 'datetime64[D]')
 
 N_t = date.size
-
+    
 # Now deal with the obs
 for pp in range(0,len(plot)):
     print plot[pp]

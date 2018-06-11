@@ -13,18 +13,19 @@ import met_setup as met
 # First of all, define the relevant input files
 # MET DATA
 #    -ERA Interim
-ERA_file = '/home/dmilodow/DataStore_DTM/BALI/MetDataProcessing/ERAinterim/BALI_Met/BALI_ERA_Interim_Met.txt'
+ERA_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_ERA_Interim_Met_20110101-201761231.txt'
 #    -TRMM
-TRMM_file = '/home/dmilodow/DataStore_DTM/BALI/MetDataProcessing/TRMM/g4.areaAvgTimeSeries.TRMM_3B42_007_precipitation.20110101-20160429.117E_4N_117E_4N.csv'
+TRMM_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/g4.areaAvgTimeSeries.TRMM_3B42_007_precipitation.20110101-201761231.117E_4N_117E_4N.csv'
 # Gapfilled met data
-met_file = '/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_30mins_v2.csv'
+#met_file = '/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/construct_drivers/BALI_gapfilled_met_station_30mins_v2.csv'
+met_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/MetData/BALI_gapfilled_met_station_30mins_20110101_20171231_v2.csv'
 
 # Second define output drivers. In this instance I am going to write drivers for both the EO data only, and gapfilled station
 # data
 # MET DATA
 outdir = "/exports/csce/datastore/geos/users/dmilodow/BALI/CARDAMOM_BALI/met_data/"
-outfile_EO = "BALI_ERAinterim_TRMM_daily_v1.csv"
-outfile_station = "BALI_metstation_daily_v1.csv"
+outfile_EO = "BALI_ERAinterim_TRMM_daily_v2_20110101_20171231.csv"
+outfile_station = "BALI_gapfilled_metstation_daily_v2_20110101_20171231.csv"
 
 #---------------------------------------------------------------------------------------------------------------
 # Now get some basic parameters for the run
@@ -144,7 +145,6 @@ for dd in range(0,N_m):
     pptn21_in[np.isnan(pptn_in)]=-9999.
 
 # write met data to file
-outfile_drivers = "BALI_gapfilled_met_station_daily_v1.csv"
 out_drivers = open(outdir+outfile_station,'w')
 out_drivers.write('timestep_days, date, mn2t, mx2t, vpd, ssrd, pptn, mn2t_21d, mx2t_21d, vpd_21d, ssrd_21d, pptn_21d\n')
 for tt in range(0,N_t):

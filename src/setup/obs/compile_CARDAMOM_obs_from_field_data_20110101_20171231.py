@@ -26,7 +26,7 @@ census_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_m
 roots_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_FineRoots_Stock_NPP_RawData_2011_2017.csv'
 litter_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_Litterfall_RawData_2011_2016.csv'
 LAI_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_LAI_fromHemisphericalPhotos_TimeSeries_2013_2016.csv'
-soil_resp.file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_TotalSoilRespiration_RawData_2011_2016.csv'
+soil_resp_file = '/home/dmilodow/DataStore_DTM/BALI/BALI_Cplot_data/csv_files_for_modelling/SAFE_CarbonPlots_TotalSoilRespiration_RawData_2011_2016.csv'
 
 #---------------------------------------------------------------------------------------------------------------
 # Now get some basic parameters for the run

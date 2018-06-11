@@ -214,7 +214,7 @@ class CARDAMOM(object):
 
     #-------------------------------------------------------------------------------------
     # This method is a wrapper to the function used to setup the project
-    def setup(self,latitude,longitude,drivers,observations,parprior,parpriorunc,otherprior,otherpriorunc):
+    def setup(self,latitude,longitude,drivers,observations,parprior,parpriorunc,otherprior,otherpriorunc,**kwargs):
 
         # pixel data     
         self.details["latitude"] = latitude
@@ -232,7 +232,7 @@ class CARDAMOM(object):
         EDCs = raw_input("Use EDCs <y/n>? ")
         if EDCs == 'y':
             self.details["EDCs"] = True
-
+            
         warning = 0
         #get the number of time steps
         if drivers.ndim == 2:
@@ -265,7 +265,11 @@ class CARDAMOM(object):
             self.save_project()
             print "OK"
 
-            #write input data      
+            #write input data
+            if "runid" in kwargs:
+                self.runid = kwargs["runid"]
+            else:
+                self.runid = -1 # placeholder  
             self.createInput()
             #copy the source code
             self.backup_source()
@@ -309,9 +313,26 @@ class CARDAMOM(object):
         if "data" not in os.listdir(path2project):
             print "Directory \"%s\" not found... creating" % path2data
             os.mkdir(path2data)
+
+        # check if no run already specified
+        if self.runid < 0:
+            runlist = os.listdir("%s" % (path2data))
+            if len(runlist) == 0:
+                self.runid = 1
+            else:
+                runlist.sort()
+                self.runid = int(runlist[-1].split("_")[-1])+1
+            print "WARNING - no runid specified in setup. Default set to %03i" % self.runid
+            
+        if ("%03i" % self.runid) not in os.listdir(path2data):
+            print "Directory \"%s\%03i\" not found... creating" % (path2data,self.runid)
+            os.mkdir("%s/%03i" % (path2data,self.runid))
         if "cardamom_output" not in os.listdir(path2project):
             print "Directory \"%s\" not found... creating" % path2cardamom_output
             os.mkdir(path2cardamom_output)
+        if ("%03i" % self.runid) not in os.listdir(path2cardamom_output):
+            print "Directory \"%s\%03i\" not found... creating" % (path2cardamom_output,self.runid)
+            os.mkdir("%s/%03i" % (path2cardamom_output,self.runid))
 
 
         print "Now creating input data in \"%s\" for project \"%s\"" % (path2data,self.project_name)
@@ -392,7 +413,7 @@ class CARDAMOM(object):
             towrite[500:]=metobs.flatten()
 
             #create binary data
-            f=file(path2data+"%s_%05i.bin" % (self.project_name,ii+1),'wb')
+            f=file(path2data+"%03i/%s_%05i.bin" % (self.runid,self.project_name,ii+1),'wb')
             f.write(struct.pack(len(towrite)*'d',*towrite))
             f.close()
 
@@ -403,7 +424,9 @@ class CARDAMOM(object):
     def backup_source(self):
         if "src" not in os.listdir(self.paths["projects"]+self.project_name):
             os.mkdir(self.paths["projects"]+self.project_name+"/src")
-        os.system("cp -r %s/* %s/%s/src" % (self.paths["library"],self.paths["projects"],self.project_name))
+        if ("%03i" % self.runid) not in os.listdir(self.paths["projects"]+self.project_name+'/src/'):
+            os.mkdir(self.paths["projects"]+self.project_name+"/src/%03i" % self.runid)
+        os.system("cp -r %s/* %s/%s/src/%03i/"  % (self.paths["library"],self.paths["projects"],self.project_name,self.runid))
         recompile_local = raw_input("Recompile local code <y/n>? ")
         if recompile_local=="y":
             self.compile_local_code()
@@ -541,7 +564,7 @@ class CARDAMOM(object):
         if 'path_to_data' in kwargs:
             path_to_data = kwargs['path_to_data']
         else:
-            path_to_data = self.paths["projects"]+self.project_name+"/data/" 
+            path_to_data = self.paths["projects"]+self.project_name+"/data/%03i/" % (runid) 
 
         if 'accepted_params' in kwargs:
             accepted_params= kwargs['accepted_params']
@@ -613,7 +636,7 @@ class CARDAMOM(object):
         if 'path_to_data' in kwargs:
             path_to_data = kwargs['path_to_data']
         else:
-            path_to_data = self.paths["projects"]+self.project_name+"/data/" 
+            path_to_data = self.paths["projects"]+self.project_name+"/data/%03i/" % (runid)  
 
         if 'accepted_params' in kwargs:
             accepted_params= kwargs['accepted_params']
@@ -641,6 +664,7 @@ class CARDAMOM(object):
         print '\t- path to exe: ', self.paths["library"]+"executable/cardamom.exe"
         print '\t- path to data: ', path_to_data
         print '\t- path to output: ', path_to_output
+        print '\t- number of chains: ', str(n_chains)
         print '\t- number of accepted parameters: ', str(accepted_params)
         print '\t- printing frequency: ', str(printing_freq)
         print '\t- sample frequency: ', str(sample_freq)
@@ -652,151 +676,6 @@ class CARDAMOM(object):
                 os.system("%s %s %s %s %s %s &" % (executable,data_bin,output_prefix,str(accepted_params),str(printing_freq),str(sample_freq)))
 
 
-
-    """
-    #-------------------------------------------------------------------------------------
-    #-------------------------------------------------------------------------------------
-    # RERUN LOCALLY
-    #-------------------------------------------------------------------------------------
-    # kwargs to include:
-    # - run id (default is latest run)
-    def rerun_DALEC_local(self,*kwargs):
-        proj_path = self.paths["projects"]+self.project_name
-        rerun_path = self.paths["projects"]+self.project_name+"/rerun"
-        mcmc_out_path = self.paths["projects"]+self.project_name+"/cardamom_output"
-
-        if "runid" in kwargs:
-            runid = kwargs["runid"]
-        else:
-            runlist = os.listdir("%s/%s/cardamom_output/" % (self.paths["projects"],self.project_name))
-            runid = int(runlist[-1])
-
-        #create directory structure for the rerun output
-        if "rerun" not in os.listdir(proj_path):
-            os.mkdir(rerun_path)
-        if "%03i" % runid not in os.listdir(rerun_path):
-            os.mkdir(rerun_path+"/%03i" % runid)
-        
-        # setup the arrays to host the rerun output - in future versions, these should be set automatically according to the model version
-        tsteps = self.details["tsteps"]
-        lat = self.details["latitude"]
-        # Loop through the sites/pixels
-        no_pts = self.details["no_pts"]
-
-        no_fluxes = 20
-        fluxes = [] #np.zeros((no_pts,tsteps,no_fluxes))
-        
-        no_pools = 7
-        pools = [] #np.zeros((no_pts,tsteps,no_pools+1))
-
-        no_pars = 38
-
-        #-----------------------------------
-        # Retrieve parameters from earlier MCMC
-        #-----------------------------------
-        # Loop through the sites/pixels
-        for pp in range(0,no_pts):
-            pixno = pp+1
-
-            # some useful stuff for clarity of code
-            tstep = self.details["drivers"][pp,:,8]
-            removal = self.details["drivers"][pp,:,6]
-            fires = self.details["drivers"][pp,:,7]
-
-            #-----------------------------------
-            # read in parameters
-            #-----------------------------------
-            # all_params, 0 =  parameters, 1 = parameters + likelihood
-            if '%s_1_PARS' % (exp) in done:
-                print "Reading in %s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
-                out1 = readParsDALEC("%s/%03i/%s_%05i_1_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=1,all_params=1)[-500:]
-            else:
-                out1 = np.zeros([500,no_pars+1])-9999.
-        
-            if '%s_2_PARS' % (exp) in done:
-                print "Reading in %s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
-                out2 = readParsDALEC("%s/%03i/%s_%05i_2_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=2,all_params=1)[-500:]
-            else:
-                out2 = np.zeros([500,no_pars+1])-9999.
-
-            if '%s_3_PARS' % (exp) in done:
-                print "Reading in %s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno)
-                out2 = readParsDALEC("%s/%03i/%s_%05i_3_PARS" % (mcmc_out_path,runid,self.project_name,pixno), pars_num=3,all_params=1)[-500:]
-            else:
-                out3 = np.zeros([500,no_pars+1])-9999.
-	
-            outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
-
-            #-----------------------------------
-            # test for convergence
-            #-----------------------------------
-            conv123 = GR([out1[-500:,-1],out2[-500:,-1],out3[-500:,-1]])
-
-            #if all converged keep them all
-            if conv123 < 1.2:
-                print 'kept all chains',
-                conv_code[ii] = 123
-                outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
-
-            else: #else test whether a pair of chains has converged and that 3rd pair has lower likelihood
-                print 'test whether a pair of chains has converged and that 3rd pair has lower likelihood' 
-                conv12  = GR([out1[:,-1],out2[:,-1]])
-                conv23  = GR([out2[:,-1],out3[:,-1]])
-                conv13 = GR([out1[:,-1],out3[:,-1]])
-
-                if conv12 < 1.2 and out3[:,-1].max() < max(out1[:,-1].max(),out2[:,-1].max()):
-                    print 'kept chains 1 and 2',
-                    outall = np.row_stack([out1[-500:],out2[-500:]])
-                    conv_code[ii] = 12
-                elif conv23 < 1.2 and out1[:,-1].max() < max(out2[:,-1].max(),out3[:,-1].max()):
-                    print 'kept chains 2 and 3',
-                    outall = np.row_stack([out2[-500:],out3[-500:]])
-                    conv_code[ii] = 23
-                elif conv13 < 1.2 and out2[:,-1].max() < max(out1[:,-1].max(),out3[:,-1].max()):
-                    print 'kept chains 1 and 3',
-                    outall = np.row_stack([out1[-500:],out3[-500:]])
-                    conv_code[ii] = 13
-                else:
-                    print 'chains did not converge! ' ,
-                    if out3.min() == -9999.:
-                        outall = np.row_stack([out1[-500:],out2[-500:]])
-                    if out2.min() == -9999.:
-                        outall = np.row_stack([out1[-500:],out3[-500:]])
-                    if out1.min() == -9999.:
-                        outall = np.row_stack([out2[-500:],out3[-500:]])
-                    else: 
-                        outall = np.row_stack([out1[-500:],out2[-500:],out3[-500:]])
-
-            #-----------------------------------
-            # forward run of DALEC
-            #-----------------------------------
-            tmppools = np.zeros([outall.shape[0],tsteps+1,no_pools+1]) # add extra pool for total C
-            tmpfluxes= np.zeros([outall.shape[0],tsteps,no_fluxes+7]) # add extra fluxes fo summary fluxes
-            fluxes_iter = np.zeros((tsteps,no_fluxes))
-            pools_iter = np.zeros((tsteps+1,no_pools))
-            # loop through parameter sets
-            for jj,parset in enumerate(outall):
-                # run DALEC
-                fluxes_iter,pools_iter = f2py.dalec_gsi_dfol_cwd_fr(fluxes_iter,pools_iter,self.details["drivers"][pp],lat[pp],tstep,removal,fires,parset[:-1],1,1)
-                # calculate extra fluxes fields
-                tmpfluxes[jj,:,:no_fluxes] = fluxes.copy() # fluxes
-                tmpfluxes[jj,:,-6] = fluxes[:,0]-fluxes[:,2] # npp
-                tmpfluxes[jj,:,-5] = fluxes[:,12]+fluxes[:,13] #rh
-                tmpfluxes[jj,:,-4] = fluxes[:,2]+fluxes[:,12]+fluxes[:,13] #reco
-                tmpfluxes[jj,:,-3] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13] #nee
-                tmpfluxes[jj,:,-2] = -fluxes[:,0]+fluxes[:,2]+fluxes[:,12]+fluxes[:,13]+fluxes[:,16]+fluxes[:,32] #nbp
-                tmpfluxes[jj,:,-1] = pools[:-1,1]/parset[16] #lai
-                
-                # calculate extra pools fields
-                tmppools[jj,:,:no_pools] = pools.copy()
-                tmppools[jj,:,-1] = pools[:].sum(1)
-            
-            # append into pools and fluxes list
-            pools.append(tmppools)
-            fluxes.append(tmpfluxes)
-
-        return pools, fluxes
-    """
     #-------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------
     # Plotting scripts
