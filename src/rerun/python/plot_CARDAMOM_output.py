@@ -144,6 +144,14 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
     else:
         ax1a.set_xlim(xmax=model['time'].size)
 
+    ax1a.set_ylim(0,40000)
+    ax1b.set_ylim(0,1000)
+    ax1c.set_ylim(0,1000)
+    ax1d.set_ylim(0,1000)
+    ax1e.set_ylim(0,1000)
+    ax1f.set_ylim(0,3000)
+    ax1g.set_ylim(0,40000)
+        
     plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
@@ -221,6 +229,10 @@ def plot_carbon_fluxes_ts(model,obs,start_tstep=False,end_tstep=False,figname=''
     else:
         ax1a.set_xlim(xmax=model['time'].size)
 
+    ax1a.set_ylim(0,20)
+    ax1b.set_ylim(-10,1)
+    ax1c.set_ylim(-7,7)
+        
     plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
@@ -314,7 +326,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
         else:
             ax1f.plot(obs['time'],obs['Clit'],marker='o',c='black',mec='black',mfc='black')
 
-    # Plot f -> Cfol into Clit
+    # Plot g -> Cfol into Clit
     ax1g = plt.subplot2grid((9,1),(6,0),sharex=ax1a)
     ax1g.annotate('f - litterfall', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1g.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
@@ -328,22 +340,22 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
         else:
             ax1g.plot(obs['time'],obs['flux_fol_lit'],marker='o',c='black',mec='black',mfc='black')
     """
-    # Plot g -> cwd fluxes into litter pool
-    ax1g = plt.subplot2grid((9,1),(7,0),sharex=ax1a)
-    ax1g.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1g.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
-    
-    ax1g.fill_between(model['time'],model['flux_cwd_lit'][:,3],model['flux_cwd_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1g.plot(model['time'],model['flux_cwd_lit'][:,1],'-',color=colour[1])
-
-
-    # Plot h -> root fluxes into litter pool
-    ax1h = plt.subplot2grid((9,1),(8,0),sharex=ax1a)
-    ax1h.annotate('f - litter flux from roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    # Plot h -> cwd fluxes into litter pool
+    ax1h = plt.subplot2grid((9,1),(7,0),sharex=ax1a)
+    ax1h.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1h.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1h.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1h.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
+    ax1h.fill_between(model['time'],model['flux_cwd_lit'][:,3],model['flux_cwd_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1h.plot(model['time'],model['flux_cwd_lit'][:,1],'-',color=colour[1])
+
+
+    # Plot i -> root fluxes into litter pool
+    ax1i = plt.subplot2grid((9,1),(8,0),sharex=ax1a)
+    ax1i.annotate('f - litter flux from roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1i.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    
+    ax1i.fill_between(model['time'],model['flux_root_lit'][:,3],model['flux_root_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1i.plot(model['time'],model['flux_root_lit'][:,1],'-',color=colour[1])
     
     # set xlimits if desired
     if start_tstep!=False:
@@ -353,6 +365,12 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
     else:
         ax1a.set_xlim(xmax=model['time'].size)
 
+    ax1a.set_ylim(0,12)
+    ax1f.set_ylim(0,1000)
+    ax1g.set_ylim(0,1.5)
+    ax1h.set_ylim(0,5)
+    ax1i.set_ylim(0,1)    
+        
     plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)

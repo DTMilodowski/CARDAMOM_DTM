@@ -27,7 +27,7 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '025'
+run = '024'
 filename = 'BALI_GEMplots_daily_2011_2017_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
