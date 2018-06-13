@@ -532,10 +532,10 @@ def plot_parameters(params,figname=''):
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
 def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
-    fig = plt.figure(3, facecolor='White',figsize=[8,14])
+    fig = plt.figure(3, facecolor='White',figsize=[10,8])
 
     # Plot a -> LAI
-    ax1a = plt.subplot2grid((6,1),(0,0))
+    ax1a = plt.subplot2grid((3,2),(0,0))
     ax1a.annotate('a - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1a.set_ylabel('LAI / m$^2$m$^{-2}$',fontsize = axis_size)
     
@@ -549,15 +549,15 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
             ax1a.plot(obs['time'],obs['lai'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot b -> gsi
-    ax1b = plt.subplot2grid((6,1),(1,0),sharex=ax1a)
-    ax1b.annotate('b - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1b = plt.subplot2grid((3,2),(1,0),sharex=ax1a)
+    ax1b.annotate('c - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1b.set_ylabel('GSI',fontsize = axis_size)
     ax1b.fill_between(model['time'],model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.2)
     ax1b.plot(model['time'],model['gsi'][:,1],'-',color=colour[2])
     
     # Plot c -> gpp
-    ax1c = plt.subplot2grid((6,1),(2,0),sharex=ax1a)
-    ax1c.annotate('c - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1c = plt.subplot2grid((3,2),(0,1),sharex=ax1a)
+    ax1c.annotate('b - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1c.set_ylabel('GPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     ax1c.fill_between(model['time'],model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.2)
     ax1c.plot(model['time'],model['gpp'][:,1],'-',color=colour[0])
@@ -569,7 +569,7 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
             ax1c.plot(obs['time'],obs['gpp'],marker='o',c='black',mec='black',mfc='black')
 
     # Plot d -> NPP
-    ax1d = plt.subplot2grid((6,1),(3,0),sharex=ax1a)
+    ax1d = plt.subplot2grid((3,2),(1,1),sharex=ax1a)
     ax1d.annotate('d - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1d.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
@@ -583,7 +583,7 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
             ax1d.plot(obs['time'],obs['npp'],marker='o',c='black',mec='black',mfc='black')
   
     # Plot e -> litterfall
-    ax1e = plt.subplot2grid((6,1),(6,0),sharex=ax1a)
+    ax1e = plt.subplot2grid((3,2),(2,0),sharex=ax1a)
     ax1e.annotate('e - litterfall', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1e.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
@@ -607,7 +607,7 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     
     
     # Plot f -> Woody biomass
-    ax1f = plt.subplot2grid((6,1),(5,0),sharex=ax1a)
+    ax1f = plt.subplot2grid((3,2),(2,1),sharex=ax1a)
     ax1f.annotate('f - C$_{wood}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1f.set_ylabel('C$_{wood}$ / g(C) m$^{-2}$',fontsize = axis_size)
     

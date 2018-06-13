@@ -27,7 +27,7 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '024'
+run = '025'
 filename = 'BALI_GEMplots_daily_2011_2017_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
@@ -75,7 +75,7 @@ for i in range(0,n_sites):
     model[sites[i]]['Rhet']=mod.variables['Rhet'][:,:,i]
     model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
     model[sites[i]]['gpp']=mod.variables['gpp'][:,:,i]
-    model[sites[i]]['npp']=-mod.variables['npp'][:,:,i]
+    model[sites[i]]['npp']=mod.variables['npp'][:,:,i]
     model[sites[i]]['nee']=mod.variables['nee'][:,:,i]
     model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
     
@@ -109,11 +109,13 @@ for i in range(0,n_sites):
     obs[sites[i]]['lit_acc_days'] = obs_in[i,:,28]
 
     # plot Carbon stocks
-    pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]],figname='carbon_pools_ts_%s_%s.png' % (run, sites[i]))
-    pCAR.plot_carbon_fluxes_ts(model[sites[i]],obs[sites[i]],figname='carbon_fluxes_ts_%s_%s.png' % (run,sites[i]))
-    pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s_%s.png' % (run,sites[i]))
-    pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s_%s.png' % (run,sites[i]))
-    pCAR.plot_parameters(params[sites[i]],figname='parameters_%s_%s.png' % (run,sites[i]))
+    #pCAR.plot_carbon_pools_ts(model[sites[i]],obs[sites[i]],figname='carbon_pools_ts_%s_%s.png' % (run, sites[i]))
+    #pCAR.plot_carbon_fluxes_ts(model[sites[i]],obs[sites[i]],figname='carbon_fluxes_ts_%s_%s.png' % (run,sites[i]))
+    #pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s_%s.png' % (run,sites[i]))
+    #pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s_%s.png' % (run,sites[i]))
+    #pCAR.plot_parameters(params[sites[i]],figname='parameters_%s_%s.png' % (run,sites[i]))
+    pCAR.plot_summary_ts(model[sites[i]],obs[sites[i]],figname='summary_ts_%s_%s.png' % (run,sites[i]))
+    plt.show()
     plt.close('all')
     
 # Summarise the plots with temporal average and lower and upper quartiles
