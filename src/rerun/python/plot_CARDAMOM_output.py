@@ -685,17 +685,17 @@ def plot_allocation_fractions(df,figname=''):
 # PLOT LEAF TRAITS
 # Plot second figure that compares the litter trap obserations against observed litter accumulation.
 def plot_leaf_traits(df,figname=''):
-    fig = plt.figure(6, facecolor='White',figsize=[10,3])
+    fig = plt.figure(7, facecolor='White',figsize=[10,3])
     # axis one - allocation to wood
-    ax6a = plt.subplot2grid((1,3),(0,0))
-    ax6a.annotate('a - LMA', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax6a.set_ylabel('LMA / g(C) m$^{-2}$',fontsize = axis_size)
+    ax7a = plt.subplot2grid((1,3),(0,0))
+    ax7a.annotate('a - LMA', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax7a.set_ylabel('LMA / g(C) m$^{-2}$',fontsize = axis_size)
     sns.violinplot(x='plot',y='LMA',data=df,inner=None,color='white')
     sns.stripplot(x='plot',y='LMA',data=df,jitter=0.05,alpha=0.005)
 
     # axis two - Narea
-    ax6b = plt.subplot2grid((1,3),(0,1))
-    ax6b.annotate('b - Leaf Nitrogen, [N]$_{area}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax7b = plt.subplot2grid((1,3),(0,1))
+    ax7b.annotate('b - Leaf Nitrogen, [N]$_{area}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
     sns.violinplot(x='plot',y='Narea',data=df,inner=None,color='white')
     sns.stripplot(x='plot',y='Narea',data=df,jitter=0.05,alpha=0.005)
@@ -703,17 +703,60 @@ def plot_leaf_traits(df,figname=''):
     ax6b.set_ylabel('[N]$_{area}$ / g(N) m$^{-2}$',fontsize=10)
     
     # axis three - C:N ratio
-    ax6c = plt.subplot2grid((1,3),(0,2))
-    ax6c.annotate('c - C:N ratio', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax7c = plt.subplot2grid((1,3),(0,2))
+    ax7c.annotate('c - C:N ratio', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
-    ax6c.set_ylabel('C:N ratio')
+    ax7c.set_ylabel('C:N ratio')
 
     sns.violinplot(x='plot',y='CNratio',data=df,inner=None,color='white')
     sns.stripplot(x='plot',y='CNratio',data=df,jitter=0.05,alpha=0.005)
 
-    ax6a.set_ylim((0,200))
-    ax6b.set_ylim((0,10**0.7))
-    ax6c.set_ylim(ymin=0)
+    ax7a.set_ylim((0,200))
+    ax7b.set_ylim((0,10**0.7))
+    ax7c.set_ylim(ymin=0)
+    
+    plt.tight_layout()
+    
+    if len(figname)>0:
+        plt.savefig(figname)
+
+    plt.show()
+
+
+    
+
+# PLOT LEAF TRAITS
+# Plot second figure that compares the litter trap obserations against observed litter accumulation.
+def plot_residence_times(df,figname=''):
+    fig = plt.figure(8, facecolor='White',figsize=[10,3])
+    # axis one - allocation to wood
+    ax8a = plt.subplot2grid((1,3),(0,0))
+    ax8a.annotate('a - Roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax8a.set_ylabel('Residence time / yrs',fontsize = axis_size)
+    sns.violinplot(x='plot',y='root_rt',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='root_rt',data=df,jitter=0.05,alpha=0.005)
+
+    # axis two - Narea
+    ax8b = plt.subplot2grid((1,3),(0,1))
+    ax8b.annotate('b - Foliage', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+
+    sns.violinplot(x='plot',y='fol_rt',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='fol_rt',data=df,jitter=0.05,alpha=0.005)
+    
+    ax8b.set_ylabel('Residence time / yrs',fontsize=10)
+    
+    # axis three - C:N ratio
+    ax8c = plt.subplot2grid((1,3),(0,2))
+    ax8c.annotate('c - Wood', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+
+    ax8c.set_ylabel('Residence time / yrs')
+
+    sns.violinplot(x='plot',y='wood_rt',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='wood_rt',data=df,jitter=0.05,alpha=0.005)
+
+    ax8a.set_ylim(ymin=0)
+    ax8b.set_ylim(ymin=0)
+    ax8c.set_ylim(ymin=0)
     
     plt.tight_layout()
     
