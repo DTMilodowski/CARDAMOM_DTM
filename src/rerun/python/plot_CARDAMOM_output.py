@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 from matplotlib import rcParams
 from scipy import stats
 import datetime as dt
+import seaborn as sns
+
 
 # Set up some basic parameters for the plots
 rcParams['font.family'] = 'sans-serif'
@@ -640,3 +642,85 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     #plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
+
+
+# PLOT ALLOCATION FRACTIONS
+# Plot second figure that compares the litter trap obserations against observed litter accumulation.
+def plot_allocation_fractions(df,figname=''):
+    fig = plt.figure(6, facecolor='White',figsize=[10,3])
+    # axis one - allocation to wood
+    ax6a = plt.subplot2grid((1,3),(0,0))
+    ax6a.annotate('a - Fraction of NPP allocated to roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax6a.set_ylabel('allocation fraction',fontsize = axis_size)
+    sns.violinplot(x='plot',y='root',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='root',data=df,jitter=0.05,alpha=0.005)
+
+    # axis two - allocation to foliage
+    ax6b = plt.subplot2grid((1,3),(0,1),sharey=ax6a)
+    ax6b.annotate('b - Fraction NPP allocated to canopy', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+
+    sns.violinplot(x='plot',y='canopy',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='canopy',data=df,jitter=0.05,alpha=0.005)
+    
+    # axis three - allocation to foliage
+    ax6c = plt.subplot2grid((1,3),(0,2),sharey=ax6a)
+    ax6c.annotate('c - Fraction of NPP allocated to wood', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    
+    ax6b.tick_params(axis='y',labelbottom='off')
+    ax6c.tick_params(axis='y',labelbottom='off')
+
+    sns.violinplot(x='plot',y='wood',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='wood',data=df,jitter=0.05,alpha=0.005)
+
+    ax6a.set_ylim((0,1))
+    
+    plt.tight_layout()
+    
+    if len(figname)>0:
+        plt.savefig(figname)
+
+    plt.show()
+
+
+# PLOT LEAF TRAITS
+# Plot second figure that compares the litter trap obserations against observed litter accumulation.
+def plot_leaf_traits(df,figname=''):
+    fig = plt.figure(6, facecolor='White',figsize=[10,3])
+    # axis one - allocation to wood
+    ax6a = plt.subplot2grid((1,3),(0,0))
+    ax6a.annotate('a - LMA', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax6a.set_ylabel('LMA / g(C) m$^{-2}$',fontsize = axis_size)
+    sns.violinplot(x='plot',y='LMA',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='LMA',data=df,jitter=0.05,alpha=0.005)
+
+    # axis two - Narea
+    ax6b = plt.subplot2grid((1,3),(0,1))
+    ax6b.annotate('b - Leaf Nitrogen, [N]$_{area}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+
+    sns.violinplot(x='plot',y='Narea',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='Narea',data=df,jitter=0.05,alpha=0.005)
+    
+    ax6b.set_ylabel('[N]$_{area}$ / g(N) m$^{-2}$',fontsize=10)
+    
+    # axis three - C:N ratio
+    ax6c = plt.subplot2grid((1,3),(0,2))
+    ax6c.annotate('c - C:N ratio', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+
+    ax6c.set_ylabel('C:N ratio')
+
+    sns.violinplot(x='plot',y='CNratio',data=df,inner=None,color='white')
+    sns.stripplot(x='plot',y='CNratio',data=df,jitter=0.05,alpha=0.005)
+
+    ax6a.set_ylim((0,200))
+    ax6b.set_ylim((0,10**0.7))
+    ax6c.set_ylim(ymin=0)
+    
+    plt.tight_layout()
+    
+    if len(figname)>0:
+        plt.savefig(figname)
+
+    plt.show()
+
+
+    
