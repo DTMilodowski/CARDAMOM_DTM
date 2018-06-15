@@ -27,7 +27,7 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '024'
+run = '025'
 filename = 'BALI_GEMplots_daily_2011_2017_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
@@ -49,8 +49,11 @@ for i in range(0,n_sites):
     obs[sites[i]] = {}
     
     param_file = '%s%s/rerun/%s/0000%i.csv' % (path2project,project,run,i+1)
+    ll_file = '%s%s/rerun/%s/0000%i_ll.csv' % (path2project,project,run,i+1)
     params[sites[i]] = np.genfromtxt(param_file,skiprows = 1,delimiter=',')[:,1:]
-
+    ll=np.genfromtxt(param_file,skiprows = 1,delimiter=',')[1,1:]
+    print sites[i],params.shape[sites[i]],ll.shape
+    
     # Get model output
     # carbon pools
     model[sites[i]]['Cwoo']=mod.variables['Cwoo'][:,:,i]
@@ -69,6 +72,7 @@ for i in range(0,n_sites):
     model[sites[i]]['flux_root_lit']=mod.variables['flux_root_lit'][:,:,i]
     model[sites[i]]['flux_cwd_lit']=mod.variables['flux_cwd_lit'][:,:,i]
     model[sites[i]]['flux_wood_cwd']=mod.variables['flux_wood_cwd'][:,:,i]
+    model[sites[i]]['ll']= ll.copy()
     
     # fluxes
     model[sites[i]]['Reco']=mod.variables['Reco'][:,:,i]
@@ -200,4 +204,53 @@ for i in range(0,6):
 out.close()  
 
 
+## Violin plots
+# pull out allocation fractions
+import pandas
+
+# allocation fractions
+n_params = 0
+
+for pp in range(0,n_sites):
+    n_params += params[sites[pp]].shape[1]
     
+all_wood = np.zeros(n_params)*np.nan    
+all_canopy = np.zeros(n_params)*np.nan
+all_root = np.zeros(n_params)*np.nan
+rt_wood = np.zeros(n_params)*np.nan    
+rt_fol = np.zeros(n_params)*np.nan
+rt_root = np.zeros(n_params)*np.nan
+LMA = np.zeros(n_params)*np.nan
+Narea = np.zeros(n_params)*np.nan
+CN = np.zeros(n_params)*np.nan
+plot_array = np.empty(n_params,dtype='S5')
+ff=0
+for pp in range(0,n_sites):
+    
+    ii=ff
+    ff=ii+params[sites[pp]].shape[1]
+    all_root[ii:ff]=params[sites[pp]][3,:].copy()
+    all_canopy[ii:ff]=params[sites[pp]][12,:]*(1-params[sites[pp]][3,:])
+    all_wood[ii:ff]=(1-params[sites[pp]][12,:])*(1-params[sites[pp]][3,:])
+    LMA[ii:ff]=params[sites[pp]][16,:].copy()
+    Narea[ii:ff]=10**params[sites[pp]][10,:]
+    CN[ii:ff]=LMA[ii:ff]/Narea[ii:ff]
+    plot_array[ii:ff]=sites[pp]
+    rt_fol[ii:ff]=model[sites[pp]]['ll']
+    rt_wood[ii:ff]=1/params[sites[pp]][5,:]/365.
+    rt_root[ii:ff]=1/params[sites[pp]][6,:]/365.
+    
+
+#put into pandas data frame
+header_names=['root','canopy','wood','plot','LMA','Narea','CNratio','wood_rt','fol_rt','root_rt']
+combined_array = np.asarray((all_root,all_canopy,all_wood,plot_array,LMA,Narea,CN,rt_wood,rt_fol,rt_root)).transpose()
+df = pandas.DataFrame(data=combined_array,columns=header_names)
+for col in df.keys():
+    if col != 'plot':
+        df[col] = df[col].astype('float64')
+    else:
+        df[col] = df[col].astype('category')
+        
+pCAR.plot_allocation_fractions(df)
+pCAR.plot_leaf_traits(df)
+pCAR.plot_residence_times(df)
