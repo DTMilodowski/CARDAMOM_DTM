@@ -224,6 +224,7 @@ for(ss in 1:nsites) {
 	decomp_lit_out[ss,3,i] <- sd(states_all$decomp_lit[,i])
 	decomp_lit_out[ss,4,i] <- quantile(states_all$decomp_lit[,i], 0.25)
 	decomp_lit_out[ss,5,i] <- quantile(states_all$decomp_lit[,i], 0.75)
+
     }
 }
 #############################################################################################
@@ -304,13 +305,25 @@ print("File created!")
 
 
 
+# Write csv file with leaf lifespan calculations
 
+for(ss in 1:nsites) {
+    print(paste("SITE: ", site[ss]))
+    # read in binary files
+    bfile=paste(path2files,vector_of_site_ids[ss],".RData",sep="")
 
+    print(paste("Reading in",bfile))
+    load(bfile)
+    
+    paramsets=length(states_all$lai[,1])
+    print(paste("Number of param sets is ",paramsets,sep=""))
 
-
-
-
-
+    meanflx=apply(states_all$litfol_flx,1,mean)
+    meanfol=apply(states_all$fol,1,mean)
+    ll=meanfol/meanflx
+    write.csv(file=paste(path2files,vector_of_site_ids[ss],"_ll.csv",sep=""),x=ll)
+    
+}
 
 
 
