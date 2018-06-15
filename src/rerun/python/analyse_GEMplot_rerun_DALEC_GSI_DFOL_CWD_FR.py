@@ -27,7 +27,7 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '025'
+run = '024'
 filename = 'BALI_GEMplots_daily_2011_2017_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
@@ -43,6 +43,7 @@ sites = ['MLA01','MLA02','SAF04','SAF05','SAF02','SAF01']
 params = {}
 model = {}
 obs = {}
+start_date = np.datetime64('2011-01-01','D')
 for i in range(0,n_sites):
     model[sites[i]] = {}
     obs[sites[i]] = {}
@@ -60,7 +61,7 @@ for i in range(0,n_sites):
     model[sites[i]]['Clab']=mod.variables['Clab'][:,:,i]
     model[sites[i]]['Cfol']=mod.variables['Cfol'][:,:,i]
     model[sites[i]]['Cbio']=mod.variables['Cbio'][:,:,i]
-    model[sites[i]]['time']=mod.variables['time']
+    model[sites[i]]['time']=start_date+(mod.variables['time'][:]-1)
     
     # Litter/foliage related components
     model[sites[i]]['lai']=mod.variables['lai'][:,:,i]
@@ -85,7 +86,7 @@ for i in range(0,n_sites):
     model[sites[i]]['gsi_ivpd']=mod.variables['gsi_ivpd'][:,:,i]
     model[sites[i]]['gsi_itemp']=mod.variables['gsi_itemp'][:,:,i]
     
-    obs[sites[i]]['time'] = mod.variables['time']
+    obs[sites[i]]['time'] =start_date+(mod.variables['time'][:]-1)
     obs[sites[i]]['gpp'] = obs_in[i,:,0]
     obs[sites[i]]['gpp_u'] = obs_in[i,:,11]
     obs[sites[i]]['nee'] = obs_in[i,:,2]

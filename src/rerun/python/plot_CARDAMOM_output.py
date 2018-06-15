@@ -11,6 +11,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 from scipy import stats
+import datetime as dt
 
 # Set up some basic parameters for the plots
 rcParams['font.family'] = 'sans-serif'
@@ -532,6 +533,7 @@ def plot_parameters(params,figname=''):
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
 def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
+    date = model['time'].astype('O')
     fig = plt.figure(3, facecolor='White',figsize=[10,8])
 
     # Plot a -> LAI
@@ -539,68 +541,68 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     ax1a.annotate('a - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1a.set_ylabel('LAI / m$^2$m$^{-2}$',fontsize = axis_size)
     
-    ax1a.fill_between(model['time'],model['lai'][:,3],model['lai'][:,4],color=colour[0],alpha=0.2)
-    ax1a.plot(model['time'],model['lai'][:,1],'-',color=colour[0])
+    ax1a.fill_between(date,model['lai'][:,3],model['lai'][:,4],color=colour[0],alpha=0.2)
+    ax1a.plot(date,model['lai'][:,1],'-',color=colour[0])
 
     if 'lai' in obs.keys(): # check for observations
         if 'lai' in obs.keys(): # check for uncertainty bounds
-            ax1a.errorbar(obs['time'],obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1a.errorbar(date,obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
-            ax1a.plot(obs['time'],obs['lai'],marker='o',c='black',mec='black',mfc='black')
+            ax1a.plot(date,obs['lai'],marker='o',c='black',mec='black',mfc='black')
     
     # Plot b -> gsi
     ax1b = plt.subplot2grid((3,2),(1,0),sharex=ax1a)
     ax1b.annotate('c - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1b.set_ylabel('GSI',fontsize = axis_size)
-    ax1b.fill_between(model['time'],model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.2)
-    ax1b.plot(model['time'],model['gsi'][:,1],'-',color=colour[2])
-    
+    ax1b.fill_between(date,model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.2)
+    ax1b.plot(date,model['gsi'][:,1],'-',color=colour[2])
     # Plot c -> gpp
-    ax1c = plt.subplot2grid((3,2),(0,1),sharex=ax1a)
+    ax1c = plt.subplot2grid((3,2),(0,1))#,sharex=ax1a)
     ax1c.annotate('b - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1c.set_ylabel('GPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
-    ax1c.fill_between(model['time'],model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.2)
-    ax1c.plot(model['time'],model['gpp'][:,1],'-',color=colour[0])
+    ax1c.fill_between(date,model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.2)
+    ax1c.plot(date,model['gpp'][:,1],'-',color=colour[0])
 
     if 'gpp' in obs.keys(): # check for observations
         if 'gpp_u' in obs.keys(): # check for uncertainty bounds
-            ax1c.errorbar(obs['time'],obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1c.errorbar(date,obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
-            ax1c.plot(obs['time'],obs['gpp'],marker='o',c='black',mec='black',mfc='black')
+            ax1c.plot(date,obs['gpp'],marker='o',c='black',mec='black',mfc='black')
 
     # Plot d -> NPP
     ax1d = plt.subplot2grid((3,2),(1,1),sharex=ax1a)
     ax1d.annotate('d - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1d.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1d.fill_between(model['time'],model['npp'][:,3],model['npp'][:,4],color=colour[0],alpha=0.2)
-    ax1d.plot(model['time'],model['npp'][:,1],'-',color=colour[0])
+    ax1d.fill_between(date,model['npp'][:,3],model['npp'][:,4],color=colour[0],alpha=0.2)
+    ax1d.plot(date,model['npp'][:,1],'-',color=colour[0])
     
     if 'npp' in obs.keys(): # check for observations
         if 'npp_u' in obs.keys(): # check for uncertainty bounds
-            ax1d.errorbar(obs['time'],obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1d.errorbar(date,obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
-            ax1d.plot(obs['time'],obs['npp'],marker='o',c='black',mec='black',mfc='black')
-  
+            ax1d.plot(date,obs['npp'],marker='o',c='black',mec='black',mfc='black')
+    
     # Plot e -> litterfall
     ax1e = plt.subplot2grid((3,2),(2,0),sharex=ax1a)
     ax1e.annotate('e - litterfall', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1e.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1e.fill_between(model['time'],model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1e.plot(model['time'],model['flux_fol_lit'][:,1],'-',color=colour[1])
+    ax1e.fill_between(date,model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1e.plot(date,model['flux_fol_lit'][:,1],'-',color=colour[1])
     
     if 'flux_fol_lit' in obs.keys(): # check for observations
         obs['flux_fol_lit']/obs['lit_acc_days']
         mask = np.isfinite(obs['flux_fol_lit'])
-        x1 = obs['time'][mask]-obs['lit_acc_days'][mask]
-        x2 = obs['time'][mask]
+        x1 = ((obs['time'][mask]-obs['lit_acc_days'][mask].astype('int').astype('timedelta64[D]'))).astype(dt.datetime)
+        x2 = obs['time'][mask].astype(dt.datetime)
+        xmid = (obs['time'][mask]-(obs['lit_acc_days'][mask]/2).astype('int').astype('timedelta64[D]')).astype(dt.datetime)
         y=obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask]
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
             y_e=obs['flux_fol_lit_u'][mask]/obs['lit_acc_days'][mask]
             for ii in range(0,mask.sum()):
                 ax1e.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=1,color='black')
-                ax1e.errorbar((x1[ii]+x2[ii])/2.,y[ii],yerr=y_e[ii],marker='.',c='black',ecolor='black')
+                ax1e.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker='.',c='black',ecolor='black')
         else:
             for ii in range(0,mask.sum()):
                 ax1e.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black')
@@ -611,14 +613,14 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     ax1f.annotate('f - C$_{wood}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax1f.set_ylabel('C$_{wood}$ / g(C) m$^{-2}$',fontsize = axis_size)
     
-    ax1f.fill_between(model['time'],model['Cwoo'][:,3],model['Cwoo'][:,4],color=colour[0],alpha=0.2)
-    ax1f.plot(model['time'],model['Cwoo'][:,1],'-',color=colour[0])
+    ax1f.fill_between(date,model['Cwoo'][:,3],model['Cwoo'][:,4],color=colour[0],alpha=0.2)
+    ax1f.plot(date,model['Cwoo'][:,1],'-',color=colour[0])
 
     if 'Cwoo' in obs.keys(): # check for observations
         if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.errorbar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1f.errorbar(date,obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
         else:
-            ax1f.plot(obs['time'],obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
+            ax1f.plot(date,obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
 
     # set xlimits if desired
     if start_tstep!=False:
@@ -626,10 +628,15 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     if end_tstep!=False:
         ax1a.set_xlim(xmax=end_tstep)
     else:
-        ax1a.set_xlim(xmax=model['time'].size)
-
+        ax1a.set_xlim(xmin=date[0],xmax=date[-1])
+  
     ax1e.set_ylim(0,1.5) 
-        
-    plt.tight_layout()
+
+    ax1a.tick_params(axis='x',labelbottom='off')
+    ax1b.tick_params(axis='x',labelbottom='off')
+    ax1c.tick_params(axis='x',labelbottom='off')
+    ax1d.tick_params(axis='x',labelbottom='off')
+
+    #plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
