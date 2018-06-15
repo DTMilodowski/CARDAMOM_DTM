@@ -130,7 +130,3 @@ write.csv(file=paste(path2rerun,"00006.csv",sep=""),x=parameters[,501:1000,])
 
 
 
-
-
-
-
