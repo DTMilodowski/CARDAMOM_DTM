@@ -51,8 +51,7 @@ for i in range(0,n_sites):
     param_file = '%s%s/rerun/%s/0000%i.csv' % (path2project,project,run,i+1)
     ll_file = '%s%s/rerun/%s/0000%i_ll.csv' % (path2project,project,run,i+1)
     params[sites[i]] = np.genfromtxt(param_file,skiprows = 1,delimiter=',')[:,1:]
-    ll=np.genfromtxt(param_file,skiprows = 1,delimiter=',')[1,1:]
-    print sites[i],params.shape[sites[i]],ll.shape
+    ll=np.genfromtxt(ll_file,skiprows = 1,delimiter=',')[:,1]
     
     # Get model output
     # carbon pools
@@ -236,7 +235,7 @@ for pp in range(0,n_sites):
     Narea[ii:ff]=10**params[sites[pp]][10,:]
     CN[ii:ff]=LMA[ii:ff]/Narea[ii:ff]
     plot_array[ii:ff]=sites[pp]
-    rt_fol[ii:ff]=model[sites[pp]]['ll']
+    rt_fol[ii:ff]=model[sites[pp]]['ll']/365.
     rt_wood[ii:ff]=1/params[sites[pp]][5,:]/365.
     rt_root[ii:ff]=1/params[sites[pp]][6,:]/365.
     
@@ -251,6 +250,6 @@ for col in df.keys():
     else:
         df[col] = df[col].astype('category')
         
-pCAR.plot_allocation_fractions(df)
-pCAR.plot_leaf_traits(df)
-pCAR.plot_residence_times(df)
+pCAR.plot_allocation_fractions(df,figname='allocation_fractions_%s' % (run))
+pCAR.plot_leaf_traits(df,figname='leaf_traits_%s.png' % (run))
+pCAR.plot_residence_times(df,figname='residence_times_%s.png' % (run))

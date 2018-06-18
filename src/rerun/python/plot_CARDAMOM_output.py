@@ -13,7 +13,7 @@ from matplotlib import rcParams
 from scipy import stats
 import datetime as dt
 import seaborn as sns
-
+sns.set()
 
 # Set up some basic parameters for the plots
 rcParams['font.family'] = 'sans-serif'
@@ -48,7 +48,7 @@ def plot_carbon_pools_ts(model,obs,start_tstep=False,end_tstep=False,figname='')
 
     if 'Cwoo' in obs.keys(): # check for observations
         if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
-            ax1a.errorbar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1a.errorbar(obs['time'],obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.1)
         else:
             ax1a.plot(obs['time'],obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
 
@@ -548,9 +548,9 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
 
     if 'lai' in obs.keys(): # check for observations
         if 'lai' in obs.keys(): # check for uncertainty bounds
-            ax1a.errorbar(date,obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1a.errorbar(date,obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1a.plot(date,obs['lai'],marker='o',c='black',mec='black',mfc='black')
+            ax1a.plot(date,obs['lai'],marker='o',c='black',mec='black',mfc='black',ms=5)
     
     # Plot b -> gsi
     ax1b = plt.subplot2grid((3,2),(1,0),sharex=ax1a)
@@ -567,9 +567,9 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
 
     if 'gpp' in obs.keys(): # check for observations
         if 'gpp_u' in obs.keys(): # check for uncertainty bounds
-            ax1c.errorbar(date,obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1c.errorbar(date,obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1c.plot(date,obs['gpp'],marker='o',c='black',mec='black',mfc='black')
+            ax1c.plot(date,obs['gpp'],marker='o',c='black',mec='black',mfc='black',ms=5)
 
     # Plot d -> NPP
     ax1d = plt.subplot2grid((3,2),(1,1),sharex=ax1a)
@@ -581,9 +581,9 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     
     if 'npp' in obs.keys(): # check for observations
         if 'npp_u' in obs.keys(): # check for uncertainty bounds
-            ax1d.errorbar(date,obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1d.errorbar(date,obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1d.plot(date,obs['npp'],marker='o',c='black',mec='black',mfc='black')
+            ax1d.plot(date,obs['npp'],marker='o',c='black',mec='black',mfc='black',ms=5)
     
     # Plot e -> litterfall
     ax1e = plt.subplot2grid((3,2),(2,0),sharex=ax1a)
@@ -603,11 +603,11 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
             y_e=obs['flux_fol_lit_u'][mask]/obs['lit_acc_days'][mask]
             for ii in range(0,mask.sum()):
-                ax1e.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=1,color='black')
-                ax1e.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker='.',c='black',ecolor='black')
+                ax1e.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=5,color='black')
+                ax1e.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker=None,c='black',ecolor='black',elinewidth=0.5)
         else:
             for ii in range(0,mask.sum()):
-                ax1e.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black')
+                ax1e.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black',ms=5)
     
     
     # Plot f -> Woody biomass
@@ -620,9 +620,9 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
 
     if 'Cwoo' in obs.keys(): # check for observations
         if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.errorbar(date,obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black')
+            ax1f.errorbar(date,obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1f.plot(date,obs['Cwoo'],marker='o',c='black',mec='black',mfc='black')
+            ax1f.plot(date,obs['Cwoo'],marker='o',c='black',mec='black',mfc='black',ms=5)
 
     # set xlimits if desired
     if start_tstep!=False:
@@ -647,20 +647,21 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
 # PLOT ALLOCATION FRACTIONS
 # Plot second figure that compares the litter trap obserations against observed litter accumulation.
 def plot_allocation_fractions(df,figname=''):
+    sns.set_style("white")
     fig = plt.figure(6, facecolor='White',figsize=[10,3])
     # axis one - allocation to wood
     ax6a = plt.subplot2grid((1,3),(0,0))
     ax6a.annotate('a - Fraction of NPP allocated to roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
     ax6a.set_ylabel('allocation fraction',fontsize = axis_size)
-    sns.violinplot(x='plot',y='root',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='root',data=df,jitter=0.05,alpha=0.005)
+    sns.violinplot(x='plot',y='root',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='root',data=df,jitter=0.05,alpha=0.005,linewidth=None)
 
     # axis two - allocation to foliage
     ax6b = plt.subplot2grid((1,3),(0,1),sharey=ax6a)
     ax6b.annotate('b - Fraction NPP allocated to canopy', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
-    sns.violinplot(x='plot',y='canopy',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='canopy',data=df,jitter=0.05,alpha=0.005)
+    sns.violinplot(x='plot',y='canopy',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='canopy',data=df,jitter=0.05,alpha=0.005,linewidth=None)
     
     # axis three - allocation to foliage
     ax6c = plt.subplot2grid((1,3),(0,2),sharey=ax6a)
@@ -669,11 +670,20 @@ def plot_allocation_fractions(df,figname=''):
     ax6b.tick_params(axis='y',labelbottom='off')
     ax6c.tick_params(axis='y',labelbottom='off')
 
-    sns.violinplot(x='plot',y='wood',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='wood',data=df,jitter=0.05,alpha=0.005)
+    sns.violinplot(x='plot',y='wood',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='wood',data=df,jitter=0.05,alpha=0.005,linewidth=None)
 
     ax6a.set_ylim((0,1))
     
+    ax6a.set_xlabel('')
+    ax6b.set_xlabel('')
+    ax6c.set_xlabel('')
+    for lab  in ax6a.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax6b.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax6c.get_xticklabels():
+        lab.set_rotation(45)
     plt.tight_layout()
     
     if len(figname)>0:
@@ -685,36 +695,45 @@ def plot_allocation_fractions(df,figname=''):
 # PLOT LEAF TRAITS
 # Plot second figure that compares the litter trap obserations against observed litter accumulation.
 def plot_leaf_traits(df,figname=''):
+    sns.set_style("white")
     fig = plt.figure(7, facecolor='White',figsize=[10,3])
     # axis one - allocation to wood
     ax7a = plt.subplot2grid((1,3),(0,0))
     ax7a.annotate('a - LMA', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    sns.violinplot(x='plot',y='LMA',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='LMA',data=df,jitter=0.05,alpha=0.005,linewidth=None)
     ax7a.set_ylabel('LMA / g(C) m$^{-2}$',fontsize = axis_size)
-    sns.violinplot(x='plot',y='LMA',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='LMA',data=df,jitter=0.05,alpha=0.005)
+    ax7a.set_xlabel('')
 
     # axis two - Narea
     ax7b = plt.subplot2grid((1,3),(0,1))
     ax7b.annotate('b - Leaf Nitrogen, [N]$_{area}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
-    sns.violinplot(x='plot',y='Narea',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='Narea',data=df,jitter=0.05,alpha=0.005)
+    sns.violinplot(x='plot',y='Narea',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='Narea',data=df,jitter=0.05,alpha=0.005,linewidth=None)
     
-    ax6b.set_ylabel('[N]$_{area}$ / g(N) m$^{-2}$',fontsize=10)
+    ax7b.set_ylabel('[N]$_{area}$ / g(N) m$^{-2}$',fontsize=10)
+    ax7b.set_xlabel('')
     
     # axis three - C:N ratio
     ax7c = plt.subplot2grid((1,3),(0,2))
     ax7c.annotate('c - C:N ratio', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
+    sns.violinplot(x='plot',y='CNratio',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='CNratio',data=df,jitter=0.05,alpha=0.005,linewidth=None)
     ax7c.set_ylabel('C:N ratio')
-
-    sns.violinplot(x='plot',y='CNratio',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='CNratio',data=df,jitter=0.05,alpha=0.005)
+    ax7c.set_xlabel('')
 
     ax7a.set_ylim((0,200))
     ax7b.set_ylim((0,10**0.7))
     ax7c.set_ylim(ymin=0)
     
+    for lab  in ax7a.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax7b.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax7c.get_xticklabels():
+        lab.set_rotation(45)
     plt.tight_layout()
     
     if len(figname)>0:
@@ -728,36 +747,46 @@ def plot_leaf_traits(df,figname=''):
 # PLOT LEAF TRAITS
 # Plot second figure that compares the litter trap obserations against observed litter accumulation.
 def plot_residence_times(df,figname=''):
+    sns.set_style("white")
     fig = plt.figure(8, facecolor='White',figsize=[10,3])
     # axis one - allocation to wood
     ax8a = plt.subplot2grid((1,3),(0,0))
     ax8a.annotate('a - Roots', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    sns.violinplot(x='plot',y='root_rt',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='root_rt',data=df,jitter=0.05,alpha=0.005,linewidth=None)
+    
     ax8a.set_ylabel('Residence time / yrs',fontsize = axis_size)
-    sns.violinplot(x='plot',y='root_rt',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='root_rt',data=df,jitter=0.05,alpha=0.005)
-
+    
     # axis two - Narea
     ax8b = plt.subplot2grid((1,3),(0,1))
     ax8b.annotate('b - Foliage', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 
-    sns.violinplot(x='plot',y='fol_rt',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='fol_rt',data=df,jitter=0.05,alpha=0.005)
+    sns.violinplot(x='plot',y='fol_rt',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='fol_rt',data=df,jitter=0.05,alpha=0.005,linewidth=None)
     
     ax8b.set_ylabel('Residence time / yrs',fontsize=10)
     
     # axis three - C:N ratio
     ax8c = plt.subplot2grid((1,3),(0,2))
     ax8c.annotate('c - Wood', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    sns.violinplot(x='plot',y='wood_rt',data=df,inner=None,color='white',linewidth=0.5)
+    sns.stripplot(x='plot',y='wood_rt',data=df,jitter=0.05,alpha=0.005,linewidth=None)
 
     ax8c.set_ylabel('Residence time / yrs')
-
-    sns.violinplot(x='plot',y='wood_rt',data=df,inner=None,color='white')
-    sns.stripplot(x='plot',y='wood_rt',data=df,jitter=0.05,alpha=0.005)
 
     ax8a.set_ylim(ymin=0)
     ax8b.set_ylim(ymin=0)
     ax8c.set_ylim(ymin=0)
-    
+    ax8a.set_xlabel('')
+    ax8b.set_xlabel('')
+    ax8c.set_xlabel('')
+    for lab  in ax8a.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax8b.get_xticklabels():
+        lab.set_rotation(45)
+    for lab  in ax8c.get_xticklabels():
+        lab.set_rotation(45)
+        
     plt.tight_layout()
     
     if len(figname)>0:
