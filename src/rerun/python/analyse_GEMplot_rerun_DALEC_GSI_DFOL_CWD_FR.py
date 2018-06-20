@@ -253,3 +253,36 @@ for col in df.keys():
 pCAR.plot_allocation_fractions(df,figname='allocation_fractions_%s' % (run))
 pCAR.plot_leaf_traits(df,figname='leaf_traits_%s.png' % (run))
 pCAR.plot_residence_times(df,figname='residence_times_%s.png' % (run))
+
+
+
+# plot level violin plots
+dfs = {}
+for pp in range(0,n_sites):
+    n_params = params[sites[pp]].shape[1]
+    allocation_fractions = np.zeros(n_params*3)*np.nan
+    residence_times = np.zeros(n_params*3)*np.nan
+    pool = np.empty(n_params*3,dtype='S6')
+
+    allocation_fractions[0:n_params]=params[sites[pp]][3,:].copy()
+    allocation_fractions[n_params:2*n_params]=params[sites[pp]][12,:]*(1-params[sites[pp]][3,:])
+    allocation_fractions[2*n_params:3*n_params]=(1-params[sites[pp]][12,:])*(1-params[sites[pp]][3,:])
+
+    residence_times[0:n_params]=1/params[sites[pp]][6,:]/365.
+    residence_times[n_params:2*n_params]=model[sites[pp]]['ll']/365.
+    residence_times[2*n_params:3*n_params]=1/params[sites[pp]][5,:]/365.
+
+    pool[0:n_params]='roots'
+    pool[n_params:2*n_params]='canopy'
+    pool[2*n_params:3*n_params]='wood'
+    
+    header_names=['pool','allocation fraction','residence time',]
+    combined_array = np.asarray((pool,allocation_fractions,residence_times)).transpose()
+    pool_df = pandas.DataFrame(data=combined_array,columns=header_names)
+    for col in pool_df.keys():
+        if col != 'pool':
+            pool_df[col] = pool_df[col].astype('float64')
+        else:
+            pool_df[col] = pool_df[col].astype('category')
+    pCAR.plot_allocation_fractions_single_site(pool_df,sites[pp],figname='allocation_fractions_%s_%s' % (run,sites[pp]))
+    pCAR.plot_residence_times_single_site(pool_df,sites[pp],figname='residence_times_%s_%s' % (run,sites[pp]))

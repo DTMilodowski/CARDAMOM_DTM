@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib import rcParams
 from scipy import stats
 import datetime as dt
+import pandas as pd
 import seaborn as sns
 sns.set()
 
@@ -535,6 +536,7 @@ def plot_parameters(params,figname=''):
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
 def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
+    sns.set()
     date = model['time'].astype('O')
     fig = plt.figure(3, facecolor='White',figsize=[10,8])
 
@@ -633,12 +635,12 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
         ax1a.set_xlim(xmin=date[0],xmax=date[-1])
   
     ax1e.set_ylim(0,1.5) 
-
+    """
     ax1a.tick_params(axis='x',labelbottom='off')
     ax1b.tick_params(axis='x',labelbottom='off')
     ax1c.tick_params(axis='x',labelbottom='off')
     ax1d.tick_params(axis='x',labelbottom='off')
-
+    """
     #plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
@@ -796,3 +798,49 @@ def plot_residence_times(df,figname=''):
 
 
     
+# PLOT ALLOCATION FRACTIONS FOR SINGLE SITE
+def plot_allocation_fractions_single_site(df,plot,figname=''):
+    sns.set_style("white")
+    fig = plt.figure(9, facecolor='White',figsize=[4,4])
+    # axis one - allocation to wood
+    ax= plt.subplot2grid((1,1),(0,0))
+    ax.annotate(plot, xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax.set_ylabel('allocation fraction',fontsize = axis_size)
+    sns.violinplot(x='pool',y='allocation fraction',data=df,inner=None,linewidth=0.5,palette="muted")
+    sns.stripplot(x='pool',y='allocation fraction',data=df,color='black',jitter=0.05,alpha=0.005,linewidth=None)
+
+    ax.set_ylim((0,1))
+    ax.set_xlabel('')
+    
+    for lab  in ax.get_xticklabels():
+        lab.set_rotation(45)
+    plt.tight_layout()
+    
+    if len(figname)>0:
+        plt.savefig(figname)
+
+    plt.show()
+
+
+# PLOT RESIDENCE TIMES FOR SINGLE SITE
+def plot_residence_times_single_site(df,plot,figname=''):
+    sns.set_style("white")
+    fig = plt.figure(10, facecolor='White',figsize=[4,4])
+    # axis one - allocation to wood
+    ax= plt.subplot2grid((1,1),(0,0))
+    ax.annotate(plot, xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax.set_ylabel('allocation fraction',fontsize = axis_size)
+    sns.violinplot(x='pool',y='residence time',data=df,inner=None,linewidth=0.5,scale="width",palette="muted")
+    sns.stripplot(x='pool',y='residence time',data=df,color='black',jitter=0.05,alpha=0.005,linewidth=None)
+
+    ax.set_xlabel('')
+    ax.set_ylim(ymin=0.1)
+    ax.set_yscale('log')
+    for lab  in ax.get_xticklabels():
+        lab.set_rotation(45)
+    plt.tight_layout()
+    
+    if len(figname)>0:
+        plt.savefig(figname)
+
+    plt.show()
