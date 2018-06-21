@@ -27,12 +27,15 @@ project_par = "BALI_GEMplots_daily_params.npy"
 project_obs = "BALI_GEMplots_daily_obs.npy"
 
 project = 'BALI_GEMplots_daily'
-run = '025'
+run = '024'
 filename = 'BALI_GEMplots_daily_2011_2017_DALEC_GSI_DFOL_CWD_FR.nc'
 
 # find NetCDF_file for rerun and load
 NetCDF_file = '%s%s/rerun/%s/%s' % (path2project,project,run,filename)
 mod = Dataset(NetCDF_file)
+met = {}
+met['VPD'] = mod['VPD']
+met['prcp']=mod['prcp']
 
 # Get corresponding observations
 obs_in = np.load('%s%s/%s' % (data_dir,run,project_obs))
@@ -77,11 +80,11 @@ for i in range(0,n_sites):
     model[sites[i]]['Reco']=mod.variables['Reco'][:,:,i]
     model[sites[i]]['Rauto']=mod.variables['Rauto'][:,:,i]
     model[sites[i]]['Rhet']=mod.variables['Rhet'][:,:,i]
-    model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
+    #model[sites[i]]['Rh_lit']=mod.variables['Rh_lit'][:,:,i]
     model[sites[i]]['gpp']=mod.variables['gpp'][:,:,i]
     model[sites[i]]['npp']=mod.variables['npp'][:,:,i]
     model[sites[i]]['nee']=mod.variables['nee'][:,:,i]
-    model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
+    #model[sites[i]]['decomp_lit']=mod.variables['decomp_lit'][:,:,i]
     
     # GSI
     model[sites[i]]['gsi']=mod.variables['gsi'][:,:,i]
@@ -118,7 +121,7 @@ for i in range(0,n_sites):
     #pCAR.plot_litter_components_ts(model[sites[i]],obs[sites[i]],figname='litter_components_ts_%s_%s.png' % (run,sites[i]))
     #pCAR.plot_litter_trap_comparison(model[sites[i]],obs[sites[i]],figname='litter_trap_components_%s_%s.png' % (run,sites[i]))
     #pCAR.plot_parameters(params[sites[i]],figname='parameters_%s_%s.png' % (run,sites[i]))
-    pCAR.plot_summary_ts(model[sites[i]],obs[sites[i]],figname='summary_ts_%s_%s.png' % (run,sites[i]))
+    pCAR.plot_summary_ts(model[sites[i]],obs[sites[i]],met,figname='summary_ts_%s_%s.png' % (run,sites[i]))
     plt.show()
     plt.close('all')
     

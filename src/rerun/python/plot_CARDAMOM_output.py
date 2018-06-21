@@ -296,7 +296,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
     ax1c.set_ylabel('GSI',fontsize = axis_size)
     
     ax1c.fill_between(model['time'],model['gsi_iphoto'][:,3],model['gsi_iphoto'][:,4],color=colour[2],alpha=0.2)
-    ax1c.plot(model['time'],model['gsi_iphoto'][:,1],'-',color=colour[2])
+    ax1c.plot(model['time'],model['gsi_iphoto'][:,0],'-',color=colour[2])
 
     # Plot d -> gsi temp
     ax1d = plt.subplot2grid((9,1),(3,0),sharex=ax1a,sharey=ax1b)
@@ -336,8 +336,26 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
     ax1g.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
     ax1g.fill_between(model['time'],model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
+    ax1g.fill_between(model['time'],model['flux_fol_lit'][:,5],model['flux_fol_lit'][:,3],color=colour[1],alpha=0.1)
+    ax1g.fill_between(model['time'],model['flux_fol_lit'][:,4],model['flux_fol_lit'][:,6],color=colour[1],alpha=0.1)
     ax1g.plot(model['time'],model['flux_fol_lit'][:,1],'-',color=colour[1])
-    
+
+    if 'flux_fol_lit' in obs.keys(): # check for observations
+        obs['flux_fol_lit']/obs['lit_acc_days']
+        mask = np.isfinite(obs['flux_fol_lit'])
+        x1 = ((obs['time'][mask]-obs['lit_acc_days'][mask].astype('int').astype('timedelta64[D]'))).astype(dt.datetime)
+        x2 = obs['time'][mask].astype(dt.datetime)
+        xmid = (obs['time'][mask]-(obs['lit_acc_days'][mask]/2).astype('int').astype('timedelta64[D]')).astype(dt.datetime)
+        y=obs['flux_fol_lit'][mask]/obs['lit_acc_days'][mask]
+        if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
+            y_e=obs['flux_fol_lit_u'][mask]/obs['lit_acc_days'][mask]
+            for ii in range(0,mask.sum()):
+                ax1g.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=5,color='black')
+                ax1g.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker=None,c='black',ecolor='black',elinewidth=0.5)
+        else:
+            for ii in range(0,mask.sum()):
+                ax1g.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black',ms=5)
+    """
     if 'flux_fol_lit' in obs.keys(): # check for observations
         obs['flux_fol_lit']/obs['lit_acc_days']
         mask = np.isfinite(obs['flux_fol_lit'])
@@ -352,7 +370,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
         else:
             for ii in range(0,mask.sum()):
                 ax1g.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black')
-                
+    """
     # Plot h -> cwd fluxes into litter pool
     ax1h = plt.subplot2grid((9,1),(7,0),sharex=ax1a)
     ax1h.annotate('f - litter flux from CWD', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -376,7 +394,7 @@ def plot_litter_components_ts(model,obs,start_tstep=False,end_tstep=False,fignam
     if end_tstep!=False:
         ax1a.set_xlim(xmax=end_tstep)
     else:
-        ax1a.set_xlim(xmax=model['time'].size)
+        ax1a.set_xlim(xmax=model['time'][-1])
 
     ax1a.set_ylim(0,12)
     ax1f.set_ylim(0,1000)
@@ -535,65 +553,89 @@ def plot_parameters(params,figname=''):
 # Also takes optional arguments for start and end timestep. initially these will
 # be index references (i.e. model timestep) but this will ultimately be altered
 # to give options to specify date ranges.
-def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
+def plot_summary_ts(model,obs,met,start_tstep=False,end_tstep=False,figname=''):
     sns.set()
     date = model['time'].astype('O')
-    fig = plt.figure(3, facecolor='White',figsize=[10,8])
+    fig = plt.figure(3, facecolor='White',figsize=[11,12])
 
-    # Plot a -> LAI
-    ax1a = plt.subplot2grid((3,2),(0,0))
-    ax1a.annotate('a - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1a.set_ylabel('LAI / m$^2$m$^{-2}$',fontsize = axis_size)
+    # Plot a -> Precipitation
+    ax1a = plt.subplot2grid((4,2),(0,0))
+    ax1a.annotate('a - precipitation', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1a.set_ylabel('daily precipitation / mm',fontsize = axis_size)
     
-    ax1a.fill_between(date,model['lai'][:,3],model['lai'][:,4],color=colour[0],alpha=0.2)
-    ax1a.plot(date,model['lai'][:,1],'-',color=colour[0])
+    ax1a.fill_between(date,np.zeros(date.size),met['prcp'],color=colour[1], linewidth=0.0)
+
+    # Plot b -> VPD
+    ax1b = plt.subplot2grid((4,2),(1,0),sharex=ax1a)
+    ax1b.annotate('c - Vapour pressure deficit', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1b.set_ylabel('VPD / Pa',fontsize = axis_size)
+    
+    ax1b.plot(date,met['VPD'],color=colour[1])
+    
+    # Plot a -> LAI
+    ax1c = plt.subplot2grid((4,2),(0,1),sharex=ax1a)
+    ax1c.annotate('b - LAI', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1c.set_ylabel('LAI / m$^2$m$^{-2}$',fontsize = axis_size)
+    
+    ax1c.fill_between(date,model['lai'][:,3],model['lai'][:,4],color=colour[0],alpha=0.5, linewidth=0.0)
+    ax1c.fill_between(date,model['lai'][:,3],model['lai'][:,5],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1c.fill_between(date,model['lai'][:,6],model['lai'][:,4],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1c.plot(date,model['lai'][:,1],'-',color=colour[0])
 
     if 'lai' in obs.keys(): # check for observations
         if 'lai' in obs.keys(): # check for uncertainty bounds
-            ax1a.errorbar(date,obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
+            ax1c.errorbar(date,obs['lai'],yerr=obs['lai_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1a.plot(date,obs['lai'],marker='o',c='black',mec='black',mfc='black',ms=5)
+            ax1c.plot(date,obs['lai'],marker='o',c='black',mec='black',mfc='black',ms=5)
     
     # Plot b -> gsi
-    ax1b = plt.subplot2grid((3,2),(1,0),sharex=ax1a)
-    ax1b.annotate('c - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1b.set_ylabel('GSI',fontsize = axis_size)
-    ax1b.fill_between(date,model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.2)
-    ax1b.plot(date,model['gsi'][:,1],'-',color=colour[2])
+    ax1d = plt.subplot2grid((4,2),(2,0),sharex=ax1a)
+    ax1d.annotate('e - Growth Season Index (GSI)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1d.set_ylabel('GSI',fontsize = axis_size)
+    ax1d.fill_between(date,model['gsi'][:,3],model['gsi'][:,4],color=colour[2],alpha=0.5, linewidth=0.0)
+    ax1d.fill_between(date,model['gsi'][:,3],model['gsi'][:,5],color=colour[2],alpha=0.25, linewidth=0.0)
+    ax1d.fill_between(date,model['gsi'][:,6],model['gsi'][:,4],color=colour[2],alpha=0.25, linewidth=0.0)
+    ax1d.plot(date,model['gsi'][:,1],'-',color=colour[2])
     # Plot c -> gpp
-    ax1c = plt.subplot2grid((3,2),(0,1))#,sharex=ax1a)
-    ax1c.annotate('b - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1c.set_ylabel('GPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
-    ax1c.fill_between(date,model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.2)
-    ax1c.plot(date,model['gpp'][:,1],'-',color=colour[0])
+    ax1e = plt.subplot2grid((4,2),(1,1))#,sharex=ax1a)
+    ax1e.annotate('d - Gross Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1e.set_ylabel('GPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1e.fill_between(date,model['gpp'][:,3],model['gpp'][:,4],color=colour[0],alpha=0.5, linewidth=0.0)
+    ax1e.fill_between(date,model['gpp'][:,3],model['gpp'][:,5],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1e.fill_between(date,model['gpp'][:,6],model['gpp'][:,4],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1e.plot(date,model['gpp'][:,1],'-',color=colour[0])
 
     if 'gpp' in obs.keys(): # check for observations
         if 'gpp_u' in obs.keys(): # check for uncertainty bounds
-            ax1c.errorbar(date,obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
+            ax1e.errorbar(date,obs['gpp'],yerr=obs['gpp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1c.plot(date,obs['gpp'],marker='o',c='black',mec='black',mfc='black',ms=5)
+            ax1e.plot(date,obs['gpp'],marker='o',c='black',mec='black',mfc='black',ms=5)
 
     # Plot d -> NPP
-    ax1d = plt.subplot2grid((3,2),(1,1),sharex=ax1a)
-    ax1d.annotate('d - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1d.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1f = plt.subplot2grid((4,2),(2,1),sharex=ax1a)
+    ax1f.annotate('f - Net Primary Productivity', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1f.set_ylabel('NPP / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1d.fill_between(date,model['npp'][:,3],model['npp'][:,4],color=colour[0],alpha=0.2)
-    ax1d.plot(date,model['npp'][:,1],'-',color=colour[0])
+    ax1f.fill_between(date,model['npp'][:,3],model['npp'][:,4],color=colour[0],alpha=0.5, linewidth=0.0)
+    ax1f.fill_between(date,model['npp'][:,3],model['npp'][:,5],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1f.fill_between(date,model['npp'][:,6],model['npp'][:,4],color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1f.plot(date,model['npp'][:,1],'-',color=colour[0])
     
     if 'npp' in obs.keys(): # check for observations
         if 'npp_u' in obs.keys(): # check for uncertainty bounds
-            ax1d.errorbar(date,obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
+            ax1f.errorbar(date,obs['npp'],yerr=obs['npp_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1d.plot(date,obs['npp'],marker='o',c='black',mec='black',mfc='black',ms=5)
+            ax1f.plot(date,obs['npp'],marker='o',c='black',mec='black',mfc='black',ms=5)
     
     # Plot e -> litterfall
-    ax1e = plt.subplot2grid((3,2),(2,0),sharex=ax1a)
-    ax1e.annotate('e - litterfall', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1e.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
+    ax1g = plt.subplot2grid((4,2),(3,0),sharex=ax1a)
+    ax1g.annotate('g - litterfall', xy=(0.05,0.05), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='bottom', fontsize=10)
+    ax1g.set_ylabel('litter flux / g(C) m$^{-2}$ d$^{-1}$',fontsize = axis_size)
     
-    ax1e.fill_between(date,model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.2)
-    ax1e.plot(date,model['flux_fol_lit'][:,1],'-',color=colour[1])
+    ax1g.fill_between(date,model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.5, linewidth=0.0)
+    ax1g.fill_between(date,model['flux_fol_lit'][:,3],model['flux_fol_lit'][:,5],color=colour[1],alpha=0.25, linewidth=0.0)
+    ax1g.fill_between(date,model['flux_fol_lit'][:,6],model['flux_fol_lit'][:,4],color=colour[1],alpha=0.25, linewidth=0.0)
+    ax1g.plot(date,model['flux_fol_lit'][:,1],'-',color=colour[1])
     
     if 'flux_fol_lit' in obs.keys(): # check for observations
         obs['flux_fol_lit']/obs['lit_acc_days']
@@ -605,26 +647,28 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
         if 'flux_fol_lit_u' in obs.keys(): # check for uncertainty bounds
             y_e=obs['flux_fol_lit_u'][mask]/obs['lit_acc_days'][mask]
             for ii in range(0,mask.sum()):
-                ax1e.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=5,color='black')
-                ax1e.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker=None,c='black',ecolor='black',elinewidth=0.5)
+                ax1g.plot([x1[ii],x2[ii]],[y[ii],y[ii]],'-',linewidth=5,color='black')
+                ax1g.errorbar(xmid[ii],y[ii],yerr=y_e[ii],marker=None,c='black',ecolor='black',elinewidth=0.5)
         else:
             for ii in range(0,mask.sum()):
-                ax1e.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black',ms=5)
+                ax1g.plot([x1[ii],x2[ii]],[y,y],'-',linewidth=1,color='black',ms=5)
     
     
     # Plot f -> Woody biomass
-    ax1f = plt.subplot2grid((3,2),(2,1),sharex=ax1a)
-    ax1f.annotate('f - C$_{wood}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
-    ax1f.set_ylabel('C$_{wood}$ / g(C) m$^{-2}$',fontsize = axis_size)
+    ax1h = plt.subplot2grid((4,2),(3,1),sharex=ax1a)
+    ax1h.annotate('h - C$_{wood}$', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
+    ax1h.set_ylabel('C$_{wood}$ / Mg(C) ha$^{-2}$',fontsize = axis_size)
     
-    ax1f.fill_between(date,model['Cwoo'][:,3],model['Cwoo'][:,4],color=colour[0],alpha=0.2)
-    ax1f.plot(date,model['Cwoo'][:,1],'-',color=colour[0])
+    ax1h.fill_between(date,model['Cwoo'][:,3]/100.,model['Cwoo'][:,4]/100.,color=colour[0],alpha=0.5, linewidth=0.0)
+    ax1h.fill_between(date,model['Cwoo'][:,3]/100.,model['Cwoo'][:,5]/100.,color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1h.fill_between(date,model['Cwoo'][:,6]/100.,model['Cwoo'][:,4]/100.,color=colour[0],alpha=0.25, linewidth=0.0)
+    ax1h.plot(date,model['Cwoo'][:,1]/100.,'-',color=colour[0])
 
     if 'Cwoo' in obs.keys(): # check for observations
         if 'Cwoo_u' in obs.keys(): # check for uncertainty bounds
-            ax1f.errorbar(date,obs['Cwoo'],yerr=obs['Cwoo_u'],marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
+            ax1h.errorbar(date,obs['Cwoo']/100.,yerr=obs['Cwoo_u']/100.,marker='o',c='black',mec='black',mfc='black',ecolor='black',elinewidth=0.5,ms=5)
         else:
-            ax1f.plot(date,obs['Cwoo'],marker='o',c='black',mec='black',mfc='black',ms=5)
+            ax1h.plot(date,obs['Cwoo']/100.,marker='o',c='black',mec='black',mfc='black',ms=5)
 
     # set xlimits if desired
     if start_tstep!=False:
@@ -634,14 +678,15 @@ def plot_summary_ts(model,obs,start_tstep=False,end_tstep=False,figname=''):
     else:
         ax1a.set_xlim(xmin=date[0],xmax=date[-1])
   
-    ax1e.set_ylim(0,1.5) 
+    ax1g.set_ylim(0,1.5) 
+    ax1d.set_ylim(0,1) 
     """
     ax1a.tick_params(axis='x',labelbottom='off')
     ax1b.tick_params(axis='x',labelbottom='off')
     ax1c.tick_params(axis='x',labelbottom='off')
     ax1d.tick_params(axis='x',labelbottom='off')
     """
-    #plt.tight_layout()
+    plt.tight_layout()
     if len(figname)>0:
         plt.savefig(figname)
 
